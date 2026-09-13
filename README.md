@@ -145,5 +145,4 @@ rest of the guide.
 
 
 ## License
-
 MIT - see [LICENSE](LICENSE).
