@@ -75,10 +75,12 @@ def get_metrics() -> Dict[str, Any]:
 def process_ticket(
     payload: TicketIngestRequest,
     idempotency_key: Optional[str] = Header(None, alias="Idempotency-Key"),
+    user_roles_header: Optional[str] = Header(None, alias="X-User-Roles"),
 ) -> TriageResult:
     """
     Ingests, classifies, and synthesizes a citation-grounded draft for incoming tickets.
     Guarantees idempotency via Idempotency-Key header or payload parameter.
+    Enforces RBAC document filtering via X-User-Roles header.
     """
     key = idempotency_key or payload.idempotency_key
 
@@ -88,8 +90,10 @@ def process_ticket(
         cached_result = idempotency_store[key]
         return TriageResult(**cached_result)
 
+    roles = [r.strip() for r in user_roles_header.split(",")] if user_roles_header else None
+
     # Process ticket through agent
-    result = agent.process_ticket(payload)
+    result = agent.process_ticket(payload, user_roles=roles)
 
     # Update operational metrics
     metrics_data["total_processed"] += 1
@@ -195,11 +199,13 @@ def resolve_exception(resolve_req: OperatorResolveRequest) -> Dict[str, Any]:
 def search_knowledge(
     q: str = Query(..., min_length=2, description="Search query"),
     top_k: int = Query(2, ge=1, le=5),
+    user_roles_header: Optional[str] = Header(None, alias="X-User-Roles"),
 ) -> Dict[str, Any]:
     """
-    Performs hybrid search over indexed enterprise compliance and SLA manuals.
+    Performs permission-aware hybrid search over indexed enterprise compliance and SLA manuals.
     """
-    results = agent.index.search(q, top_k=top_k)
+    roles = [r.strip() for r in user_roles_header.split(",")] if user_roles_header else None
+    results = agent.index.search(q, top_k=top_k, user_roles=roles)
     return {
         "query": q,
         "results": [

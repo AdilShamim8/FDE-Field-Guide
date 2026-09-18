@@ -119,3 +119,33 @@ def test_hybrid_knowledge_search():
     assert len(results) > 0
     assert results[0]["document_id"] == "APEX-SLA-2026"
     assert "Section 3.1" in results[0]["content"]
+
+
+def test_permission_aware_rbac_filtering():
+    query_url = "/api/v1/knowledge/search?q=GDPR%20data%20residency%20Section%2011.3"
+
+    # Unauthorized role (support_tier1 lacks compliance or admin role for Section 11.3)
+    unauth_resp = client.get(query_url, headers={"X-User-Roles": "support_tier1"})
+    assert unauth_resp.status_code == 200
+    unauth_results = unauth_resp.json()["results"]
+    assert not any(r["document_id"] == "APEX-COMPLIANCE-DOC" for r in unauth_results)
+
+    # Authorized role (compliance officer has access)
+    auth_resp = client.get(query_url, headers={"X-User-Roles": "compliance"})
+    assert auth_resp.status_code == 200
+    auth_results = auth_resp.json()["results"]
+    assert any(r["document_id"] == "APEX-COMPLIANCE-DOC" for r in auth_results)
+
+
+def test_dense_vector_cosine_similarity():
+    from src.pipeline.ingestion import compute_dense_embedding, cosine_similarity
+
+    v1 = compute_dense_embedding("P0 critical outage payment failure")
+    v2 = compute_dense_embedding("total production downtime billing crash")
+    v3 = compute_dense_embedding("general weather forecast in Paris")
+
+    sim_related = cosine_similarity(v1, v2)
+    sim_unrelated = cosine_similarity(v1, v3)
+
+    assert sim_related > sim_unrelated
+    assert sim_related > 0.30

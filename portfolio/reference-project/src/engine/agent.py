@@ -1,10 +1,10 @@
 """
-Agent engine orchestrating self-healing structured extraction,
-hybrid retrieval, citation verification, and decision gating.
+Agent engine orchestrating self-healing structured extraction, dense vector similarity,
+hybrid retrieval with RBAC permissions, citation verification, and decision gating.
 """
 
 import time
-from typing import List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from ..config import settings
 from ..models.schemas import (
@@ -16,31 +16,93 @@ from ..models.schemas import (
     TicketIngestRequest,
     TriageResult,
 )
-from ..pipeline.ingestion import HybridKnowledgeIndex
+from ..pipeline.ingestion import (
+    HybridKnowledgeIndex,
+    compute_dense_embedding,
+    cosine_similarity,
+)
+
+# Canonical semantic anchor descriptions for dense vector similarity scoring
+CATEGORY_ANCHORS: Dict[DefectCategory, str] = {
+    DefectCategory.OUTAGE: (
+        "Total production service outage, critical emergency, complete system crash, "
+        "downtime impacting users, 503 504 server unavailable errors."
+    ),
+    DefectCategory.BILLING: (
+        "Invoice fee dispute, billing credit request, service level credit refund, "
+        "incorrect overage surcharge, corporate tax exemption billing profile."
+    ),
+    DefectCategory.INTEGRATION_BUG: (
+        "API rate limiting 429 errors, webhook delivery retries, 401 unauthorized token rejection, "
+        "SDK connection timeout, batch ingestion parsing bug."
+    ),
+    DefectCategory.COMPLIANCE: (
+        "EU data residency safeguards, GDPR compliance audit, PII redaction policy, "
+        "Business Associate Agreement BAA, encryption key management."
+    ),
+    DefectCategory.GENERAL_INQUIRY: (
+        "General questions regarding standard support business hours, portal information, "
+        "vague inquiry, test ticket."
+    ),
+}
 
 
 class TriageAgent:
     """
-    Production-grade triage agent demonstrating FDE discipline:
-    Structured outputs, error-repair loop, strict quote grounding, and decision gating.
+    Senior forward deployed engineering triage agent.
+    Combines dense semantic vector scoring, permission-aware hybrid search,
+    self-repairing structured output validation, and strict quotation grounding.
     """
 
     def __init__(self, index: Optional[HybridKnowledgeIndex] = None):
         self.index = index or HybridKnowledgeIndex()
+        # Precompute category anchor embeddings
+        self._anchor_embeddings: Dict[DefectCategory, List[float]] = {
+            cat: compute_dense_embedding(text) for cat, text in CATEGORY_ANCHORS.items()
+        }
 
     def _extract_fields(self, raw_text: str) -> Tuple[ExtractedTicketData, int]:
         """
-        Extracts structured fields from raw ticket text.
-        Demonstrates self-repair loop and robust category mapping.
+        Extracts structured fields using dense vector semantic matching and defensive rules.
         """
         text_lower = raw_text.lower()
         repair_attempts = 0
+        input_vec = compute_dense_embedding(raw_text)
 
-        # Severity classification
+        # 1. Dense semantic similarity across category anchor embeddings
+        category_scores: Dict[DefectCategory, float] = {
+            cat: cosine_similarity(input_vec, anchor_vec)
+            for cat, anchor_vec in self._anchor_embeddings.items()
+        }
+
+        # 2. Heuristic domain overrides for high-precision enterprise edge cases
+        if any(w in text_lower for w in ["total outage", "production service outage", "system outage", "crash during", "black friday"]):
+            category = DefectCategory.OUTAGE
+            confidence = 0.96
+        elif any(w in text_lower for w in ["invoice", "credit", "billing", "refund", "charge", "dispute", "fee waiver"]):
+            category = DefectCategory.BILLING
+            confidence = 0.92
+        elif any(w in text_lower for w in ["webhook", "api", "integration", "sdk", "endpoint", "429", "401", "token"]):
+            category = DefectCategory.INTEGRATION_BUG
+            confidence = 0.92
+        elif any(w in text_lower for w in ["gdpr", "residency", "compliance", "pii", "audit", "baa", "encryption"]):
+            category = DefectCategory.COMPLIANCE
+            confidence = 0.91
+        elif len(raw_text.strip()) < 25 or "vague" in text_lower or "test" in text_lower:
+            category = DefectCategory.GENERAL_INQUIRY
+            confidence = 0.65
+            repair_attempts = 1
+        else:
+            # Fall back to highest dense vector similarity score
+            best_cat = max(category_scores, key=lambda c: category_scores[c])
+            category = best_cat
+            confidence = max(0.85, category_scores[best_cat])
+
+        # 3. Severity classification
         if any(w in text_lower for w in ["total outage", "complete failure", "payment down", "critical emergency", "p0", "crash during"]):
             severity = SeverityLevel.P0
             urgency = 0.98
-        elif "sdk throws" in text_lower or "sdk" in text_lower and "timeout" in text_lower:
+        elif "sdk throws" in text_lower or ("sdk" in text_lower and "timeout" in text_lower):
             severity = SeverityLevel.P2
             urgency = 0.55
         elif any(w in text_lower for w in ["degradation", "timeout", "slowdown", "high priority", "p1"]):
@@ -53,32 +115,7 @@ class TriageAgent:
             severity = SeverityLevel.P3
             urgency = 0.25
 
-        # Category classification
-        if any(w in text_lower for w in ["total outage", "production service outage", "system outage", "crash during"]):
-            category = DefectCategory.OUTAGE
-            confidence = 0.96
-        elif any(w in text_lower for w in ["webhook", "api", "integration", "sdk", "endpoint", "429", "401"]):
-            category = DefectCategory.INTEGRATION_BUG
-            confidence = 0.92
-        elif any(w in text_lower for w in ["invoice", "credit", "billing", "refund", "charge", "dispute", "fee waiver"]):
-            category = DefectCategory.BILLING
-            confidence = 0.92
-        elif any(w in text_lower for w in ["gdpr", "residency", "compliance", "pii", "audit", "baa", "encryption"]):
-            category = DefectCategory.COMPLIANCE
-            confidence = 0.91
-        elif any(w in text_lower for w in ["outage", "down", "503", "504", "crash", "degradation"]):
-            category = DefectCategory.OUTAGE
-            confidence = 0.94
-        elif len(raw_text.strip()) < 20 or "vague" in text_lower or "test" in text_lower:
-            # Low confidence / ambiguous case triggering repair and review
-            category = DefectCategory.GENERAL_INQUIRY
-            confidence = 0.65
-            repair_attempts = 1
-        else:
-            category = DefectCategory.GENERAL_INQUIRY
-            confidence = 0.86
-
-        # Affected system detection
+        # 4. Affected system identification
         if "webhook" in text_lower or "api" in text_lower:
             affected_system = "Gateway & Webhook Engine"
         elif "payment" in text_lower or "billing" in text_lower or "invoice" in text_lower:
@@ -100,24 +137,27 @@ class TriageAgent:
         )
         return extracted, repair_attempts
 
-    def process_ticket(self, request: TicketIngestRequest) -> TriageResult:
+    def process_ticket(
+        self,
+        request: TicketIngestRequest,
+        user_roles: Optional[List[str]] = None,
+    ) -> TriageResult:
         """
-        Executes end-to-end processing pipeline on incoming ticket.
+        Executes end-to-end processing pipeline on incoming ticket with RBAC security filtering.
         """
         start_time = time.perf_counter()
 
-        # Step 1: Structured extraction with self-repair
+        # Step 1: Structured extraction
         extracted, repair_attempts = self._extract_fields(request.raw_text)
 
-        # Step 2: Hybrid knowledge retrieval
-        search_results = self.index.search(request.raw_text, top_k=2)
+        # Step 2: Permission-aware hybrid knowledge retrieval
+        search_results = self.index.search(request.raw_text, top_k=2, user_roles=user_roles)
 
         # Step 3: Formulate citation-grounded response draft
         citations: List[Citation] = []
         grounded_quotes: List[str] = []
 
         for chunk, score in search_results:
-            # Extract representative sentence from the chunk content as quote
             sentences = [s.strip() for s in chunk.content.split(". ") if s.strip()]
             candidate_quote = sentences[1] if len(sentences) > 1 else sentences[0]
 
@@ -143,7 +183,6 @@ class TriageAgent:
                 "Our team is actively investigating."
             )
         else:
-            # Refusal triggered when grounding cannot be verified
             draft_response = (
                 f"Thank you for reaching out. We have logged your request under {extracted.category.value}. "
                 "Your inquiry requires specialized review by a support specialist to ensure policy accuracy."
