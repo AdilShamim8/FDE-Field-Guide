@@ -30,8 +30,8 @@ and cross-link it from at least two existing documents.
   the major AI labs
 - [Failure stories](../case-studies/03-failure-stories.md) - most public writeups are
   success stories; anonymized practitioner accounts welcome
-- [Customer scenario rounds](../interviews/04-customer-scenarios.md) - rubrics would
-  benefit from interviewer input
+- [Customer scenario rounds](../interviews/04-customer-scenarios.md) - updated with
+  verbatim transcripts and rubrics; further domain-specific additions welcome
 
 ## Completed but evolving
 

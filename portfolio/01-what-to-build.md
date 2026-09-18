@@ -139,6 +139,51 @@ Whichever you choose, run the constraint simulation checklist before building:
 
 Six checked boxes and the project is deployment-shaped regardless of who paid for it.
 
+## Why basic AI projects will not get you hired
+
+The market is flooded with candidate portfolios containing trivial AI projects. Hiring managers at AI labs and enterprise software firms consistently bypass three recurring shapes:
+
+- The single-PDF Streamlit wrapper: a simple script that passes an uploaded PDF into a default LangChain or LlamaIndex retriever and prints an answer. Proves nothing about real document scale, OCR artifacts, dirty formatting, or data residency.
+- The ungrounded chatbot clone: a chatbot built directly against an external API endpoint with no verification of facts, no citation grounding, and no refusal boundaries. Proves nothing about production safety or enterprise compliance.
+- The toy prompt engineering repo: a folder of markdown system prompts tested on two lucky manual inputs. Proves nothing about automated regression testing, schema enforcement, latency percentiles, or cost control.
+
+What makes an AI project deployable is everything outside the model call: the permissions perimeter, defensive schema validation, hybrid retrieval, deterministic quote verification, and the human oversight queue.
+
+## The five portfolio archetypes
+
+Practitioner masterclasses converge on five archetype systems that prove FDE competence:
+
+### 1. Permission-aware enterprise knowledge system
+
+- Core challenge: enterprises cannot show every document to every employee. An HR or financial RAG system must respect document-level Access Control Lists (ACLs) and row-level security.
+- What it proves: security-first architecture, integrating user identity groups directly into vector search filters, preventing cross-tenant privilege escalation, and citation grounding.
+
+### 2. Intake-to-resolution workflow
+
+- Core challenge: customer support, IT helpdesk, or claims processing queues receive noisy multi-channel inquiries with high error rates and strict SLAs.
+- What it proves: defensive payload parsing, self-healing structured extraction, hybrid knowledge retrieval, human-in-the-loop exception routing, and feedback capture. See our complete implementation in `portfolio/reference-project/`.
+
+### 3. Document intelligence and approval system
+
+- Core challenge: processing complex multi-page invoices, tax forms, or customs declarations with varied layouts, handwritten signatures, and non-standard tables.
+- What it proves: multi-modal extraction, schema validation, confidence thresholding, one-click human review queues, and audit logging.
+
+### 4. Customer data onboarding pipeline
+
+- Core challenge: onboarding a new enterprise customer requires reconciling legacy database exports with malformed schemas, conflicting timestamps, and dirty encodings.
+- What it proves: defensive ingestion, character encoding detection, deduplication, schema transformation, idempotent backfills, and defect accounting reports.
+
+### 5. Operations command center with an action loop
+
+- Core challenge: moving from passive question-answering to active operational intervention (e.g. dispatching a technician, adjusting inventory, issuing a billing credit).
+- What it proves: Palantir-style operational ontology, entity resolution, governed writeback gates with human approval, and fail-safe rollback mechanisms.
+
+## Sequencing: which projects to build first
+
+We recommend starting with either Archetype 1 (Permission-aware knowledge system) or Archetype 2 (Intake-to-resolution workflow). 
+
+Both archetypes expose the core coding-to-conversation arc tested in FDE loops: they require you to design data boundaries, handle noisy inputs, enforce deterministic verification, and provide an operator review queue. Once one archetype is fully deployed, containerized, and evaluated, you have the exact evidence needed to pass technical screens, system design rounds, and customer scenario interviews.
+
 ## Related documents
 
 - [Project ideas](02-project-ideas.md) - twelve briefs engineered around these six principles

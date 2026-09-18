@@ -101,17 +101,19 @@ patterns are labeled as patterns; recommendations are labeled as recommendations
 
 - [The interview process](interviews/01-interview-process.md) - loop structure, stage-by-stage evidence from 2025-2026 hiring
 - [Coding and technical rounds](interviews/02-coding-and-technical.md) - what FDE coding interviews actually test and how to prepare
-- [System design rounds](interviews/03-system-design.md) - customer-flavored system design and how interviewers score it
-- [Customer scenario rounds](interviews/04-customer-scenarios.md) - role-plays, discovery exercises, and practice scenarios with rubrics
+- [Coding round solutions](interviews/08-coding-solutions.md) - runnable code implementations, test suites, and verbal narration playbooks for the six core technical problems
+- [System design rounds](interviews/03-system-design.md) - customer-flavored system design, capacity math, and enterprise blueprints
+- [Customer scenario rounds](interviews/04-customer-scenarios.md) - role-plays, verbatim discovery transcripts, and de-escalation scenarios with rubrics
 - [Behavioral rounds](interviews/05-behavioral.md) - the ownership and judgment stories you need ready
-- [Take-home assignments](interviews/06-take-homes.md) - typical formats, evaluation rubrics, and how to stand out
+- [Take-home assignments](interviews/06-take-homes.md) - 72-hour enterprise spec, 100-point evaluation rubric, and ADR templates
 - [Question bank](interviews/07-question-bank.md) - real question patterns organized by round type
 
 
 ## Portfolio
 
-- [What to build](portfolio/01-what-to-build.md) - the portfolio principles that separate deployment-shaped projects from tutorials
+- [What to build](portfolio/01-what-to-build.md) - the five portfolio archetypes, why basic AI projects fail, and portfolio principles
 - [Project ideas](portfolio/02-project-ideas.md) - twelve customer-style project specs with built-in ambiguity and constraints
+- [Enterprise reference project](portfolio/reference-project/README.md) - complete production implementation of an intake-to-resolution triage system with hybrid search, golden evaluation harness, Docker, and operational runbook
 - [Presenting projects](portfolio/03-presenting-projects.md) - write-ups, demos, and metrics that make hiring managers believe you shipped
 
 

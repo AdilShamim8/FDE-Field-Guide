@@ -27,6 +27,7 @@ structure. Pick one project, not six, and walk it through the
 - Skills - classification, confidence thresholds, human review queues, feedback capture
 - Depth markers - per-class routing accuracy on a golden set, a review queue a human actually works, and a written threshold decision with the trade-off named
 - Hidden depth - the review queue and the threshold are the product; the classifier is a component, and misrouting feedback is what makes it improve
+- Complete reference implementation - see [reference-project/README.md](reference-project/README.md) for the full runnable repository with FastAPI, hybrid grounding, golden evaluation harness, and operations runbook.
 
 ### 2. Document Q&A over a messy public corpus
 
@@ -128,6 +129,7 @@ its six principles.
 
 ## Related documents
 
+- [Reference project](reference-project/README.md) - a complete production-grade implementation of brief 1
 - [What to build](01-what-to-build.md) - the principles these briefs are engineered around
 - [Presenting projects](03-presenting-projects.md) - how to write up whichever brief you pick
 - [The FDE loop](../role/05-the-fde-loop.md) - walk your chosen brief through every stage
