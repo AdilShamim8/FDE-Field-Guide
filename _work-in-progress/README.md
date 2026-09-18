@@ -16,8 +16,7 @@ and cross-link it from at least two existing documents.
 - Negotiation for FDEs - negotiating scope changes and change orders mid-engagement
 - International deployments - localization, data residency, and cross-border data transfer
 - FDE team building - how organizations structure, staff, and ramp forward-deployed teams
-- Domain guides - regulated-industry playbooks (healthcare, finance, defense) written
-  separately because the compliance surface changes everything
+- Domain guides - regulated-industry playbooks (healthcare, finance, defense): added in [case-studies/04-regulated-industries-playbook.md](../case-studies/04-regulated-industries-playbook.md); industry-specific compliance extensions welcome
 - Interview data - a structured analysis of documented FDE interview loops, in the style
   of the reference repository's job-description research
 - Compensation trends - a time-series update of [job-market/02-compensation.md](../job-market/02-compensation.md)
