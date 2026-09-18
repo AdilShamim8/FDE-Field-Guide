@@ -230,7 +230,80 @@ You are reviewing an integration pull request from a customer-facing engineer th
 - Secret exposure: API keys hardcoded in code or committed to configuration files
 - PII leakage in observability logs: raw customer prompt payloads containing tax numbers or passwords printed into unencrypted logging aggregators
 - Unbounded memory consumption: loading multi-gigabyte document streams into memory with `f.read()` rather than streaming chunks
-- Missing timeout and connection pool configuration: `requests.post` called without an explicit `timeout` parameter
+## 7. Sliding window rate limiter with tiered tenant quotas
+
+### The problem context
+
+An enterprise integration gateway must enforce strict rate limits across thousands of customer tenants with differing subscription tiers (`free`, `standard`, `enterprise`). Fixed-window counters allow double-limit bursts at boundary transitions, so the system requires a sliding window counter algorithm.
+
+### What interviewers listen for
+
+- Defending sliding window over fixed window: explaining why boundary bursts overwhelm downstream services
+- Accurate retry-after calculation: returning the exact duration in seconds until quota becomes available rather than a vague generic error
+- Multi-tier quota isolation: ensuring requests from free-tier tenants cannot exhaust enterprise-tier quotas
+
+### Reference implementation
+
+The full runnable implementation is in `interviews/code/rate_limiter.py`:
+
+```python
+from dataclasses import dataclass
+from typing import Dict, List, Optional, Tuple
+
+@dataclass
+class RateLimitStatus:
+    allowed: bool
+    limit: int
+    remaining: int
+    reset_after_sec: float
+    retry_after_sec: Optional[float] = None
+
+class SlidingWindowRateLimiter:
+    def __init__(self, window_sec: float = 60.0, tier_limits: Optional[Dict[str, int]] = None, time_func=None):
+        self.window_sec = window_sec
+        self.tier_limits = tier_limits or {"free": 10, "standard": 60, "enterprise": 300}
+        self.time_func = time_func or time.time
+        self._history: Dict[str, List[Tuple[float, int]]] = {}
+```
+
+### Verbal narration script
+
+"Fixed window counters suffer from boundary bursts: a client can fire sixty requests in the last second of minute one and another sixty in the first second of minute two, delivering 120 requests across a two-second interval. I am implementing a sliding window counter that tracks timestamped request weights within the rolling window. If a tenant exceeds their limit, we calculate the exact timestamp when the oldest request drops out of the window and return HTTP 429 with the Retry-After header."
+
+## 8. Token-aware document chunker with metadata propagation
+
+### The problem context
+
+In enterprise RAG ingestion pipelines, documents must be partitioned into manageable chunks that adhere to model context limits while preserving sentence integrity, sliding overlap, and parent document metadata.
+
+### What interviewers listen for
+
+- Sentence and paragraph boundary preservation: avoiding naive character splitting that cuts mid-word or mid-sentence
+- Sliding overlap: maintaining context across chunk boundaries so multi-sentence reasoning survives retrieval
+- Metadata lineage: injecting document IDs, chunk indices, and classification tags into every generated chunk
+
+### Reference implementation
+
+The full runnable implementation is in `interviews/code/chunker.py`:
+
+```python
+import re
+from dataclasses import dataclass, field
+from typing import Any, Dict, List, Optional
+
+@dataclass
+class TextChunk:
+    chunk_id: str
+    content: str
+    token_count: int
+    chunk_index: int
+    total_chunks: int
+    metadata: Dict[str, Any] = field(default_factory=dict)
+```
+
+### Verbal narration script
+
+"Naive chunking by fixed character slices breaks sentences in half and destroys retrieval semantic quality. My chunker splits on sentence punctuation boundaries, tracks rolling token count against a defined maximum budget, and builds an overlap buffer from previous sentences. Every output chunk carries parent document metadata, chunk index, and total chunk count to support downstream citation verification."
 
 ## Related documents
 
@@ -244,3 +317,4 @@ You are reviewing an integration pull request from a customer-facing engineer th
 - [AWS Architecture Blog: Exponential Backoff And Jitter](https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/) - Marc Brooker on avoiding thundering herds
 - [fde.academy](https://fde.academy) - technical assessment expectations across top AI labs
 - [Pydantic Documentation](https://docs.pydantic.dev/) - structured data validation for Python applications
+
