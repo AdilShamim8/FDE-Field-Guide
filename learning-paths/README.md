@@ -4,6 +4,7 @@ Six routes into FDE work, each written for a specific starting point. Every path
 same ground: what you already have, what you need to learn, what to skip, projects to build,
 and an honest timeline.
 
+- [The 90-Day FDE Transition Roadmap](90-day-fde-roadmap.md) - a week-by-week curriculum synthesizing FDE Academy masterclasses
 - [Beginner to FDE](beginner-to-fde.md) - from little or no professional engineering experience
 - [From Software Engineer](from-software-engineer.md) - the most common route; add customer work to production skills
 - [From AI/ML Engineer](from-ai-ml-engineer.md) - add delivery, discovery, and ownership to model skills
