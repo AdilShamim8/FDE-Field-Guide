@@ -1,0 +1,252 @@
+[
+  {
+    "id": "TC-001",
+    "ticket_id": "TICKET-1001",
+    "account_id": "ACC-ENTERPRISE-01",
+    "raw_text": "CRITICAL EMERGENCY: Total production service outage. Our payment processing endpoints are throwing 500 errors across all US regions impacting 100% of our customers. Immediate escalation required!",
+    "expected_category": "OUTAGE",
+    "expected_severity": "P0",
+    "expected_routing": "ESCALATED_P0",
+    "expected_citation_doc": "APEX-SLA-2026"
+  },
+  {
+    "id": "TC-002",
+    "ticket_id": "TICKET-1002",
+    "account_id": "ACC-FINANCE-99",
+    "raw_text": "We experienced an SLA breach during yesterday's downtime. We are requesting our contractual 25% SLA credit applied against our August invoice as per Section 5.4.",
+    "expected_category": "BILLING",
+    "expected_severity": "P2",
+    "expected_routing": "AUTOMATED_DISPATCH",
+    "expected_citation_doc": "APEX-BILLING-POLICY"
+  },
+  {
+    "id": "TC-003",
+    "ticket_id": "TICKET-1003",
+    "account_id": "ACC-RETAIL-44",
+    "raw_text": "Our engineers are seeing intermittent 429 rate limit errors on the webhook delivery endpoint. Can you clarify your webhook retry backoff policy?",
+    "expected_category": "INTEGRATION_BUG",
+    "expected_severity": "P2",
+    "expected_routing": "AUTOMATED_DISPATCH",
+    "expected_citation_doc": "APEX-INTEGRATION-GUIDE"
+  },
+  {
+    "id": "TC-004",
+    "ticket_id": "TICKET-1004",
+    "account_id": "ACC-EU-BANK-12",
+    "raw_text": "Our compliance auditors require written confirmation of EU data residency and GDPR safeguards under Section 11.3 for our Frankfurt workloads.",
+    "expected_category": "COMPLIANCE",
+    "expected_severity": "P2",
+    "expected_routing": "AUTOMATED_DISPATCH",
+    "expected_citation_doc": "APEX-COMPLIANCE-DOC"
+  },
+  {
+    "id": "TC-005",
+    "ticket_id": "TICKET-1005",
+    "account_id": "ACC-UNKNOWN-00",
+    "raw_text": "Help please, system slow or test maybe.",
+    "expected_category": "GENERAL_INQUIRY",
+    "expected_severity": "P3",
+    "expected_routing": "HUMAN_REVIEW_REQUIRED",
+    "expected_citation_doc": null
+  },
+  {
+    "id": "TC-006",
+    "ticket_id": "TICKET-1006",
+    "account_id": "ACC-HEALTH-55",
+    "raw_text": "Core reporting dashboard degradation observed. Queries that usually take 200ms are timing out after 60 seconds. High priority P1 issue.",
+    "expected_category": "OUTAGE",
+    "expected_severity": "P1",
+    "expected_routing": "AUTOMATED_DISPATCH",
+    "expected_citation_doc": "APEX-SLA-2026"
+  },
+  {
+    "id": "TC-007",
+    "ticket_id": "TICKET-1007",
+    "account_id": "ACC-CORP-31",
+    "raw_text": "Can we get a cash refund for the unused subscription seats from last quarter?",
+    "expected_category": "BILLING",
+    "expected_severity": "P2",
+    "expected_routing": "AUTOMATED_DISPATCH",
+    "expected_citation_doc": "APEX-BILLING-POLICY"
+  },
+  {
+    "id": "TC-008",
+    "ticket_id": "TICKET-1008",
+    "account_id": "ACC-SAAS-77",
+    "raw_text": "Integration bug: Our webhook endpoint returned repeated 503 errors and our subscription got paused automatically. How do we resume?",
+    "expected_category": "INTEGRATION_BUG",
+    "expected_severity": "P2",
+    "expected_routing": "AUTOMATED_DISPATCH",
+    "expected_citation_doc": "APEX-INTEGRATION-GUIDE"
+  },
+  {
+    "id": "TC-009",
+    "ticket_id": "TICKET-1009",
+    "account_id": "ACC-GLOBAL-10",
+    "raw_text": "Does our customer telemetry leave the EU region during logging exports? Need GDPR audit proof.",
+    "expected_category": "COMPLIANCE",
+    "expected_severity": "P2",
+    "expected_routing": "AUTOMATED_DISPATCH",
+    "expected_citation_doc": "APEX-COMPLIANCE-DOC"
+  },
+  {
+    "id": "TC-010",
+    "ticket_id": "TICKET-1010",
+    "account_id": "ACC-TEST-05",
+    "raw_text": "vague test",
+    "expected_category": "GENERAL_INQUIRY",
+    "expected_severity": "P3",
+    "expected_routing": "HUMAN_REVIEW_REQUIRED",
+    "expected_citation_doc": null
+  },
+  {
+    "id": "TC-011",
+    "ticket_id": "TICKET-1011",
+    "account_id": "ACC-LOGISTICS-08",
+    "raw_text": "Complete failure of the logistics dispatch system! Trucks cannot leave the warehouse. This is a total outage and P0 emergency.",
+    "expected_category": "OUTAGE",
+    "expected_severity": "P0",
+    "expected_routing": "ESCALATED_P0",
+    "expected_citation_doc": "APEX-SLA-2026"
+  },
+  {
+    "id": "TC-012",
+    "ticket_id": "TICKET-1012",
+    "account_id": "ACC-VENTURE-19",
+    "raw_text": "Dispute on invoice INV-90412. An incorrect surcharge was billed for overage calls.",
+    "expected_category": "BILLING",
+    "expected_severity": "P2",
+    "expected_routing": "AUTOMATED_DISPATCH",
+    "expected_citation_doc": "APEX-BILLING-POLICY"
+  },
+  {
+    "id": "TC-013",
+    "ticket_id": "TICKET-1013",
+    "account_id": "ACC-TECH-22",
+    "raw_text": "Python SDK throws connection timeout when invoking the batch ingestion API. Need support with rate limit pacing.",
+    "expected_category": "INTEGRATION_BUG",
+    "expected_severity": "P2",
+    "expected_routing": "AUTOMATED_DISPATCH",
+    "expected_citation_doc": "APEX-INTEGRATION-GUIDE"
+  },
+  {
+    "id": "TC-014",
+    "ticket_id": "TICKET-1014",
+    "account_id": "ACC-SECURITY-03",
+    "raw_text": "Where are encryption keys managed for data residency compliance under our enterprise contract?",
+    "expected_category": "COMPLIANCE",
+    "expected_severity": "P2",
+    "expected_routing": "AUTOMATED_DISPATCH",
+    "expected_citation_doc": "APEX-COMPLIANCE-DOC"
+  },
+  {
+    "id": "TC-015",
+    "ticket_id": "TICKET-1015",
+    "account_id": "ACC-UNKNOWN-99",
+    "raw_text": "Just checking general account settings and portal information.",
+    "expected_category": "GENERAL_INQUIRY",
+    "expected_severity": "P3",
+    "expected_routing": "AUTOMATED_DISPATCH",
+    "expected_citation_doc": null
+  },
+  {
+    "id": "TC-016",
+    "ticket_id": "TICKET-1016",
+    "account_id": "ACC-ECOMM-40",
+    "raw_text": "Major crash during Black Friday promotion! Payment gateway completely unresponsive.",
+    "expected_category": "OUTAGE",
+    "expected_severity": "P0",
+    "expected_routing": "ESCALATED_P0",
+    "expected_citation_doc": "APEX-SLA-2026"
+  },
+  {
+    "id": "TC-017",
+    "ticket_id": "TICKET-1017",
+    "account_id": "ACC-INSIGHT-11",
+    "raw_text": "We need to update our billing contact email and corporate tax exemption ID for next month's invoice.",
+    "expected_category": "BILLING",
+    "expected_severity": "P2",
+    "expected_routing": "AUTOMATED_DISPATCH",
+    "expected_citation_doc": "APEX-BILLING-POLICY"
+  },
+  {
+    "id": "TC-018",
+    "ticket_id": "TICKET-1018",
+    "account_id": "ACC-DEV-88",
+    "raw_text": "API authentication token rejected with 401 unauthorized following password reset on service account.",
+    "expected_category": "INTEGRATION_BUG",
+    "expected_severity": "P2",
+    "expected_routing": "AUTOMATED_DISPATCH",
+    "expected_citation_doc": "APEX-INTEGRATION-GUIDE"
+  },
+  {
+    "id": "TC-019",
+    "ticket_id": "TICKET-1019",
+    "account_id": "ACC-FINSERV-67",
+    "raw_text": "Does your platform sign Business Associate Agreements (BAA) and provide isolated tenant databases?",
+    "expected_category": "COMPLIANCE",
+    "expected_severity": "P2",
+    "expected_routing": "AUTOMATED_DISPATCH",
+    "expected_citation_doc": "APEX-COMPLIANCE-DOC"
+  },
+  {
+    "id": "TC-020",
+    "ticket_id": "TICKET-1020",
+    "account_id": "ACC-ACME-01",
+    "raw_text": "What are your standard support team business hours for regional branches?",
+    "expected_category": "GENERAL_INQUIRY",
+    "expected_severity": "P3",
+    "expected_routing": "AUTOMATED_DISPATCH",
+    "expected_citation_doc": null
+  },
+  {
+    "id": "TC-021",
+    "ticket_id": "TICKET-1021",
+    "account_id": "ACC-BANK-70",
+    "raw_text": "Total outage on identity provider! Zero users can authenticate into our customer portal. P0 critical emergency.",
+    "expected_category": "OUTAGE",
+    "expected_severity": "P0",
+    "expected_routing": "ESCALATED_P0",
+    "expected_citation_doc": "APEX-SLA-2026"
+  },
+  {
+    "id": "TC-022",
+    "ticket_id": "TICKET-1022",
+    "account_id": "ACC-MARKET-14",
+    "raw_text": "Requesting fee waiver and credit on late invoice fee charged due to wire transfer banking delay.",
+    "expected_category": "BILLING",
+    "expected_severity": "P2",
+    "expected_routing": "AUTOMATED_DISPATCH",
+    "expected_citation_doc": "APEX-BILLING-POLICY"
+  },
+  {
+    "id": "TC-023",
+    "ticket_id": "TICKET-1023",
+    "account_id": "ACC-MOBILE-33",
+    "raw_text": "Webhook payloads contain malformed JSON timestamps when dispatched from the iOS SDK integration.",
+    "expected_category": "INTEGRATION_BUG",
+    "expected_severity": "P2",
+    "expected_routing": "AUTOMATED_DISPATCH",
+    "expected_citation_doc": "APEX-INTEGRATION-GUIDE"
+  },
+  {
+    "id": "TC-024",
+    "ticket_id": "TICKET-1024",
+    "account_id": "ACC-REG-90",
+    "raw_text": "Need clarification on PII redacting policies during log shipment to external Datadog monitoring.",
+    "expected_category": "COMPLIANCE",
+    "expected_severity": "P2",
+    "expected_routing": "AUTOMATED_DISPATCH",
+    "expected_citation_doc": "APEX-COMPLIANCE-DOC"
+  },
+  {
+    "id": "TC-025",
+    "ticket_id": "TICKET-1025",
+    "account_id": "ACC-MISC-12",
+    "raw_text": "Inquiry regarding the roadmap for upcoming 2027 enterprise features.",
+    "expected_category": "GENERAL_INQUIRY",
+    "expected_severity": "P3",
+    "expected_routing": "AUTOMATED_DISPATCH",
+    "expected_citation_doc": null
+  }
+]

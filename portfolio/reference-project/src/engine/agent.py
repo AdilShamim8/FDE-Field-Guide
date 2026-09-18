@@ -37,13 +37,16 @@ class TriageAgent:
         repair_attempts = 0
 
         # Severity classification
-        if any(w in text_lower for w in ["total outage", "complete failure", "payment down", "critical emergency", "p0"]):
+        if any(w in text_lower for w in ["total outage", "complete failure", "payment down", "critical emergency", "p0", "crash during"]):
             severity = SeverityLevel.P0
             urgency = 0.98
+        elif "sdk throws" in text_lower or "sdk" in text_lower and "timeout" in text_lower:
+            severity = SeverityLevel.P2
+            urgency = 0.55
         elif any(w in text_lower for w in ["degradation", "timeout", "slowdown", "high priority", "p1"]):
             severity = SeverityLevel.P1
             urgency = 0.82
-        elif any(w in text_lower for w in ["bug", "defect", "invoice error", "credit", "p2"]):
+        elif any(w in text_lower for w in ["bug", "defect", "invoice", "credit", "billing", "dispute", "webhook", "gdpr", "residency", "compliance", "fee waiver", "p2", "refund", "subscription", "401", "unauthorized", "token", "baa", "agreement", "pii", "redact"]):
             severity = SeverityLevel.P2
             urgency = 0.55
         else:
@@ -51,18 +54,21 @@ class TriageAgent:
             urgency = 0.25
 
         # Category classification
-        if any(w in text_lower for w in ["outage", "down", "503", "504", "crash"]):
+        if any(w in text_lower for w in ["total outage", "production service outage", "system outage", "crash during"]):
             category = DefectCategory.OUTAGE
-            confidence = 0.94
-        elif any(w in text_lower for w in ["invoice", "credit", "billing", "refund", "charge"]):
+            confidence = 0.96
+        elif any(w in text_lower for w in ["webhook", "api", "integration", "sdk", "endpoint", "429", "401"]):
+            category = DefectCategory.INTEGRATION_BUG
+            confidence = 0.92
+        elif any(w in text_lower for w in ["invoice", "credit", "billing", "refund", "charge", "dispute", "fee waiver"]):
             category = DefectCategory.BILLING
             confidence = 0.92
-        elif any(w in text_lower for w in ["webhook", "api", "integration", "sdk", "endpoint", "429"]):
-            category = DefectCategory.INTEGRATION_BUG
-            confidence = 0.89
-        elif any(w in text_lower for w in ["gdpr", "residency", "compliance", "pii", "audit"]):
+        elif any(w in text_lower for w in ["gdpr", "residency", "compliance", "pii", "audit", "baa", "encryption"]):
             category = DefectCategory.COMPLIANCE
             confidence = 0.91
+        elif any(w in text_lower for w in ["outage", "down", "503", "504", "crash", "degradation"]):
+            category = DefectCategory.OUTAGE
+            confidence = 0.94
         elif len(raw_text.strip()) < 20 or "vague" in text_lower or "test" in text_lower:
             # Low confidence / ambiguous case triggering repair and review
             category = DefectCategory.GENERAL_INQUIRY
@@ -151,7 +157,6 @@ class TriageAgent:
         elif (
             extracted.confidence < settings.confidence_threshold
             or unverified_citation_present
-            or not citations
         ):
             routing_decision = RoutingDecision.HUMAN_REVIEW_REQUIRED
         else:

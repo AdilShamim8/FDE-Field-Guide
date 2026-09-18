@@ -3,7 +3,7 @@ Configuration management for ETISE enterprise application.
 Loaded defensively via environment variables using Pydantic Settings.
 """
 
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class AppSettings(BaseSettings):
@@ -15,9 +15,7 @@ class AppSettings(BaseSettings):
     idempotency_ttl_seconds: int = 86400
     api_secret_key: str = "dev-secret-key-change-in-production"
 
-    class Config:
-        env_file = ".env"
-        extra = "ignore"
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 
 settings = AppSettings()
