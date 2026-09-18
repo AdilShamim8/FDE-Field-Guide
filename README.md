@@ -88,6 +88,7 @@ patterns are labeled as patterns; recommendations are labeled as recommendations
 
 ## Learning Paths
 
+- [The 90-Day FDE Transition Roadmap](learning-paths/90-day-fde-roadmap.md) - a week-by-week curriculum synthesizing FDE Academy masterclasses
 - [Learning path overview](learning-paths/README.md) - how the paths fit together and how to judge your own readiness
 - [Beginner to FDE](learning-paths/beginner-to-fde.md) - the longest path: engineering fundamentals plus the FDE skill set
 - [From Software Engineer](learning-paths/from-software-engineer.md) - the most common transition: add customer work on top of production skills
@@ -101,12 +102,12 @@ patterns are labeled as patterns; recommendations are labeled as recommendations
 
 - [The interview process](interviews/01-interview-process.md) - loop structure, stage-by-stage evidence from 2025-2026 hiring
 - [Coding and technical rounds](interviews/02-coding-and-technical.md) - what FDE coding interviews actually test and how to prepare
-- [Coding round solutions](interviews/08-coding-solutions.md) - runnable code implementations, test suites, and verbal narration playbooks for the six core technical problems
+- [Coding round solutions](interviews/08-coding-solutions.md) - runnable code implementations, test suites, and verbal narration playbooks for the core technical problems
 - [System design rounds](interviews/03-system-design.md) - customer-flavored system design, capacity math, and enterprise blueprints
 - [Customer scenario rounds](interviews/04-customer-scenarios.md) - role-plays, verbatim discovery transcripts, and de-escalation scenarios with rubrics
 - [Behavioral rounds](interviews/05-behavioral.md) - the ownership and judgment stories you need ready
 - [Take-home assignments](interviews/06-take-homes.md) - 72-hour enterprise spec, 100-point evaluation rubric, and ADR templates
-- [Question bank](interviews/07-question-bank.md) - real question patterns organized by round type
+- [Question bank](interviews/07-question-bank.md) - real question patterns by round type, senior FDE response playbooks, and scoring rubrics
 
 
 ## Portfolio
@@ -123,6 +124,7 @@ patterns are labeled as patterns; recommendations are labeled as recommendations
 - [Deployment patterns in the wild](case-studies/01-deployment-patterns-in-the-wild.md) - recurring shapes of real customer engagements
 - [LLM deployment cases](case-studies/02-llm-deployment-cases.md) - documented enterprise LLM deployments and what they teach
 - [Failure stories](case-studies/03-failure-stories.md) - the pilot-to-production cliff, documented failures, and the lessons each one teaches
+- [Regulated industries playbook](case-studies/04-regulated-industries-playbook.md) - compliance, BAA, MRM, and air-gapped security playbooks for healthcare, finance, and defense
 
 
 ## Job Market
