@@ -61,8 +61,17 @@ All customer identifiers, company names, account numbers, and IP addresses were 
 - [Evaluation harness](run_evals.py) - automated evaluation script
 - [Golden dataset](golden_dataset.json) - 25 curated test cases
 
-## Further reading
+## Further reading and verified source links
 
-- [CFPB Complaint Database](https://www.consumerfinance.gov/data-research/consumer-complaints/) - source data portal
-- [Hugging Face Bitext Dataset](https://huggingface.co/datasets/bitext/customer-support-llm-dataset) - customer support intents
-- [AWS Service Level Agreements](https://aws.amazon.com/legal/service-level-agreements/) - enterprise cloud SLA terms
+- [Consumer Financial Protection Bureau Complaint Database](https://www.consumerfinance.gov/data-research/consumer-complaints/) - official U.S. federal database of consumer financial complaints
+- [Hugging Face Bitext Customer Support Dataset](https://huggingface.co/datasets/bitext/customer-support-llm-dataset) - 27,000 categorized enterprise customer service interactions
+- [AWS Legal Service Level Agreements](https://aws.amazon.com/legal/service-level-agreements/) - AWS compute, storage, and payment gateway availability definitions
+- [Stripe Legal Services Agreement](https://stripe.com/legal/ssa) - dispute resolution timelines, refund rules, and SLA credit limits
+- [Datadog Service Level Objectives Documentation](https://docs.datadoghq.com/monitors/service_level_objectives/) - enterprise incident classification, error budgets, and SLA calculation
+- [European Commission GDPR Data Residency Framework](https://ec.europa.eu/info/law/law-topic/data-protection_en) - EU regional data storage and cross-border transfer requirements
+- [FDE Academy Masterclass: Project Selection & Portfolio Archetypes](https://youtu.be/Fruw822BMBc) - foundational video masterclass on enterprise portfolio systems
+- [End-to-End Real FDE Project Development](https://youtu.be/Ycl5aiYRcmU) - video walkthrough from customer problem statement to production
+- [FDE: The $1M/Year AI Job Explained](https://youtu.be/zXysLUTLjw4) - Palantir origins and client discovery workflows
+- [Complete End-to-End AI FDE Project Implementation](https://youtu.be/FSZhPDzESPU) - enterprise AI deployment and real pipelines
+- [FDE Academy YouTube Channel](https://www.youtube.com/@fdeacademy) - masterclasses and video tutorials for forward deployed engineers
+

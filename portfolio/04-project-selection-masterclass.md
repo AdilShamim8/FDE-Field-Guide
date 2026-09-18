@@ -99,11 +99,13 @@ The FDE Academy Masterclass defines five distinct archetype systems that provide
 
 To ensure your portfolio contains zero synthetic shortcuts, use verified public enterprise datasets. Below are primary sources:
 
-- Consumer Financial Protection Bureau (CFPB) Complaint Database (`https://www.consumerfinance.gov/data-research/consumer-complaints/`): real consumer financial disputes against banks and credit bureaus. Ideal for Archetype 2 and Archetype 4.
-- SEC EDGAR System (`https://www.sec.gov/edgar/searchedgar/companysearch`): official 10-K annual and 10-Q quarterly reports. Ideal for Archetype 1 and Archetype 3.
-- Hugging Face Enterprise Support Datasets: `bitext/customer-support-llm-dataset` and `banking77`. Ideal for classification, intent routing, and evaluation benchmarking.
-- Enron Email Dataset (`https://www.cs.cmu.edu/~enron/`): historical corpus of real corporate email interactions. Ideal for identity mapping, thread extraction, and permission boundary simulation.
-- Public Enterprise SLA handbooks: official terms from AWS Service Level Agreements, Stripe Legal Service Agreements, and Datadog SLA terms. Ideal for knowledge grounding and compliance citation indices.
+- [Consumer Financial Protection Bureau (CFPB) Complaint Database](https://www.consumerfinance.gov/data-research/consumer-complaints/): real consumer financial disputes against banks and credit bureaus. Ideal for Archetype 2 and Archetype 4.
+- [SEC EDGAR System](https://www.sec.gov/edgar/searchedgar/companysearch): official 10-K annual and 10-Q quarterly reports. Ideal for Archetype 1 and Archetype 3.
+- [Hugging Face Bitext Customer Support Dataset](https://huggingface.co/datasets/bitext/customer-support-llm-dataset): 27,000 categorized enterprise customer support intents with sentiment ratings. Ideal for Archetype 2.
+- [Hugging Face Banking77 Intent Dataset](https://huggingface.co/datasets/PolyAI/banking77): 13,082 customer service queries across 77 fine-grained banking intents. Ideal for classification and routing benchmarks.
+- [Enron Email Dataset at Carnegie Mellon](https://www.cs.cmu.edu/~enron/): historical corpus of 500,000 real corporate email interactions. Ideal for identity mapping, thread extraction, and permission boundary simulation.
+- [PhysioNet MIMIC-IV Clinical Database Demo](https://physionet.org/content/mimiciv/): real anonymized hospital operational data and clinical event telemetry. Ideal for Archetype 5.
+- [Public Enterprise SLA Handbooks](https://aws.amazon.com/legal/service-level-agreements/): official terms from AWS Service Level Agreements, [Stripe Legal Services Agreement](https://stripe.com/legal/ssa), and [Datadog Service Level Objectives](https://docs.datadoghq.com/monitors/service_level_objectives/). Ideal for knowledge grounding and compliance citation indices.
 
 ## Candidate background selection matrix
 
@@ -144,6 +146,14 @@ Map your starting background to the recommended project archetype to maximize in
 
 ## Further reading
 
-- [FDE Academy Masterclass](https://youtu.be/Fruw822BMBc) - video breakdown of what FDE portfolios must prove
-- [fde.academy](https://fde.academy) - forward deployed engineering curriculum and community
+- [FDE Academy Masterclass: Project Selection & Portfolio Archetypes](https://youtu.be/Fruw822BMBc) - video breakdown of what FDE portfolios must prove and why basic AI projects fail
+- [End-to-End Real FDE Project Development](https://youtu.be/Ycl5aiYRcmU) - video walkthrough from customer problem statement to production
+- [FDE: The $1M/Year AI Job Explained](https://youtu.be/zXysLUTLjw4) - Palantir origins, audit-to-deployment blueprint, and client discovery
+- [Complete End-to-End AI FDE Project Implementation](https://youtu.be/FSZhPDzESPU) - enterprise AI deployment and real pipelines
+- [Palantir and AI FDE Interview Breakdown](https://youtu.be/CCt0csEqul0) - live coding, system design, and customer role-play rounds decoded
+- [FDE Roadmap and Core Tech Stack](https://youtu.be/kBM5UXRbo3U) - 90-day technical transition plan
+- [Systems Design and Technical Skills for FDEs](https://youtu.be/9CmIPfIYPws) - customer-flavored distributed architecture and Python fluency
+- [From Software Engineer to FDE](https://youtu.be/vLlIBT0HSSc) - transition guidance for traditional engineers
+- [FDE Academy YouTube Channel](https://www.youtube.com/@fdeacademy) - masterclasses and video tutorials for forward deployed engineers
 - [CFPB Consumer Complaint Database](https://www.consumerfinance.gov/data-research/consumer-complaints/) - public enterprise customer disputes
+

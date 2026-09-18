@@ -79,7 +79,14 @@ Validate the system against the 25-case golden dataset:
 
 `python -m uvicorn portfolio.reference-project.src.api.server:app --port 8000 --reload`
 
-Once started, the API docs are accessible at `http://localhost:8000/docs`.
+## Dataset provenance and verified references
+
+This reference project strictly rejects synthetic shortcuts. The evaluation suite and compliance corpus are derived from verified public sources, detailed in [evals/DATASET_PROVENANCE.md](evals/DATASET_PROVENANCE.md):
+
+- [Consumer Financial Protection Bureau (CFPB) Complaint Database](https://www.consumerfinance.gov/data-research/consumer-complaints/): real consumer financial disputes, fee waivers, and billing escalations.
+- [Hugging Face Bitext Customer Support Dataset](https://huggingface.co/datasets/bitext/customer-support-llm-dataset): multi-channel enterprise support tickets and intent classifications.
+- Public Enterprise SLA Handbooks: official availability terms and incident thresholds from [AWS Service Level Agreements](https://aws.amazon.com/legal/service-level-agreements/), [Stripe Legal Services Agreement](https://stripe.com/legal/ssa), and [Datadog Service Level Objectives](https://docs.datadoghq.com/monitors/service_level_objectives/).
+- [FDE Academy Masterclass](https://youtu.be/Fruw822BMBc): architectural blueprint for intake-to-resolution enterprise workflows and permission-aware RAG systems.
 
 ## Project artifacts in this directory
 
