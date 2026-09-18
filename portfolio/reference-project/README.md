@@ -86,20 +86,24 @@ Once started, the API docs are accessible at `http://localhost:8000/docs`.
 - `docs/ARCHITECTURE.md` - comprehensive architecture, threat model, and data boundary specification
 - `docs/SOW.md` - Statement of Work detailing scope boundaries, deliverables, and acceptance criteria
 - `docs/SLA_RUNBOOK.md` - operational runbook, alert thresholds, and rollback procedures
-- `docs/ADR-001.md` - Architecture Decision Record justifying hybrid search and local validation
-- `src/` - production source code (FastAPI server, extraction engine, retrieval pipeline, Pydantic schemas)
+- `docs/ADR-001.md` - Architecture Decision Record justifying hybrid search, dense embeddings, and local validation
+- `evals/DATASET_PROVENANCE.md` - exact provenance and licensing documentation for evaluation cases and handbook corpus
+- `src/` - production source code (FastAPI server, extraction engine with vector similarity, hybrid retrieval with RBAC ACLs, Pydantic schemas)
 - `evals/` - golden evaluation dataset and automated scoring harness
 - `tests/` - unit and regression test suite
 - `docker-compose.yml` & `Dockerfile` - containerized deployment setup
 
 ## Related documents
 
-- [What to build](01-what-to-build.md) - portfolio principles that separate deployment systems from tutorials
-- [Project ideas](02-project-ideas.md) - twelve customer briefs with hidden depth
-- [Presenting projects](03-presenting-projects.md) - how to present this system to hiring managers
-- [System design rounds](../interviews/03-system-design.md) - system design interview frameworks
+- [Project selection masterclass](../04-project-selection-masterclass.md) - the five enterprise archetypes, dataset directory, and candidate sequencing
+- [What to build](../01-what-to-build.md) - portfolio principles that separate deployment systems from tutorials
+- [Project ideas](../02-project-ideas.md) - twelve customer briefs with hidden depth
+- [Presenting projects](../03-presenting-projects.md) - how to present this system to hiring managers
+- [System design rounds](../../interviews/03-system-design.md) - system design interview frameworks
 
 ## Further reading
 
+- [CFPB Consumer Complaint Database](https://www.consumerfinance.gov/data-research/consumer-complaints/) - public enterprise dispute data
+- [Hugging Face Bitext Dataset](https://huggingface.co/datasets/bitext/customer-support-llm-dataset) - real-world customer support intents
 - [FastAPI Documentation](https://fastapi.tiangolo.com/) - production Python web frameworks
 - [Pydantic Documentation](https://docs.pydantic.dev/) - data validation and settings management

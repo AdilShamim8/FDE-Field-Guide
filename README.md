@@ -111,9 +111,10 @@ patterns are labeled as patterns; recommendations are labeled as recommendations
 
 ## Portfolio
 
-- [What to build](portfolio/01-what-to-build.md) - the five portfolio archetypes, why basic AI projects fail, and portfolio principles
+- [What to build](portfolio/01-what-to-build.md) - the six portfolio principles that separate deployment-shaped systems from tutorials
+- [Project selection masterclass](portfolio/04-project-selection-masterclass.md) - the five enterprise archetypes, why basic AI projects fail, verified public datasets, and candidate sequencing
 - [Project ideas](portfolio/02-project-ideas.md) - twelve customer-style project specs with built-in ambiguity and constraints
-- [Enterprise reference project](portfolio/reference-project/README.md) - complete production implementation of an intake-to-resolution triage system with hybrid search, golden evaluation harness, Docker, and operational runbook
+- [Enterprise reference project](portfolio/reference-project/README.md) - complete production implementation of an intake-to-resolution triage system with hybrid search, dense vector cosine similarity, RBAC ACLs, golden evaluation harness, Docker, and operational runbook
 - [Presenting projects](portfolio/03-presenting-projects.md) - write-ups, demos, and metrics that make hiring managers believe you shipped
 
 
