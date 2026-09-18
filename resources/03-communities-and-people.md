@@ -18,6 +18,7 @@ The standing caveat: role-specific threads are anecdotal. A dozen vivid stories 
 ### Practitioner sites and their communities
 
 - [fde.academy](https://fde.academy) - courses and analyses aimed at the title, including the August 2026 Palantir compensation breakdown by level; useful for interview framing and ladder expectations
+- [FDE Academy YouTube](https://www.youtube.com/@fdeacademy) - masterclasses, project breakdowns, and practitioner video discussions
 - [joinplank.com](https://joinplank.com) - tracks the FDE market (982 postings across 462 companies in 2026); its collection doubles as a market map of who is hiring first FDEs
 - [fdepulse.com](https://fdepulse.com) - practitioner career write-ups; the commonly cited five-level ladder model comes from sites of this kind
 - [tryexponent.com](https://tryexponent.com) - interview-prep community with FDE guides; its write-ups document lab and platform loops, including the compressed ElevenLabs loop and the Palantir FDSE guide

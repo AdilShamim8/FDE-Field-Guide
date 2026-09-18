@@ -44,7 +44,19 @@ A small rotation covers what the job demands: hiring-market context, deployment 
   - [fdepulse.com](https://fdepulse.com) - career-ladder write-ups and role mechanics from practitioners
   - [gaijineer.co](https://gaijineer.co) - interview-process accounts, such as the April 2026 Cohere FDE walkthrough
 
-A caveat on the practitioner sites: several of them sell courses or recruiting services, and none of them are research. Treat them as experience reports - valuable for texture and for figures you then verify elsewhere, not for numbers you quote unverified.
+### Video lectures and masterclasses
+
+- [FDE Academy YouTube Channel](https://www.youtube.com/@fdeacademy) - core channel for forward deployed engineering breakdowns and curriculum
+- [AI for Forward-Deployed Engineers Masterclass](https://youtu.be/Fruw822BMBc) - five enterprise portfolio archetypes and why basic AI projects fail
+- [FDE: The $1M/Year AI Job Explained](https://youtu.be/zXysLUTLjw4) - Palantir origins, the audit-to-deployment blueprint, and client discovery
+- [Building Agentic RAG in Production](https://youtu.be/Ycl5aiYRcmU) - end-to-end technical implementation from data ingestion to cloud deployment
+- [Enterprise AI Deployment and Real Pipelines](https://youtu.be/FSZhPDzESPU) - bridging prototype code to production infrastructure
+- [Palantir and AI FDE Interview Breakdown](https://youtu.be/CCt0csEqul0) - live coding, system design, and customer role-play rounds decoded
+- [FDE Roadmap and Core Tech Stack](https://youtu.be/kBM5UXRbo3U) - 90-day technical transition plan
+- [Systems Design and Technical Skills for FDEs](https://youtu.be/9CmIPfIYPws) - customer-flavored distributed architecture and Python fluency
+- [From Software Engineer to FDE](https://youtu.be/vLlIBT0HSSc) - transition guidance for traditional engineers
+
+A caveat on practitioner video sources: treat them as direct engineering blueprints and experience reports, cross-referencing all architectural claims against the working code in this guide.
 
 ## How to read for FDE work
 
