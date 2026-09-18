@@ -94,6 +94,104 @@ When time runs out, cut features first, then hardening, and never the `README` -
 - [ ] The timebox was respected, and overruns are either absent or disclosed
 - [ ] You re-read the brief once more and checked nothing was silently dropped
 
+## Fictional enterprise take-home specification
+
+Below is the representative brief used across elite AI and data platform hiring loops (48 to 72 hour window).
+
+### The customer prompt
+
+"We are a logistics enterprise receiving 15,000 shipment exception emails and customs queries per day across five regional ports. Right now, support agents spend four minutes per ticket manually reading PDFs, extracting invoice numbers, classifying issue urgency, and querying our database. 
+
+Deliver a working prototype service that:
+1. Ingests raw ticket payloads and attached markdown documents
+2. Extracts shipment ID, carrier, defect category, and urgency score with schema validation
+3. Provides an automated answer grounded in our customs handbook, with exact document citations
+4. Routes low-confidence or high-severity cases to an exception review queue
+5. Ships with an automated test suite, an evaluation script demonstrating extraction accuracy, and client-facing architecture documentation."
+
+## The 100-point hiring committee rubric
+
+Hiring committees score take-homes across five distinct pillars:
+
+### 1. Code architecture and hygiene (25 points)
+- Clean separation of concerns (API layer, ingestion pipeline, model engine, validation layer)
+- Strong typing with type annotations and Pydantic schemas
+- Zero committed credentials or environment leaks
+- Pinned dependency management (`requirements.txt` or `pyproject.toml`)
+
+### 2. Resilience and boundary handling (25 points)
+- Defensive parsing on corrupted inputs and encoding anomalies
+- Client-side timeouts, retry loops with full jitter, and circuit breaker patterns
+- Explicit refusal when source context lacks sufficient information
+- Idempotency guarantees on repeated ingestion
+
+### 3. Evaluation rigor and measurement (20 points)
+- Runnable evaluation harness included in the repository
+- Golden dataset testing at least 15 to 25 edge cases (clean, noisy, adversarial, out-of-domain)
+- Metric accounting: per-field precision, recall, citation accuracy, and schema failure rate
+- Transparent disclosure of model limitations and failure cases
+
+### 4. Client deliverable and documentation (20 points)
+- Clear problem restatement with explicit assumption inventory
+- Architecture Decision Record (ADR) justifying technology trade-offs
+- One-page Executive Handover Memo written for business stakeholders
+- Working quickstart instructions that execute cleanly on a fresh machine
+
+### 5. Production readiness and containerization (10 points)
+- Clean `Dockerfile` and `docker-compose.yml` configuration
+- Structured JSON logging with request tracing IDs
+- Health check and metrics endpoint (`/health`, `/metrics`)
+
+## Architecture Decision Record (ADR) template
+
+Include an ADR in your submission (`docs/ADR-001.md`). Evaluators use this to judge senior engineering reasoning:
+
+```markdown
+# ADR 001: Hybrid Search and In-Memory Vector Storage for Triage Prototype
+
+## Status
+Accepted
+
+## Context
+The customer needs sub-second response times across 15,000 daily tickets with strict adherence to port customs handbooks. Budget and engagement constraints require a lightweight footprint that can run on an existing on-premise Kubernetes node without provisioning managed external vector cloud services.
+
+## Decision
+We selected an in-process SQLite database paired with sqlite-vec and BM25 sparse keyword search, orchestrating extraction via Pydantic schema validation.
+
+## Consequences
+Positive:
+- Zero external cloud database dependencies; runs locally in a single Docker container.
+- Sub-50ms hybrid retrieval latency on queries under 50,000 document chunks.
+- Deterministic schema validation guarantees zero unvalidated payloads reach the database.
+
+Negative:
+- Horizontal scaling across multiple worker pods requires transitioning from SQLite to PostgreSQL with pgvector.
+- Memory usage scales linearly with chunk count, requiring an index sharding strategy if the corpus exceeds 250,000 documents.
+```
+
+## Executive Handover Memo template
+
+Include a one-page business summary in your `README` or `docs/HANDOVER.md`:
+
+```markdown
+# Executive Handover: Automated Port Exception Triage Pipeline
+
+## Engagement summary
+Over this initial milestone, we engineered an automated ingestion and document grounding service for port customs tickets. The system replaces manual triaging by automatically extracting invoice data, querying regulatory handbooks, and generating citation-grounded response drafts.
+
+## Measured performance baseline
+Across our 25-case golden verification suite:
+- Field extraction precision: 96.2% on standard customs declarations
+- Automated routing accuracy: 91.4% across five defect classifications
+- Hallucination rate: 0.0% (system cleanly refuses and routes to human operator when citations cannot be verified)
+- Average end-to-end latency: 840ms per ticket
+
+## Recommended next steps
+1. Deploy in shadow mode for two weeks alongside the Rotterdam port operations team to capture edge-case drift.
+2. Integrate OAuth 2.0 service account credentials with the customer's active SAP shipment ledger.
+3. Review human operator override logs weekly to update the golden evaluation suite.
+```
+
 ## Related documents
 
 - [Coding and technical rounds](02-coding-and-technical.md) - the same skills scored live
