@@ -104,6 +104,112 @@ Build versus buy (the helpdesk may already ship this); real-time versus batch, s
 
 Ignoring who operates it. A system two people can run is the entire requirement; a technically superior design they cannot debug on a bad day fails the round regardless of its accuracy.
 
+## Concrete capacity arithmetic for the round
+
+Top-scoring candidates do not wave their hands and say it scales. They run back-of-the-envelope calculations aloud in the first fifteen minutes. We recommend memorizing these baseline sizing formulas:
+
+### Ingestion throughput and vector storage
+
+Scenario: 500,000 policy documents, average 10 pages per document.
+- Raw text size: 500,000 docs * 10 pages * 3,000 characters per page = 15 GB raw text.
+- Chunking strategy: 500 tokens per chunk with 10% overlap (50 tokens) yields approximately 8 chunks per page = 40,000,000 total chunks.
+- Vector dimension: text-embedding-3-small (1536 dimensions) or text-embedding-3-large (3072 dimensions).
+- Storage per vector: 1536 float32 values * 4 bytes = 6,144 bytes per chunk vector.
+- Vector memory footprint: 40,000,000 chunks * 6.14 KB = approximately 245.7 GB of raw vector storage.
+- With HNSW graph index overhead (M=16, efConstruction=64), budget an additional 1.2x to 1.5x RAM. Total RAM needed to keep index hot in memory: approximately 320 GB to 370 GB.
+- Cost decision to state aloud: keeping 40 million vectors hot in RAM costs $1,200 to $1,800 per month on AWS or Azure. If query volume is low (e.g. 5 QPS during business hours), use pgvector with IVFFlat or disk-backed HNSW with SSD caches to cut infrastructure cost by 70%.
+
+### Inference concurrency and token budget
+
+Scenario: 2,000 concurrent insurance adjusters, generating 10 queries per minute per user at peak = 333 queries per second.
+- Prompt token budget: System prompt (800 tokens) + 5 retrieved chunks (2,500 tokens) + conversation history (1,200 tokens) = 4,500 prompt tokens per request.
+- Completion token budget: Structured answer with citations = 300 completion tokens.
+- Total token throughput: 333 QPS * 4,800 tokens = approximately 1.6 million tokens per second.
+- Architectural conclusion to state aloud: public LLM rate limits (e.g. Tier 5 limits of 500,000 TPM to 2M TPM) will throttle this traffic during spikes. You must provision dedicated provisioned throughput units (PTUs) or deploy a multi-region load-balanced gateway with regional rate limiters and token-bucket queuing.
+
+## Enterprise blueprint 1: Private VPC agentic RAG under strict residency
+
+### Architecture topology
+
+```
+[ Customer Browser ]
+        |  (TLS 1.3 / Corporate SAML 2.0 / Okta)
+        v
+[ Enterprise API Gateway ] (Reverse Proxy + WAF + Mutual TLS)
+        |
+        +---> [ Query Rewriter & Intent Router ] (Small in-region LLM)
+        |              |
+        |              v
+        +---> [ Hybrid Retrieval Engine ]
+        |         |--> In-VPC BM25 Sparse Index (Elasticsearch/OpenSearch)
+        |         +--> In-VPC Dense Index (pgvector / Qdrant)
+        |              |
+        |              v
+        +---> [ Cross-Encoder Reranker ] (Cohere or BGE-Reranker in-VPC)
+        |              |
+        |              v
+        +---> [ Generation & Citation Grounding Engine ] (In-Region LLM)
+        |              |
+        |              v
+        +---> [ Guardrail & PII Redactor ] (Presidio / NeMo Guardrails)
+        |
+        +---> [ Append-Only Audit Ledger ] (S3 / Blob with WORM retention)
+```
+
+### Data boundary and security controls
+
+- Data residency: zero customer text leaves the corporate AWS VPC or Azure subscription. Dedicated private endpoints (AWS PrivateLink or Azure Private Link) terminate model API traffic without traversing the public internet.
+- Document-level access control: during ingestion, each document chunk inherits access control lists (ACLs) from the source repository (SharePoint, Google Workspace, or internal PostgreSQL). During retrieval, the user's active Active Directory groups are injected directly as SQL WHERE filters into the vector query, eliminating cross-tenant privilege escalation before the LLM prompt is assembled.
+- Grounding verification: the generator must return exact source document IDs and character offsets. A deterministic validator verifies that every cited fact exists verbatim in the retrieved source text before presenting the answer to the user.
+
+## Enterprise blueprint 2: Palantir-style operational ontology and triage
+
+### What an operational ontology means in customer systems
+
+In enterprise forward-deployed engagements, models do not interact directly with raw database tables. Instead, an ontology layer maps disconnected relational tables, object stores, and legacy APIs into concrete business entities: Customers, Invoices, Incidents, Facilities, and Actions.
+
+```
++--------------------------------------------------------------------+
+|                         ACTION LAYER                               |
+|   Approve Invoice | Escalate Incident | Dispatch Field Technician   |
++--------------------------------------------------------------------+
+                                 ^
+                                 | (Validated Writeback with Human Gate)
++--------------------------------------------------------------------+
+|                        ONTOLOGY LAYER                              |
+|   Objects: Ticket, Account, Contract, Part, Technician             |
+|   Links:   Account owns Ticket; Part belongs to Contract           |
+|   Rules:   P0 incident requires VP notification within 15 min      |
++--------------------------------------------------------------------+
+                                 ^
+                                 | (Bi-directional Sync & Reconciliation)
++--------------------------------------------------------------------+
+|                         DATA FOUNDATION                            |
+|   Salesforce CRM | SAP ERP | Snowflake Warehouse | Zendesk Queue   |
++--------------------------------------------------------------------+
+```
+
+### Key architectural decisions for the ontology pattern
+
+- Entity resolution: incoming events (e.g. an email from "Acme Intl" and a CRM record for "Acme Global") are resolved against a canonical entity registry using deterministic fuzzy matching and embedding nearest-neighbors.
+- Writeback governance: the LLM never executes database INSERT or UPDATE statements directly. It proposes an Action with an explicit payload. If the action risk exceeds a defined threshold (e.g. modifying an invoice over $1,000), the action is routed to a human review inbox with a one-click approval interface and full diff visualization.
+- Auditability: every state change records the prompt trace, the model ID, the active user session, and the human approver in an immutable event log.
+
+## Rollout, rollback, and observability harness
+
+Every credible system design response concludes with Day-2 operations.
+
+### Rollout phases
+
+1. Shadow phase (2 weeks): system ingests real requests, executes queries and classifications, logs recommendations to an internal telemetry database, but applies zero automated actions. Measures precision, recall, and latency against manual operator actions.
+2. Assisted phase (4 weeks): system displays recommendations directly inside existing operator tooling (e.g. Zendesk sidebar or Salesforce widget). Operator accepts or overrides with one click, capturing direct feedback on misclassifications.
+3. Autonomous low-risk phase: automated execution enabled only for transactions where confidence exceeds 0.92 and monetary or operational blast radius is under $250. High-risk transactions continue requiring human sign-off.
+
+### Automated rollback triggers
+
+- Error budget depletion: if 5xx HTTP responses exceed 0.5% over a rolling 10-minute window, traffic automatically fails over to the legacy rule engine or human-only queue.
+- Hallucination canary: a background cron runs 20 synthetic golden queries every 5 minutes. If citation grounding verification fails on more than 1 canary query, the system switches to conservative refusal mode ("Service temporarily unable to ground response; routing to human specialist").
+
 ## Anti-patterns
 
 - Designing for a billion users - the customer has 900 staff, and scale theater reads as not listening
@@ -115,6 +221,7 @@ All four anti-patterns share a root: answering the prompt as written instead of 
 
 ## Related documents
 
+- [Coding round solutions](08-coding-solutions.md) - runnable implementations of integration and resiliency patterns
 - [Architecture for customer systems](../system-design/01-architecture-for-customer-systems.md) - the full method this round compresses
 - [Trade-offs and decision records](../system-design/03-trade-offs-and-decision-records.md) - how to name and record trade-offs
 - [Deployment patterns](../deployment/02-deployment-patterns.md) - where the model runs, in depth
@@ -124,4 +231,7 @@ All four anti-patterns share a root: answering the prompt as written instead of 
 
 ## Further reading
 
+- [AWS Architecture Blog: Exponential Backoff And Jitter](https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/) - resilience in customer systems
 - [gaijineer.co](https://gaijineer.co) - the Cohere practitioner account describing what the design conversation expects
+- [Palantir Foundry Documentation](https://www.palantir.com/docs/foundry/) - operational ontology principles and entity modeling
+
