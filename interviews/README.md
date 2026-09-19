@@ -11,7 +11,8 @@ the second half.
 - [Customer scenario rounds](04-customer-scenarios.md) - role-plays and verbatim discovery transcripts, with rubrics
 - [Behavioral rounds](05-behavioral.md) - the stories you need ready
 - [Take-home assignments](06-take-homes.md) - formats, 100-point rubric, and ADR templates
-- [Question bank](07-question-bank.md) - question patterns by round type
+- [Question bank](07-question-bank.md) - question patterns by round type backed by real practitioner data
+- [Real-world question dataset](dataset/README.md) - machine-readable JSON questions, rubrics, and source provenance matrix
 
 Interviewers are evaluating engineering judgment, customer empathy, communication, and
 ownership - the same qualities as the job itself. Prepare by doing the job's shape of work,

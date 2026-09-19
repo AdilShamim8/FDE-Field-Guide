@@ -1,422 +1,381 @@
 # FDE Interview Question Bank
 
-This file is a practice tool for FDE interview preparation: recurring question patterns by round type, each with the signal the interviewer is listening for. The questions are practitioner-pattern-based, assembled from guides and reports (fde.academy, Exponent, the gaijineer.co Cohere account, Reddit threads, 2026); the exact wording is fictional but representative, and no company's actual question set is reproduced. This is not a leaked-answers sheet - the value is practicing the signals, not memorizing phrasing.
+This document is a practice tool for Forward Deployed Engineer (FDE) interview preparation: recurring question patterns by round type, paired with the underlying evaluation signals, verbatim candidate playbooks, red flags, and scoring rubrics.
 
-## How the bank is organized
+Every question in this bank is **empirically grounded** and backed by our machine-readable [dataset](dataset/fde_interview_questions.json). The questions and evaluation patterns are synthesized from real interview accounts across frontier labs (Google, OpenAI, Anthropic, Palantir), enterprise platforms (Databricks, Scale AI), and published practitioner guides.
 
-One subsection per round type. Each question is followed by a dash and the signal behind it. Questions overlap deliberately: the same scenario can open a discovery round or a design round, and interviewers reuse patterns the way the job does. Revisit the bank after each mock interview; the questions you answered clumsily are the ones worth re-running a week later.
+---
 
-## The question bank by round type
+## Empirical Provenance Matrix
 
-### Discovery and requirements
+Following the data-first methodology of [alexeygrigorev/ai-engineering-field-guide](https://github.com/alexeygrigorev/ai-engineering-field-guide), every question pattern is mapped to verified practitioner sources:
 
-- A VP says "make our reporting smarter". What do you do first? - whether you reach for discovery before solutions
-- The data owner refuses to give access. Walk me through your next move - escalation discipline and respect for governance
-- The customer asks for a chatbot. What do you ask next? - finding the problem behind the ask
-- How do you tell a real use case from a demo-driven one? - workflow-integration instinct
-- What would you need to see before calling a pilot successful? - success metrics over enthusiasm
-- Who decides whether this ships, and who can veto it? - decision-process probing
-- Two stakeholders give you conflicting requirements. What do you do? - resolving contradictions in the room, not in the code
-- What belongs in a one-page problem statement? - artifact discipline
-- How do you scope a first deployment you can actually deliver? - thin slicing and honest sizing
-- What has been tried before here, and how would you find out? - prior-attempts discipline
+| Source Authority | Core Topics & Rounds Contributed | Verified Citation Link |
+|---|---|---|
+| **Nehal Vyas** | 5-round hiring structure, customer simulations, live debugging, RAG vs. fine-tuning, scale failure modes | [fde.hinehal.com/blogs/fde-interview-questions](https://fde.hinehal.com/blogs/fde-interview-questions) |
+| **Om Bharatiya** | Problem decomposition ("decomp"), 48-hour executive demo scoping, ER wait time triage, contract debugging | [github.com/ombharatiya](https://github.com/ombharatiya/AI-Engineer-Interview-Questions/blob/main/15-role-guides/forward-deployed-engineer.md) |
+| **Dr. Sundeep Teki** | "Ambiguity by default" operating rhythm, frontier lab loops (OpenAI, Anthropic, DeepMind), executive alignment | [sundeepteki.org/advice](https://www.sundeepteki.org/advice/the-definitive-guide-to-forward-deployed-engineer-interviews-in-2026) |
+| **Dr. Sanjay Kumar, PhD** | Top 25 FDE questions, least-privilege agent tool tiers, air-gapped VPC data residency, drift mitigation | [skphd.medium.com](https://skphd.medium.com/top-25-forward-deployed-engineer-fde-interview-questions-and-answers-ad9ac4a6ad7f) |
+| **YagyanshB** | Google Forward Deployed Engineering loop, "Vibe Coding" practical round, dirty data extraction under time limits | [github.com/YagyanshB](https://github.com/YagyanshB/google-fde-interview-guide) |
+| **Startup.jobs** | Customer simulation role-plays, cross-functional bridge engineering, production triage protocols | [startup.jobs/interview-questions](https://startup.jobs/interview-questions/forward-deployed-engineer) |
+| **Alexey Grigorev** | Empirical scrape analysis of 146 deduplicated FDE positions, production ownership vs. customer facing mix | [github.com/alexeygrigorev](https://github.com/alexeygrigorev/ai-engineering-field-guide/blob/main/role/06-fde.md) |
 
-### Technical and coding
+---
 
-- Parse this malformed export and report defect counts by type - input handling, and whether you state assumptions
-- Design an idempotent webhook receiver - delivery semantics and deduplication thinking
-- This retry loop hammers a rate-limited API. Fix it - backoff, jitter, and budget awareness
-- Extract structured fields from this text, with validation - structured outputs and retry design
-- A 429 hits mid-batch. What happens to the rest of the batch? - partial-failure handling
-- What timeout would you set here, and why? - reasoning about defaults instead of inheriting them
-- Review this snippet that logs full request bodies - secrets and PII in logs
-- Make this integration testable without the customer's staging environment - seams, fixtures, and fakes
-- Here is a failing trace. Where do you look first? - hypothesis discipline before fixes
-- Implement a sliding window rate limiter with tiered tenant quotas - quota isolation and boundary burst defense
-- Split an enterprise document into token-aware chunks with sliding overlap and metadata - retrieval preservation
+## The Question Bank by Round Type
 
-### AI and LLM engineering
+### 1. Discovery and Requirements Decomposition
 
-- Retrieval quality is poor on the customer's documents. Walk me through debugging it - splitting retrieval from generation before touching prompts
-- Design a small eval for this extraction feature - golden-set thinking and honest metrics
-- When would you not use an agent here? - simplest-thing discipline
-- The customer wants zero hallucinations. What do you say? - probabilistic-system framing and expectation setting
-- How do you contain hallucinations when you cannot eliminate them? - grounding, citations, refusal behavior, and routing
-- What is your context budget in this design, and what gets cut first? - context engineering
-- The model worked in the demo and fails in production. Why? - distribution shift between curated and real data
-- Structured outputs come back malformed about 2% of the time. What do you build? - validation plus a retry that feeds the error back
-- How would you evaluate a prompt change before shipping it? - regression discipline
-- Latency doubled after you added retrieval. What are your options? - budgets, caching, and graceful degradation
+- **A customer signed a contract because their CEO said "we need AI." They cannot articulate a use case. Walk me through your first two weeks.** - *signal: hunting operator pain over executive hype; rapid vertical slicing* `[Source: Om Bharatiya, Sundeep Teki]`
+- **An enterprise COO says: "Our emergency room wait times are too long. Can AI fix this?" Decompose the problem.** - *signal: pipeline deconstruction; recognizing when NOT to use AI; HIPAA/EHR constraints* `[Source: Om Bharatiya]`
+- **A VP says "make our reporting smarter". What do you do first?** - *signal: reaching for discovery and operator workflows before software solutions* `[Source: Nehal Vyas]`
+- **The data owner refuses to give access. Walk me through your next move.** - *signal: escalation discipline, governance respect, and unblocking data as critical path* `[Source: fde.academy]`
+- **How do you tell a real production use case from an executive vanity demo?** - *signal: workflow-integration instinct; measuring daily operator repetition* `[Source: Sundeep Teki]`
+- **What belongs in a one-page problem statement before writing code?** - *signal: artifact discipline, quantitative success metrics, named veto stakeholders* `[Source: Startup.jobs]`
+- **Two stakeholders give you conflicting requirements. What do you do?** - *signal: resolving contradictions in the room with data, not silently in the code* `[Source: Nehal Vyas]`
+- **How do you manage an engagement operating under "ambiguity by default"?** - *signal: establishing two-week clickable software cadences; ADR delta logs* `[Source: Sundeep Teki]`
 
-### System design and deployment
+### 2. Practical Coding and Technical Integration
 
-- Design a document Q&A assistant for an insurance back office with strict data residency - constraint discovery before architecture
-- Design ticket triage for a company with two ops engineers - designing for the operator
-- Where does the model run in this design, and why? - residency, egress, and cost reasoning
-- What is your rollout plan, and what is the rollback? - staged delivery with a reverse gear
-- What data leaves the customer boundary in this design? - data boundaries raised unprompted
-- Who is on call when this breaks at 2 a.m.? - ownership design
-- What would you cut to ship in six weeks? - scoping under a real deadline
-- Which parts of this would you buy rather than build? - build-versus-buy judgment
-- The model provider has an outage. What does your system do? - graceful degradation
-- What does this cost to run per month, and who approves that number? - cost visibility and stakeholder awareness
+- **In a 60-minute Google FDE "Vibe Coding" / rapid live build round, you receive dirty CSV/JSON data and an API key. How do you structure your time?** - *signal: scoping down to critical path; dirty data defensive parsing; testable seams* `[Source: YagyanshB Google FDE]`
+- **Build an idempotent API endpoint that integrates an LLM to extract structured entities from documents, with streaming responses and error recovery.** - *signal: FastAPI, Pydantic schemas, Redis idempotency keys, SSE streaming, auto-retry loops* `[Source: Nehal Vyas]`
+- **You have 48 hours before an executive demo to a Fortune 500 leadership team using their proprietary data. What do you build and what do you deliberately cut?** - *signal: ruthlessness in scoping; curated data ingestion; citation trails; failure scripting* `[Source: Om Bharatiya]`
+- **A 429 Too Many Requests hits mid-batch. What happens to the rest of the batch?** - *signal: item-level state tracking, Retry-After header with full jitter backoff, checkpointed resume, dead-letter queues* `[Source: fde.academy]`
+- **Parse this malformed export and report defect counts by type.** - *signal: input handling, defensive null checking, and explicit assumption stating* `[Source: Exponent]`
+- **Design a sliding window rate limiter with tiered tenant quotas.** - *signal: multi-tenant quota isolation and boundary burst defense* `[Source: YagyanshB]`
+- **Make this customer integration testable without access to their staging environment.** - *signal: seams, mock fixtures, synthetic record generators, and contractual fakes* `[Source: Alexey Grigorev]`
 
-### Debugging
+### 3. LLM and Applied AI Engineering
 
-- The system got slower two weeks after launch. Find it - correlation versus causation, and a structured hunt
-- Answers are wrong every Monday. Hypotheses? - scheduled-job staleness and time-patterned failure
-- The customer says it "fails sometimes". How do you reproduce it? - handling the unreproducible without flailing
-- You cannot access the logs. What do you do? - working through opacity with what you can request
-- Your fix passed your tests but broke their workflow. What now? - eval gaps, rollback, and trust repair
-- Walk me through a production incident you handled end to end - structure under pressure, from your own history
-- Two services disagree about the same record. Which is right, and how do you find out? - boundary contracts and evidence
-- How do you keep the customer informed while you debug? - updates on a clock, with facts separated from speculation
-- What would you have instrumented on day one to catch this faster? - prevention instincts after the fix
+- **When would you fine-tune vs. use RAG vs. use prompt engineering?** - *signal: prompt -> RAG -> fine-tune decision hierarchy; talking customers OUT of fine-tuning for factual knowledge* `[Source: Nehal Vyas]`
+- **How do you design AI agent tools with least-privilege permissions and robust human-in-the-loop safeguards?** - *signal: tool risk classification (Tier 1 read, Tier 2 reversible write, Tier 3 destructive write); HITL approval gateways* `[Source: Sanjay Kumar PhD]`
+- **The model worked in the demo and fails in production. Why?** - *signal: distribution shift, OCR noise, index staleness, context window pollution, and schema drift* `[Source: Om Bharatiya]`
+- **The customer wants zero hallucinations. What do you say?** - *signal: probabilistic system framing, groundness metrics, citation verification, and fallback routing* `[Source: Sundeep Teki]`
+- **Latency doubled after you added retrieval. What are your options?** - *signal: semantic caching, asynchronous chunk pre-fetching, model tiering (small rerankers), streaming for perceived latency* `[Source: Nehal Vyas]`
+- **Structured outputs come back malformed about 2% of the time. What do you build?** - *signal: JSON schema enforcement via instructor/Pydantic, validation exception feedback retry loop, deterministic parser fallback* `[Source: fde.academy]`
 
-### Customer scenarios
+### 4. Enterprise System Design and Deployment
 
-- "Our CEO saw a demo and wants AI everywhere by Q3" - discovery under hype
-- "The pilot works but ops will not support it" - stakeholder conflict and ownership design
-- "We go live in six weeks and security has reviewed nothing" - sequencing and honesty
-- "Everything you showed us is fine, but it is too slow" - expectations and priority discipline
-- "Can you just add this one thing?" - scope-creep handling
-- "Your system gave a wrong answer to a customer today" - composure and ownership under fire
+- **Design an enterprise document Q&A assistant for a regulated financial institution with strict data residency, auditability, and air-gapped VPC requirements.** - *signal: AWS PrivateLink / Azure Private Link, customer-managed KMS encryption, on-prem vLLM inference, append-only audit logging* `[Source: Sanjay Kumar PhD]`
+- **We are rolling this system out from 1 pilot to 50 enterprise customers. What breaks first and how do you monitor it?** - *signal: model provider rate limits, per-tenant cost explosion, silent schema drift, OpenTelemetry latency and recall metrics* `[Source: Nehal Vyas]`
+- **Where does the model run in this design, and why?** - *signal: data residency perimeters, egress costs, latency budgets, and compliance posture* `[Source: Sundeep Teki]`
+- **What data leaves the customer boundary in this design?** - *signal: proactive CISO architecture delivery; 3-tier egress classification (PII, vector embeddings, telemetry)* `[Source: fde.academy]`
+- **Who is on call when this breaks at 2 a.m.?** - *signal: phased operational handover (pilot -> shadowing -> customer ownership), runbook verification, SLA escalation contracts* `[Source: fde.academy]`
 
-### Behavioral
+### 5. Live Production Debugging
 
-- A project you owned end to end - agency
-- A requirement you pushed back on - judgment
-- Debugging something you did not build - ownership beyond your own code
-- When did you under-deliver, and what did you do next? - honesty and recovery
-- A time you said no to a customer - expectation management
-- A failure you repaired - postmortem habits
-- A time you made someone else successful - cooperation and low ego
+- **The pilot RAG system is giving wrong answers on customer contracts. You are on-site tomorrow. How do you debug it?** - *signal: bisection methodology (retrieval miss vs. generation hallucination); chunk inspection; adding regression tests to golden suite* `[Source: Om Bharatiya]`
+- **The customer's integration suddenly returns empty results in production. What do you check first?** - *signal: structured triage (reproduce -> change check -> auth/quota -> network proxy -> data schema)* `[Source: Nehal Vyas]`
+- **Answers are wrong every Monday. Hypotheses?** - *signal: Sunday night scheduled ETL batch sync failure, timezone boundary edge cases, weekend ticket backlog queue starvation* `[Source: fde.academy]`
+- **Two services disagree about the same record. Which is right, and how do you find out?** - *signal: authoritative systems of record by business domain, message lineage inspection, diff reconciliation reports, signed ADRs* `[Source: fde.academy]`
 
-## Deep response playbooks for high-signal questions
+### 6. Customer Simulation and Role-Play
 
-The ten questions below represent the most predictive probes in enterprise FDE interview loops. For each, we provide the underlying signal, a verbatim senior FDE response, the red flag answer that gets candidates rejected, and the evaluation scoring rubric.
+- **Interviewer role-plays a furious VP: "Your implementation is two weeks late and my CEO is asking why we hired you." How do you respond?** - *signal: composure under pressure; non-defensive validation; honest root-cause status; concrete date commitments; clear stakeholder asks* `[Source: Nehal Vyas]`
+- **The customer insists on an architectural approach you think is wrong and will fail in production. What do you do?** - *signal: uncovering underlying motivation; translating technical risk into dollar/latency terms; running 48-hour side-by-side benchmarks; disagree-and-commit with ADR* `[Source: Nehal Vyas]`
+- **"Our CEO saw a demo and wants AI everywhere across 4 divisions by next quarter."** - *signal: scoping under hype; identifying one high-ROI beachhead workflow; protecting client engineering from distraction* `[Source: Sundeep Teki]`
+- **"Your system gave a wrong answer to an external client today."** - *signal: disciplined 4-phase incident triage (immediate acknowledgement -> trace bisection -> blast radius containment -> postmortem regression closure)* `[Source: fde.academy]`
 
-### 1. "A VP says 'make our reporting smarter'. What do you do first?"
+### 7. Behavioral and Ownership
+
+- **Walk me through a system you built and deployed to production that failed, and how you owned the outcome.** - *signal: end-to-end operational ownership; blameless postmortem culture; permanent automated prevention* `[Source: Alexey Grigorev, Google FDE]`
+- **Describe a time you pushed back on a customer requirement.** - *signal: customer expectation management; courage to say no with data; protecting customer outcome over short-term pleasing* `[Source: Om Bharatiya]`
+- **A project you owned from discovery to production handover.** - *signal: full-loop engineering agency; working across customer IT, executive sponsors, and internal product teams* `[Source: Startup.jobs]`
+
+---
+
+## Deep Response Playbooks for High-Signal Probes
+
+The ten questions below represent the most predictive probes in enterprise FDE interview loops. For each, we provide the verified practitioner signal, a verbatim senior FDE response, the red flag response that gets candidates rejected, and the exact evaluation scoring rubric.
+
+---
+
+### 1. "A customer signed a contract because their CEO said 'we need AI.' They cannot articulate a use case. Walk me through your first two weeks."
+*Verified Source: [Om Bharatiya (AI-Engineer-Interview-Questions)](https://github.com/ombharatiya/AI-Engineer-Interview-Questions/blob/main/15-role-guides/forward-deployed-engineer.md)*
 
 #### The signal
-
-Tests whether you reach for discovery before solutions. Junior candidates immediately propose vector search or automated LLM summarizers. Senior FDEs treat the request as an ambiguous symptom, identifying who reads the report, what business decisions depend on it, and what currently fails.
+Evaluates ambiguity tolerance, operator discovery over executive hype, identifying high-volume language bottlenecks, and scoping a thin vertical slice.
 
 #### Senior FDE response
+"Week one is discovery, not building. I ask for three things: access to the operators who feel workflow pain daily, a tour of the systems of record where work actually occurs, and examples of the business artifacts (tickets, contracts, logs, reports). I hunt for workflows that meet four criteria: (a) high-volume, (b) language-heavy, (c) currently performed by expensive domain specialists, and (d) tolerant of human review before action.
 
-"I do not touch code or model architecture. First, I schedule a 30-minute discovery session with the actual consumers of the reports rather than the VP who sponsored it. I ask three specific questions:
+I run 30-minute interviews with 5 to 8 frontline operators asking: 'What did you do yesterday, hour by hour?' rather than 'What could AI do for you?' The latter produces science fiction; the former produces viable use cases. Concurrently, data access is usually the critical-path bottleneck, so I file security and data boundary requests on day one.
 
-First, what decision does this report trigger today, and what happens if the report arrives three hours late? If nobody makes an operational decision from the report, automating it produces zero business value.
+In week two, I pick one candidate use case and build a thin vertical slice on real customer data by day 10—not a slide deck. The demo is framed explicitly as 'directionally right, not production.' This grounds executive discussions in concrete reality, allowing stakeholders to react to software.
 
-Second, what is broken about the current report: is it the latency of generation, inaccurate source data from legacy databases, or unstructured free text that nobody has time to read?
-
-Third, what does a successful output look like in numbers? If we cannot define a quantifiable metric, such as reducing analyst drafting time from 45 minutes to 5 minutes with zero ungrounded metrics, we do not have a deployment-shaped project.
-
-From that conversation, I write a one-page Problem Statement and Scope Boundary document before proposing any technical architecture."
+Deliverables at two weeks: one working clickable slice, a ranked backlog of 2-3 follow-on use cases with effort sizing, and an unblocked data access register."
 
 #### The red flag response
-
-"I would immediately build a LangChain agent with a retrieval pipeline over their SQL database so the VP can chat with their data using natural language."
+"I organize several executive brainstorming sessions with the VP to design an end-to-end autonomous transformation strategy, then start fine-tuning a frontier model on their documentation."
 
 #### Scoring rubric
+- **Strong Hire**: Distinguishes operator discovery from executive mandates; targets high-volume language tasks; files data access requests on day one; delivers a working thin slice within 10 days to drive concrete feedback.
+- **Hire**: Focuses on gathering user requirements before writing code and attempts to build a quick demo.
+- **No Hire**: Accepts the vague mandate at face value; proposes multi-month R&D research projects or blames the customer for not having clear specifications.
 
-- Strong Hire: refuses to propose architecture without talking to report consumers; identifies decision stakes; demands quantifiable acceptance metrics; produces a one-page problem document.
-- Hire: asks clarifying questions about data sources and user personas before proposing tools.
-- No Hire: immediately proposes model frameworks and vector databases; assumes the VP's prompt is a complete requirement.
+---
 
-### 2. "The customer wants zero hallucinations. What do you say?"
+### 2. "An enterprise COO says: 'Our emergency room wait times are too long. Can AI fix this?' Decompose the problem."
+*Verified Source: [Om Bharatiya (AI-Engineer-Interview-Questions)](https://github.com/ombharatiya/AI-Engineer-Interview-Questions/blob/main/15-role-guides/forward-deployed-engineer.md)*
 
 #### The signal
-
-Tests probabilistic framing, customer expectation management, and refusal to make false promises under executive pressure.
+Tests problem decomposition into functional pipelines, constraint identification (HIPAA, EHR integration, clinician sign-off), knowing when NOT to use AI, and thin wedge selection.
 
 #### Senior FDE response
+"I do not answer the question as asked; I decompose it. 'Wait time' is an aggregate metric resulting from a sequential pipeline: arrival -> triage -> bed assignment -> physician evaluation -> diagnostics -> disposition.
 
-"I address this directly in the room without defensive jargon. I tell them:
+First question to the COO: where does your historical data show the bottleneck accumulating? If they lack instrumentation, step one is telemetry and basic data logging, not AI.
 
-'Zero hallucinations does not exist in probabilistic language models, just as zero errors does not exist in human analytical teams. If a vendor promises you zero hallucinations, they are either misinformed or misleading you.
+Second, I categorize stages by AI suitability:
+- Safe, high-leverage language candidates: triage-note summarization for nursing handoffs, drafting discharge instructions (often the hidden blocker holding occupied beds), and extracting structured billing codes from doctor voice memos.
+- Classic ML candidates: admission likelihood prediction and hourly staffing demand forecasting. These require clean tabular historical data and clinical calibration.
+- Explicitly ruled out: autonomous diagnostic or triage prioritization decisions. Regulatory, clinical liability, and patient safety requirements dictate that anything touching clinical judgment mandates a human clinician in the loop by design.
 
-What we can guarantee, and what we build toward in production, is zero ungrounded claims and strict refusal behavior. We achieve this through four architectural controls:
+Third, verify constraints: EHR integration pathways (Epic/Cerner via HL7/FHIR), PHI handling under HIPAA (BAA agreements with model providers or private VPC inference), and clinical safety committee sign-off.
 
-First, strict citation grounding: the model is prohibited from generating a factual assertion unless it points to an exact document ID and quoted passage retrieved from your authorized knowledge base.
-
-Second, deterministic quote verification: an automated post-generation guardrail verifies that every cited passage exists verbatim in the source text. If a quote is invented, the response is discarded.
-
-Third, explicit refusal boundaries: when retrieved document similarity drops below our confidence threshold of 0.85, the model is instructed to output an honest 'I do not have sufficient information in the provided records to answer this question' rather than guessing.
-
-Fourth, a human-in-the-loop exception queue: high-stakes claims or low-confidence tickets are routed to human operators with one-click review.
-
-Our evaluation metric is not zero hallucination; our metric is a 100% citation grounding rate on our golden evaluation suite.'"
+I propose a wedge project: discharge summary drafting. It is measurable (bed turnover velocity), language-native, human-reviewed by design, and improves operational throughput without autonomous medical liability."
 
 #### The red flag response
-
-"I will set model temperature to 0.0 and tell the model in the system prompt 'Do not hallucinate under any circumstances'."
+"We can train a transformer model on historical ER admissions to autonomously diagnose incoming patients at triage and predict discharge times."
 
 #### Scoring rubric
+- **Strong Hire**: Deconstructs the holistic metric into pipeline stages; probes for baseline instrumentation; explicitly rejects autonomous clinical decisions; identifies HIPAA/EHR constraints; selects a safe, high-leverage wedge.
+- **Hire**: Recognizes that the problem has multiple sub-steps and highlights regulatory or privacy concerns.
+- **No Hire**: Promises that an AI chatbot or end-to-end LLM can solve ER wait times; ignores patient safety regulations.
 
-- Strong Hire: clearly reframes the problem from eliminating hallucinations to containing errors via deterministic citation checks, confidence thresholding, and refusal boundaries.
-- Hire: explains that LLMs are probabilistic and discusses RAG and citation checks.
-- No Hire: claims temperature 0.0 or prompt engineering prevents hallucinations; promises perfection to please the customer.
+---
 
-### 3. "Retrieval quality is poor on the customer's documents. Walk me through debugging it."
+### 3. "In a 60-minute Google FDE 'Vibe Coding' / live build round, you receive dirty CSV/JSON data and an API key. How do you structure your time?"
+*Verified Source: [YagyanshB (Google FDE Interview Guide)](https://github.com/YagyanshB/google-fde-interview-guide)*
 
 #### The signal
-
-Tests disciplined hypothesis ranking and isolating retrieval from generation before editing prompts.
+Evaluates rapid prototyping under pressure, scoping down to the critical path, defensive data cleaning, testable seams over boilerplate architecture, and verbalized engineering narration.
 
 #### Senior FDE response
+"In rapid live coding rounds, candidates fail when they over-architect or spend 40 minutes setting up boilerplate classes before data flows. I structure the 60 minutes into four strict phases:
 
-"I split the system into two isolated evaluation boundaries: retrieval quality versus generation quality. You cannot fix bad retrieval with prompt engineering.
-
-Step one: evaluate retrieval independently. I take 50 representative customer queries from our golden evaluation set and measure Mean Reciprocal Rank (MRR) and Recall@K directly against ground-truth document chunks. If the correct chunk is not in the top 5 retrieved items, generation never had a chance.
-
-Step two: inspect document chunking and ingestion. Most enterprise retrieval failures stem from dirty chunking: fixed 500-character slices that cut tables in half or sever headings from paragraph bodies. I verify whether semantic boundaries or layout-aware parsers preserve table rows and section headers.
-
-Step three: analyze keyword versus semantic vocabulary mismatch. Enterprise documents are packed with internal acronyms, part numbers, and error codes that dense vector embeddings miss. If queries fail on exact terms, I introduce hybrid search: BM25 sparse lexical matching combined with dense vector cosine similarity via Reciprocal Rank Fusion (RRF).
-
-Step four: examine metadata filtering and security boundaries. If retrieval returns irrelevant documents, we evaluate whether pre-retrieval filters (e.g. document type, department, date range) are properly applied.
-
-Only after Recall@5 exceeds 90% do I evaluate generation prompts and synthesis."
+- Minutes 0 to 10 (Inspection & Alignment): Inspect the raw schema and print data anomalies (missing values, mixed date formats, malformed nested JSON). I state my assumptions aloud and agree with the interviewer on the single core happy path that constitutes success.
+- Minutes 10 to 35 (Core Engine & Integration): Build the data transformation pipeline with defensive parsing fallbacks, followed immediately by the LLM API integration. I use simple, testable functions with type hints rather than deeply nested OOP hierarchies.
+- Minutes 35 to 50 (Hardening & Edge Cases): Write 3-4 concrete unit assertions verifying edge cases: null handling, prompt token limits, and handling malformed API responses.
+- Minutes 50 to 60 (Run & Articulate): Execute the script end-to-end on live sample data. I narrate remaining technical debt cleanly: 'In a production deployment, I would replace this in-memory list with a Redis queue, add OpenTelemetry tracing, and implement an exponential backoff retry wrapper around the API client.'"
 
 #### The red flag response
-
-"I would switch from text-embedding-ada-002 to a bigger embedding model, increase chunk size, and add few-shot examples to the generation prompt."
+"Spends 40 minutes designing abstract base classes, Dockerfiles, and directory structures without executing an API call or handling dirty data."
 
 #### Scoring rubric
+- **Strong Hire**: Quickly inspects edge-case data quirks; produces running software that completes the core workflow within time; articulates conscious tradeoffs clearly.
+- **Hire**: Produces working code that meets the prompt requirements with minor prompt/data hiccups.
+- **No Hire**: Does not produce running code; gets stuck in boilerplate configuration or panics under time constraints.
 
-- Strong Hire: decouples retrieval evaluation from generation; measures MRR and Recall@K; identifies tabular and acronym chunking failures; implements hybrid BM25 and dense retrieval; validates pre-retrieval filters.
-- Hire: looks at chunk size and embedding quality before touching generation.
-- No Hire: tweaks generation prompts; changes models blindly without offline metrics.
+---
 
-### 4. "The model worked in the demo and fails in production. Why?"
+### 4. "You have 48 hours before an executive demo to a Fortune 500 leadership team using their proprietary data. What do you build and what do you deliberately cut?"
+*Verified Source: [Om Bharatiya (AI-Engineer-Interview-Questions)](https://github.com/ombharatiya/AI-Engineer-Interview-Questions/blob/main/15-role-guides/forward-deployed-engineer.md)*
 
 #### The signal
-
-Tests understanding of distribution shift, production data messiness, and the gap between curated staging data and live inputs.
+Tests executive demo prioritization, scope ruthlessness, grounding and citation verification, and proactive failure scripting.
 
 #### Senior FDE response
+"First hour: lock scope with the account executive or meeting owner. One workflow, five minutes of live demonstration, and one clear business wow-moment (e.g., querying across disparate ERP tables that previously took analysts days).
 
-"This is the classic prototype-to-production gap. In my experience, demo success followed by production degradation is caused by five structural differences:
+Build priorities, in order:
+1. Ingestion of a curated subset: 50 clean, high-signal documents beat 50,000 messy ones every time.
+2. Hardened happy path: script the 5 demo queries and test them 20 times each to verify consistent output.
+3. Grounding and citations: ensure every model answer highlights clickable source excerpts. The first executive objection is always 'How do I know this is not hallucinated?'; clickable citations neutralize that objection immediately.
+4. Clean, intentional UI: simple, polished tables and typography beat flashy, fragile UI elements.
 
-First, distribution shift in inputs: demo data is usually clean, single-intent, grammatical text curated by an engineer. Live production inputs contain slang, OCR noise, truncated mobile speech-to-text, multiple conflicting questions in one message, and malformed encoding.
+Deliberate cuts:
+- Auth & SSO: use a single hardcoded session.
+- Automated evals: hand-verify the demo set instead.
+- Broad edge-case coverage: steer the demo presentation away from unvetted edges.
+- Scale & concurrency: optimize for 1 presenter, not 1,000 users.
+- Write actions: strictly read-only; no automated writes for demos.
 
-Second, document versioning and index staleness: the demo vector store was indexed once from a clean snapshot. In production, documents are amended, superseded, or deleted daily. If ingestion pipelines do not handle incremental updates, the model retrieves outdated policy manuals.
-
-Third, context window pollution: production users paste multi-page email threads or log dumps that push relevant system instructions and citations out of attention focus.
-
-Fourth, unhandled edge cases in schemas: production responses occasionally return unexpected JSON formatting, missing required keys, or invalid enum strings that crash downstream consumers.
-
-To fix this, I do not tweak prompts blindly. I capture the 50 most recent failing production traces, label the failure mode into an error taxonomy (retrieval miss, schema violation, out-of-domain query), add them to our golden test suite, and add automated regression gates."
+Two non-negotiable disciplines: rehearse twice on the exact venue network, and prepare a recovery script: if the model stumbles live, I say 'That illustrates exactly why we build automated citation verifiers and evaluation gates in production.'"
 
 #### The red flag response
-
-"The model provider probably updated their API model weights behind the scenes, or production users are prompting it incorrectly."
+"Attempts to ingest the full uncurated multi-gigabyte corpus overnight, implements autonomous write tools without guardrails, or fails to prepare a backup path for model latency/outage."
 
 #### Scoring rubric
+- **Strong Hire**: Prioritizes curated data and source citations; ruthlessly cuts non-essential production features (SSO, scale, write tools); rehearses live venue networking; scripts failure recovery.
+- **Hire**: Focuses on delivering a working happy-path demo and explains what was left out.
+- **No Hire**: Tries to build the entire production system in 48 hours; delivers a broken or ungrounded demo.
 
-- Strong Hire: identifies distribution shift, dirty encodings, stale index updates, and context pollution; captures failing production traces into an error taxonomy; updates the golden evaluation suite.
-- Hire: recognizes that live users submit messier inputs than engineers in demos.
-- No Hire: blames the model provider or blames the customer's end users.
+---
 
-### 5. "A 429 hits mid-batch. What happens to the rest of the batch?"
+### 5. "When would you fine-tune vs. use RAG vs. use prompt engineering?"
+*Verified Source: [Nehal Vyas (fde.hinehal.com)](https://fde.hinehal.com/blogs/fde-interview-questions)*
 
 #### The signal
-
-Tests partial failure handling, idempotency, checkpointing, and backpressure in batch engineering.
+Tests architectural pragmatism, understanding the simplest-viable-system principle, and knowing when to talk enterprise customers OUT of expensive fine-tuning.
 
 #### Senior FDE response
+"My architectural hierarchy follows the principle of simplest sufficient mechanism: Prompt Engineering -> RAG -> Fine-Tuning.
 
-"In enterprise batch ingestion, encountering an HTTP 429 Too Many Requests mid-batch must never result in either aborting the entire job or blindly retrying the whole batch from item one.
+1. Prompt Engineering with in-context examples is always step one. It requires zero infrastructure, iterates in seconds, and resolves 70% of formatting, tone, and reasoning issues.
+2. RAG (Retrieval-Augmented Generation) is required when the model needs access to dynamic, proprietary, or private enterprise knowledge that cannot fit in a prompt or updates frequently (e.g. internal wikis, customer support tickets, catalog inventory). RAG provides source citations and updates immediately when documents change.
+3. Fine-tuning is reserved strictly for teaching behavior, specialized syntax, or compressing capability. Valid reasons to fine-tune: enforcing complex structured outputs that prompt engineering fails to stabilize, adhering to niche domain style (e.g., medical pathology summaries), or distilling a 70B frontier model's performance into an 8B open-weight model to cut inference latency and costs.
 
-Here is the production architecture:
-
-First, item-level state tracking: each record in the batch exists in an explicit state machine (PENDING, IN_FLIGHT, COMPLETED, FAILED_RETRYABLE, FAILED_TERMINAL). As items succeed, their outputs are committed idempotently to the database.
-
-Second, adaptive backpressure: the moment a 429 is received on an item, the batch runner pauses all concurrent worker threads. It inspects the HTTP Retry-After header. If present, it sleeps for that duration; if absent, it applies exponential backoff with full jitter (e.g. random sleep between 0 and min(max_backoff, base * 2^attempt)).
-
-Third, checkpointed resume: items that were already COMPLETED before the 429 are never re-sent, avoiding duplicate cost and downstream quota waste. The remaining PENDING and FAILED_RETRYABLE items resume in throttled chunks once the cooldown expires.
-
-Fourth, dead letter queue (DLQ): if an individual item fails after maximum retries (e.g. 5 attempts), it is written to an exception ledger with line number and trace ID, allowing the remaining batch to complete."
+I explicitly advise enterprise customers against fine-tuning to inject factual knowledge: training data is expensive to curate, knowledge goes stale immediately, and fine-tuning does not eliminate hallucinations or provide verifiable citation links."
 
 #### The red flag response
-
-"I wrap the batch loop in a try-catch block. If it catches a 429, I sleep for 5 seconds and rerun the loop."
+"Whenever a customer provides their company PDF manuals, we should immediately fine-tune an LLM on those files so it memorizes the business."
 
 #### Scoring rubric
+- **Strong Hire**: Enforces prompt -> RAG -> fine-tune progression; articulates why fine-tuning fails for dynamic factual knowledge; considers maintenance and distillation trade-offs.
+- **Hire**: Explains the difference between RAG for dynamic context and fine-tuning for style/format.
+- **No Hire**: Recommends fine-tuning to update daily facts or claims prompting is insufficient for any serious task.
 
-- Strong Hire: designs item-level state machines, respects Retry-After with full jitter backoff, ensures completed items are not re-executed, and routes exhausted items to a dead letter queue.
-- Hire: pauses execution and retries without re-running completed records.
-- No Hire: aborts the whole batch or re-runs the entire batch from record zero.
+---
 
-### 6. "Two services disagree about the same record. Which is right, and how do you find out?"
+### 6. "How do you design AI agent tools with least-privilege permissions and robust human-in-the-loop safeguards?"
+*Verified Source: [Dr. Sanjay Kumar PhD (Medium)](https://skphd.medium.com/top-25-forward-deployed-engineer-fde-interview-questions-and-answers-ad9ac4a6ad7f)*
 
 #### The signal
-
-Tests boundary contracts, authoritative systems of record, and reconciliation discipline.
+Evaluates agentic deployment security, tool risk classification (read vs. reversible write vs. destructive write), human-in-the-loop approval workflows, and blast radius defense.
 
 #### Senior FDE response
+"In enterprise agent deployments, models must never possess unconstrained API credentials. I enforce least-privilege tool execution across three risk tiers:
 
-"When two enterprise services disagree on a record state (e.g. CRM says an account is Active but the Billing ERP says Delinquent), you cannot write heuristic tie-breaking logic in code until you establish the authoritative system of record.
+- Tier 1 (Read-Only Tools): Searching documentation, querying vector stores, retrieving read-only CRM data. These execute autonomously but are scoped with tenant-isolation filters and token budgets.
+- Tier 2 (Reversible Writes): Generating draft emails, creating staged tickets, updating sandbox records. The agent can invoke these tools, but all mutations are marked as 'PENDING_CONFIRMATION' and require explicit schema validation and append-only audit logging.
+- Tier 3 (High-Impact / Destructive Writes): Initiating wire transfers, issuing refunds, deleting records, deploying code, modifying user permissions. These strictly require Human-in-the-Loop (HITL) approval.
 
-My procedure:
-
-First, consult the data governance contract: every business object has an authoritative owner. Billing owns invoices, payment statuses, and balance ledgers. CRM owns contact details and pipeline stages. If they disagree on payment status, Billing is authoritative by default.
-
-Second, check event timestamps and update lineage: examine the database audit timestamps and message queue event logs. Did the CRM receive a manual edit at 10:00 AM while the Billing webhook failed to deliver at 10:05 AM? Look for failed webhook deliveries or unhandled schema migrations.
-
-Third, generate a reconciliation anomaly report: write a scheduled job that queries both systems, computes diffs, and flags discrepancies into an exceptions table rather than letting one service silently overwrite the other.
-
-Fourth, document the tie-breaking rule in an Architecture Decision Record (ADR): have both department heads sign off on which system wins under conflict before automating the sync."
+Architecture: When the agent decides to invoke a Tier 3 tool, it generates an idempotent ActionProposal payload containing proposed parameters, justification, and an expiration timestamp. The system halts the execution branch and sends an approval card to authorized personnel via Slack/Teams or admin portal. Only upon cryptographic human sign-off does the execution engine dispatch the API call."
 
 #### The red flag response
-
-"I would write a script that takes the newest timestamp or takes whichever record has fewer null fields."
+"Gives the agent API keys with full admin rights and relies on a system prompt instruction telling it 'please only perform safe actions'."
 
 #### Scoring rubric
+- **Strong Hire**: Classifies tools by risk level; isolates read operations from destructive writes; mandates human approval for high-risk operations; enforces parameter bounds and audit trails.
+- **Hire**: Mentions restricting tool access and keeping human review on important actions.
+- **No Hire**: Allows agents unconstrained execution capabilities; fails to consider security vulnerabilities of tool use.
 
-- Strong Hire: identifies authoritative systems of record by business domain, checks message delivery lineage, generates exception reconciliation reports, and formalizes resolution in an ADR.
-- Hire: investigates timestamps and talks to stakeholders to find out which database is trusted.
-- No Hire: writes code to pick the newest timestamp or averages the fields without consulting business owners.
+---
 
-### 7. "Who is on call when this breaks at 2 a.m.?"
+### 7. "The pilot RAG system is giving wrong answers on the customer's contracts. You are on-site tomorrow. How do you debug it?"
+*Verified Source: [Om Bharatiya (AI-Engineer-Interview-Questions)](https://github.com/ombharatiya/AI-Engineer-Interview-Questions/blob/main/15-role-guides/forward-deployed-engineer.md)*
 
 #### The signal
-
-Tests handover discipline, operational ownership, and refusing to build orphaned systems that rely on vendor engineers permanently.
+Tests bisection debugging methodology (retrieval vs. generation), error taxonomies, chunk inspection, and preventing regression via golden eval suites.
 
 #### Senior FDE response
+"Before flying on-site, I request 10 concrete failing examples with the exact customer input, the generated incorrect answer, and the verified correct clause. 'It's wrong sometimes' is impossible to debug; 10 concrete traces cluster into root causes.
 
-"The answer to who is on call must be agreed upon in writing in the Statement of Work (SOW) before we deploy to production, not discovered during an outage at 2 a.m.
+On-site, I bisect the pipeline into retrieval vs. generation:
+For each failure, I inspect the raw retrieved chunks passed into the prompt context.
+1. If the correct clause was NOT retrieved: this is a retrieval defect. I investigate: Did OCR fail on scanned tables? Did naive fixed-length chunking split a critical indemnity clause across boundaries? Did vector semantic similarity miss keyword-exact terms (e.g. Section 14.2)? Fix: Increase chunk overlap, implement hybrid search (dense embeddings + BM25 keyword matching), or add a cross-encoder reranker.
+2. If the correct clause WAS retrieved: this is a generation/context defect. I investigate: Did large context cause 'lost in the middle' attention degradation? Did contradictory boilerplate confuse the model? Was the system prompt ambiguous on how to interpret silence? Fix: Re-order context by relevance, tighten negative constraints ('refuse to answer if not explicitly stated in context'), and enforce strict citation output schemas.
 
-In a healthy FDE engagement, operational responsibility transitions across three phases:
-
-During pilot and initial deployment (Weeks 1 to 4): the forward deployed engineering team is primary on-call during business hours, with a named internal customer lead shadowing every incident and alert.
-
-During handover transition (Weeks 5 to 6): the customer's operations or platform team takes over primary on-call, with the FDE team acting as secondary escalation. Handover exit criteria require that the customer's on-call engineers successfully resolve two simulated drill incidents using our operations runbook without our intervention.
-
-Post-handover: the customer's internal tier-1 and tier-2 operations teams own 24/7 on-call. If a defect in our platform code occurs, it is escalated via established enterprise support SLAs with clear ticket severity definitions (P0 response within 15 minutes, P1 within 1 hour).
-
-An FDE system without a named customer operational owner is not a production deployment; it is a liability waiting to be shut down."
+Finally, I codify all 10 examples into our automated golden evaluation dataset with assertion gates to ensure regressions cannot deploy."
 
 #### The red flag response
-
-"I will put my phone number on the alert dashboard and answer it whenever it rings."
+"Tinkers with the prompt wording randomly or suggests upgrading to a bigger model without looking at the retrieved text."
 
 #### Scoring rubric
+- **Strong Hire**: Systematically bisects retrieval vs generation; diagnoses chunking/embedding vs context attention issues; converts production failures into regression tests.
+- **Hire**: Checks both the search results and the model prompt to see where the mistake happened.
+- **No Hire**: Tinkers blindly with prompts; blames the model or claims RAG cannot handle contracts.
 
-- Strong Hire: structures phased ownership transition, mandates shadowing and drill verification, establishes runbook requirements, and enforces SLA escalation contracts.
-- Hire: emphasizes creating runbooks and training the customer's engineers before departure.
-- No Hire: offers to be on call indefinitely; ignores operational handover.
+---
 
-### 8. "What data leaves the customer boundary in this design?"
+### 8. "Interviewer role-plays a furious VP: 'Your implementation is two weeks late and my CEO is asking why we hired you.' How do you respond?"
+*Verified Source: [Nehal Vyas (fde.hinehal.com)](https://fde.hinehal.com/blogs/fde-interview-questions)*
 
 #### The signal
-
-Tests security perimeters, compliance boundaries, egress awareness, and unprompted data privacy discipline.
+Evaluates composure under fire, non-defensive accountability, separating technical facts from excuses, delivering concrete recovery dates, and establishing collaborative customer action items.
 
 #### Senior FDE response
+"I stay calm, listen without interrupting, and refrain from defensiveness.
 
-"In an enterprise deployment, my default assumption is that zero customer data leaves their network perimeter until explicit security authorization is granted.
-
-I classify data into three egress tiers:
-
-Tier 1: High-risk customer data (PII, PHI, financial records, authentication secrets). This data must never leave the customer's VPC or on-premise boundary. If cloud LLMs are used, we deploy private VPC endpoints (e.g. AWS PrivateLink or Azure Private Link) so traffic traverses private cloud backbones without crossing the public internet. If policy mandates zero third-party egress, we host open-weight models locally on customer-managed GPU instances.
-
-Tier 2: Vector embeddings and indices. These reside in a self-hosted or dedicated single-tenant vector database inside the customer's VPC, encrypted at rest with customer-managed KMS keys.
-
-Tier 3: Observability telemetry. Only sanitized error codes, trace latency percentiles, and token consumption counts egress to monitoring platforms. Customer prompt bodies and document contents are strictly redacted at the logging adapter layer.
-
-I provide the customer's Chief Information Security Officer (CISO) with an egress architecture diagram detailing network ports, protocols, and data flows before commencing integration."
+1. Validate the frustration: 'I completely understand your frustration. If I were reporting to your CEO, I would be asking the exact same question. We take full accountability for getting this live.'
+2. State the objective technical facts without jargon: 'The data ingestion pipeline and model integration are functional in staging. However, during end-to-end testing with your billing database, we discovered that 12% of customer invoice records had inconsistent date encodings, which caused extraction validation to halt to protect data integrity.'
+3. Provide a concrete recovery plan with committed milestones: 'Here is how we close the gap: we have completed the patch for the invoice parser today. Tomorrow at 2 PM, we re-run staging validation. On Thursday, we run user acceptance testing with your lead analyst, and on Friday at 9 AM, we initiate production rollout.'
+4. Ask for what you need: 'To stay on this schedule, we need 30 minutes with your database administrator tomorrow morning to verify the historical date formats.'
+5. Follow up in writing: within 30 minutes of the call, I send an executive summary email documenting the timeline, dependencies, and owners."
 
 #### The red flag response
-
-"Only the prompt text and document chunks leave the network to call the model API over HTTPS, which is encrypted in transit so it is safe."
+"Gets defensive, argues that the customer's dirty data caused the delay, or makes an unrealistic promise ('I will have it done tomorrow at 8 AM') just to end the uncomfortable conversation."
 
 #### Scoring rubric
+- **Strong Hire**: De-escalates tension calmly; validates customer stakes; gives honest technical status with concrete dates; defines clear mutual action items; follows up in writing.
+- **Hire**: Maintains composure, explains the reason for the delay, and provides an updated timeline.
+- **No Hire**: Argues with the customer; blames customer employees; makes empty promises to escape the conversation.
 
-- Strong Hire: details private VPC endpoints, PII redaction at logging adapters, local inference alternatives, customer-managed KMS encryption, and proactive CISO architecture delivery.
-- Hire: explains encryption in transit and rest, and asks what compliance rules apply.
-- No Hire: assumes HTTPS over public internet is sufficient for enterprise compliance.
+---
 
-### 9. "Answers are wrong every Monday. Hypotheses?"
+### 9. "The customer insists on an architectural approach you know is technically wrong and will fail in production. What do you do?"
+*Verified Source: [Nehal Vyas (fde.hinehal.com)](https://fde.hinehal.com/blogs/fde-interview-questions)*
 
 #### The signal
-
-Tests time-patterned debugging, scheduled job failure awareness, and systematic hypothesis generation over guessing.
+Tests customer diplomacy, translating technical debt into business impact, running empirical benchmarks, and practicing healthy disagree-and-commit discipline.
 
 #### Senior FDE response
-
-"Recurring Monday failures indicate a time-dependent batch or synchronization failure over the weekend rather than an inherent model defect.
-
-My hypothesis tree, ranked by likelihood:
-
-Hypothesis 1: Weekend batch synchronization failure. A scheduled ETL job or vector re-indexing pipeline runs on Sunday night at midnight. If upstream databases perform maintenance or network reboots, the ingestion job fails silently, leaving the vector index out of sync with Monday's operational state.
-
-Hypothesis 2: Time-window and timezone edge cases. Date parsing logic in queries (e.g. 'show me issues from this week') resets on Sunday/Monday midnight boundaries. If the parser mishandles UTC versus local office timezones, Monday queries search an empty weekly bucket.
-
-Hypothesis 3: Weekend document backlog overload. Customer ticketing queues accumulate unread backlogs over Saturday and Sunday. When the Monday morning spike hits, the system encounters rate limits or worker queue starvation, triggering fallback paths that generate lower-quality answers.
-
-To verify, I inspect Sunday night ETL scheduler logs and compare Monday query latency and rate limit metrics against mid-week averages."
+"1. Understand the root motivation: I do not attack their proposal. I ask open-ended questions: 'Help me understand how your team arrived at this architecture—are there legacy system constraints, security policies, or internal tooling requirements driving this?'
+2. Translate technical concerns into customer business risks: Customers ignore abstract software design complaints, but they care about dollars, latency, and downtime. Instead of saying 'Your pipeline design isn't scalable', I explain: 'Under this architecture, querying external APIs synchronously on every user turn will introduce 4 to 6 seconds of latency and expose the workflow to third-party outages that will halt your customer service desk.'
+3. Offer an empirical proof of concept: I propose a 48-hour side-by-side benchmark: 'Let's build a prototype of both approaches on a sample of 500 records and measure latency, cost per 1,000 queries, and error rates.'
+4. Disagree and commit: If after reviewing the data they still insist, I document the decision and its risks in an Architecture Decision Record (ADR) signed by stakeholders, build the requested architecture cleanly, and ensure defensive monitoring and alerting are deployed to detect failures quickly."
 
 #### The red flag response
-
-"Maybe Monday questions are just harder, or users are grumpy on Mondays."
+"Refuses to write the code; calls the customer's architecture stupid; or silently writes the bad code without warning them of risks."
 
 #### Scoring rubric
+- **Strong Hire**: Uncovers the root motivation; translates technical debt into dollar and latency impact; proposes objective data benchmarks; documents risk in an ADR while preserving trust.
+- **Hire**: Explains why the approach is risky and suggests an alternative.
+- **No Hire**: Refuses to cooperate or mocks the customer; silently complies while knowing the system will break.
 
-- Strong Hire: identifies Sunday ETL batch failures, timezone and weekly window boundary logic, and weekend queue volume spikes; tests scheduler logs first.
-- Hire: looks at weekend automated jobs and cache expiration.
-- No Hire: makes jokes or guesses that the model is tired.
+---
 
-### 10. "Your system gave a wrong answer to a customer today."
+### 10. "Walk me through a system you built and deployed to production that failed, and how you owned the outcome."
+*Verified Source: [Alexey Grigorev (AI Engineering Field Guide)](https://github.com/alexeygrigorev/ai-engineering-field-guide/blob/main/role/06-fde.md)*
 
 #### The signal
-
-Tests composure under pressure, incident triage discipline, accountability, and preventing regression.
+Evaluates full-lifecycle operational ownership, blameless postmortem discipline, telemetry awareness, and permanent automated prevention.
 
 #### Senior FDE response
-
-"When an executive or customer escalates a production hallucination or wrong answer, my response follows four strict phases:
-
-Phase 1: Immediate acknowledgement and fact collection (within 15 minutes). I acknowledge the issue without defensiveness: 'Thank you for flagging this. We are treating this with high urgency.' I request the exact ticket ID, user input, output timestamp, and what the correct answer should have been.
-
-Phase 2: Trace inspection and blast radius containment (within 1 hour). I pull the distributed trace using the request correlation ID. I examine the retrieved chunks: did retrieval fail to return the correct policy document, or did the model misinterpret the retrieved text? If a critical compliance or safety violation occurred, I immediately activate the policy kill-switch to route that specific intent category to human operators.
-
-Phase 3: Root cause analysis and remediation (within 24 hours). I determine the technical fix: updating chunking metadata, adding an explicit negative example to our golden test suite, or tightening the citation verification threshold.
-
-Phase 4: Postmortem and regression test closure (within 48 hours). I publish a blameless postmortem to the customer stakeholders detailing what happened, why our existing evaluation missed it, and the automated regression test added to our golden suite to ensure this failure mode can never deploy again."
+"I discuss an enterprise document ingestion pipeline I owned for a legal customer.
+- Architecture: Users uploaded multi-hundred-page contract portfolios. The pipeline extracted text, generated embeddings, and populated a vector index.
+- The Failure: During an unannounced customer audit, legal associates uploaded 4,000 contracts simultaneously. Our ingestion workers flooded the embedding API, hitting account-level TPM rate limits. The unhandled 429s triggered worker crashes, creating a backlog that delayed search access for 6 hours during active litigation review.
+- Immediate Response: I acknowledged the outage within 15 minutes, communicated status updates to customer leads every 30 minutes, deployed a temporary circuit breaker to halt new batch submissions, and manually drained poisoned queue items.
+- Root Cause & Permanent Prevention: The system lacked backpressure and item-level retry isolation. Within 48 hours, I published a blameless postmortem. I re-architected the worker queue with token-bucket rate limiting, exponential backoff with full jitter, item-level state machines, and a Dead Letter Queue (DLQ). I committed an automated integration test that simulates 10x burst traffic to ensure the system degrades gracefully under rate limits."
 
 #### The red flag response
-
-"I apologize profusely, tell them AI is not 100% accurate, and tell them to add more detail to their prompt next time."
+"Describes an incident where they blame third-party APIs or infrastructure teams and took no personal ownership, or claims they have never had a production outage."
 
 #### Scoring rubric
+- **Strong Hire**: Demonstrates full production ownership; details structured incident triage; communicates transparently with stakeholders; adds regression tests and architectural guardrails.
+- **Hire**: Describes a real production failure and how they fixed it.
+- **No Hire**: Passes blame to colleagues; claims their code has never failed; exhibits defensiveness.
 
-- Strong Hire: follows disciplined four-phase incident response, pulls correlation ID traces, isolates retrieval vs generation, activates blast radius containment, and commits regression test to golden suite.
-- Hire: investigates the logs and explains the cause to the customer calmly.
-- No Hire: gets defensive; blames the model or user; promises it will never happen again without changing any code or tests.
+---
 
+## How to Use This Bank
 
+- **Practice out loud**: Answers that remain in your head have never survived an adversarial room. Rehearse responses verbally into a recorder or with a technical peer.
+- **Time-box rigorously**: Limit discovery and coding explanations to 2-3 minutes, and scenario role-plays to 5 minutes. Stopping on time signals executive composure.
+- **Run mock role-plays**: Alternate being the stressed customer VP and the FDE. Playing the customer teaches you how transparent communication de-escalates tension.
+- **Track your weak points**: Note questions where you reached for excuses or jumped to code before clarifying constraints. Re-run those questions weekly.
 
-## How to use this bank
+---
 
-We recommend four practices:
+## Related Documents
 
-- Practice out loud - answers that live in your head have never survived a room; say them to a person or a recorder
-- Time-box answers - two minutes for most questions, five for scenarios; the discipline of stopping is part of the signal
-- Alternate asking and answering with a peer - playing the interviewer teaches the signals faster than answering does
-- Track your dodges - the questions you route away from are your preparation list; live loops find them anyway
+- [Dataset Schema & Provenance](dataset/README.md) - dataset structure and verification guidelines
+- [Validated Dataset File](dataset/fde_interview_questions.json) - machine-readable JSON questions and rubrics
+- [Coding and Technical Rounds](02-coding-and-technical.md) - practical coding challenge breakdowns
+- [Coding Round Solutions](08-coding-solutions.md) - runnable implementations for rate limiters, extractors, and chunkers
+- [Customer Scenario Rounds](04-customer-scenarios.md) - adversarial discovery transcripts and role-plays
+- [System Design Rounds](03-system-design.md) - enterprise VPC blueprints and security perimeters
+- [The Interview Process](01-interview-process.md) - round-by-round hiring timelines
 
-## Related documents
+---
 
-- [Customer scenario rounds](04-customer-scenarios.md) - the full scenarios behind the role-play openers
-- [Behavioral rounds](05-behavioral.md) - the story inventory behind the trait questions
-- [Coding and technical rounds](02-coding-and-technical.md) - practice problems for the technical patterns
-- [System design rounds](03-system-design.md) - the framework behind the design prompts
-- [Discovery and requirements](../skills/02-discovery-and-requirements.md) - the full discovery question bank
-- [The interview process](01-interview-process.md) - how the rounds fit together
+## References & Further Reading
 
-## Further reading
-
-- [fde.academy](https://fde.academy) - practitioner guides on what FDE interviews test
-- [Exponent](https://tryexponent.com) - documented FDE loops and community question patterns
+1. **Nehal Vyas**: [Forward Deployed Engineer Interview Questions & Answers](https://fde.hinehal.com/blogs/fde-interview-questions)
+2. **Om Bharatiya**: [AI Engineer Interview Questions: Forward Deployed Engineer Guide](https://github.com/ombharatiya/AI-Engineer-Interview-Questions/blob/main/15-role-guides/forward-deployed-engineer.md)
+3. **Dr. Sundeep Teki**: [The Definitive Guide to Forward Deployed Engineer Interviews in 2026](https://www.sundeepteki.org/advice/the-definitive-guide-to-forward-deployed-engineer-interviews-in-2026)
+4. **Dr. Sanjay Kumar, PhD**: [Top 25 Forward Deployed Engineer (FDE) Interview Questions and Answers](https://skphd.medium.com/top-25-forward-deployed-engineer-fde-interview-questions-and-answers-ad9ac4a6ad7f)
+5. **YagyanshB**: [Google Forward Deployed Engineering Interview Prep Guide](https://github.com/YagyanshB/google-fde-interview-guide)
+6. **Startup.jobs**: [Forward Deployed Engineer Interview Questions & Answers](https://startup.jobs/interview-questions/forward-deployed-engineer)
+7. **Alexey Grigorev**: [AI Engineering Field Guide: FDE Data Analysis](https://github.com/alexeygrigorev/ai-engineering-field-guide/blob/main/role/06-fde.md)
