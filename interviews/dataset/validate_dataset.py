@@ -112,12 +112,12 @@ def validate_dataset(filepath: Path) -> bool:
 
     print(f"[+] Dataset successfully validated: {len(data)} questions verified.")
     print("\n--- Breakdown by Interview Stage ---")
-    for s, c in stages_count.items():
-        print(f"  • {s}: {c} question(s)")
+    for s, c in sorted(stages_count.items()):
+        print(f"  - {s}: {c} question(s)")
 
     print("\n--- Breakdown by Verified Primary Source ---")
-    for a, c in sources_count.items():
-        print(f"  • {a}: {c} citation(s)")
+    for a, c in sorted(sources_count.items()):
+        print(f"  - {a}: {c} citation(s)")
 
     return True
 
