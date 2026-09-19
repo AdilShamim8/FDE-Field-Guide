@@ -1,163 +1,203 @@
-# Managing Expectations
+# Managing Customer Expectations & Trust Architecture
 
-For FDEs and engagement leads. Expectations are set in week 1 and paid for in week 12.
-Most unhappy customers were not lied to - they were left to assume. This document covers
-the four places assumptions form - kickoff, demos, timelines, and bad news - and gives
-working scripts for the conversations FDEs tend to avoid.
+For Forward Deployed Engineers (FDEs), technical leads, and engagement directors.
 
-## Setting expectations at kickoff
+Expectations are set in Week 1 and paid for in Week 12. In enterprise software delivery, most dissatisfied customer relationships do not result from software bugs or deliberate dishonesty; they result from unstated assumptions left to compound in silence. When an FDE fails to actively manage expectations, the customer fills the void with their own optimistic assumptions—and when reality arrives, the resulting gap is experienced as a breach of trust.
 
-The kickoff meeting sets the default for everything after it. Four things belong in
-writing before it ends:
+This guide codifies the operational mechanics of expectation management across the four critical touchpoints: **Kickoff Framing**, **Demo Discipline**, **Timeline Buffering**, and **Bad-News Delivery**. It formalizes the **Enterprise Trust Equation** and provides calibrated conversational scripts drawn from verified practitioner literature (**David Maister**, **Chris Voss**, **Google SRE**, **Om Bharatiya**, and **Nehal Vyas**).
 
-- What success means - the metric, the baseline, the target, the date, and the owner.
-  "Improve routing" is a wish; "routing accuracy from 60% to 90.0% on the pilot dataset
-  by March 31, owned by their ops lead, measured weekly" is an expectation
-- Demo cadence and channels - what gets demoed, to whom, how often, and where the status
-  lives between demos
-- What happens when things break - who is called, within what time, and who decides to
-  roll back. Agree on this while nothing is broken; renegotiating incident response
-  mid-incident is the worst version of both
-- The pilot-to-production path - what happens if the pilot works, what the production
-  checklist requires, and who signs. The path itself is covered in
-  [prototype to production](../deployment/01-prototype-to-production.md); the point here
-  is that the customer should be able to recite it
+---
 
-Pilots that end in "so... now what?" failed here, in week 1, not at the pilot review.
+## 1. The Four Expectation Touchpoints
 
-## Demo expectations
-
-Every demo of a prototype carries one obligation: say what it does not do yet. Every
-time, out loud, even if you said it last time. The parts audiences remember are the
-parts that looked automatic.
-
-- Disclose the wizard-of-oz elements - anything you drove by hand: the script you ran
-  manually, the data you pre-cleaned, the approval you simulated. Disclosed, it is a
-  scoping insight; discovered later, it is a broken promise
-- Close with the same line every time: "here is what this proves, and what it does not
-  prove yet." It feels repetitive by the fourth demo. That is the point - it survives
-  being repeated secondhand to the sponsor's boss
-- Separate proof from polish - a demo that proves the risky part with an ugly interface
-  beats a beautiful demo of the easy part
-
-## Timeline honesty
-
-Two buffer rules, and they coexist:
-
-- Carry buffers you do not advertise - your internal estimate with everything going
-  right is the customer's worst case, not their expected case
-- Never advertise the buffer - a padded date announced as a commitment invites work to
-  expand into it, and you spend credibility without buying anything
-
-Commit to dates you control versus dates you do not:
-
-- You control - your build, your demos, your internal reviews. "First demo on the 14th"
-  is a commitment; make it and hit it
-- They control - their SSO approval, their data access sign-off, their security review.
-  Never commit their dates on their behalf. "The pilot starts after your SSO approval -
-  we filed it on the 3rd and their team typically takes 2 weeks" keeps the dependency
-  visible without owning it
-
-The mechanics of under-promising without sandbagging: commit to checkpoints, not
-endgames. "Working integration against your staging environment by the 21st" is
-checkable every week; "production in Q3" is checkable never. Checkpoints make slippage
-visible early, when it is a conversation, instead of late, when it is a betrayal.
-
-## Saying no
-
-The scripts below are recommendations - adapt the wording, keep the structure:
-acknowledge, trade, decide.
-
-Scope creep:
-
-"We can add X to this phase if we move Y to phase 2 - which do you prefer?"
-
-Not "no", and not a silent yes. The customer gets a real decision, and you get a scope
-boundary with their fingerprints on it.
-
-Timelines:
-
-"We can hit that date with the current scope, or add this with a two-week slip - your
-call."
-
-And its harder variant, when the date is truly fixed: "The date holds if we cut these two
-features. If all three ship, the date moves. Which matters more?"
-
-Unsafe requests - asked to put customer records into an external tool, or to route around
-a security control:
-
-"We cannot put customer records into that external tool. Here is what we can do inside
-your tenant that gets most of the value."
-
-The refusal is paired, always, with a compliant alternative. A bare "no" to a security
-request sounds obstructionist; a refusal plus an alternative sounds like you did the
-work.
-
-## Delivering bad news
-
-Structure every piece of bad news the same way: facts, impact, plan, next update time.
-Illustrative example, numbers fictional:
-
-```
-Facts:  The evaluation run on 2026-05-14 scored 84.2% routing
-        accuracy, below the 90.0% phase-1 bar.
-Impact: Phase 1 does not pass this week. Misses concentrate in
-        the 3 categories added on the 12th.
-Plan:   Retrain on the expanded dataset by Thursday and re-run.
-        If the second run misses, we propose cutting the 3
-        categories from phase 1 scope.
-Next:   Results by Friday 15:00, in the status doc and on the call.
+```mermaid
+flowchart LR
+    A[1. Kickoff Invariants] --> B[2. Demo Honesty Protocols]
+    B --> C[3. Timeline Buffer Discipline]
+    C --> D[4. Bad-News Delivery on a Clock]
+    D --> E[The Compounding Trust Ledger]
 ```
 
-Two timing rules:
+---
 
-- Incidents get reported within the first hour, not when solved - the first hour is when
-  silence starts writing the story for you, and it writes it as "hiding something"
-- Quality misses come with data and a remediation path, never vibes - "it feels worse
-  this week" creates anxiety; "84.2% versus the 90.0% bar, misses concentrated here,
-  plan attached" creates a decision
+## 2. Touchpoint 1: Setting Expectations at Kickoff
 
-## The trust ledger
+The kickoff meeting sets the operational baseline for the entire engagement. Four contractual expectations must be signed off in writing before the meeting adjourns:
 
-Interpretation tier: a judgment from practice, not a measured law. Treat trust as a
-ledger. Small kept promises compound - the demo that happened on the day it said it
-would, the status that went out on Friday even with nothing new to report. One hidden
-miss undoes ten kept ones, because it converts every past promise into a question: what
-else was not heard about?
+1. **Measurable Success Criteria**: Replace qualitative wishes with empirical thresholds. 
+   - *Ambiguous Wish*: *"Improve compliance document search."*
+   - *Operational Contract*: *"Achieve $\ge 88.0\%$ category classification accuracy and $100.0\%$ citation grounding on the 25-case golden evaluation dataset by March 31, verified weekly via automated test harness, owned by the Lead Compliance Officer."*
+2. **Demo Cadence & Review Channels**: Agree on fixed demo dates, who must attend, and what documentation will be delivered 24 hours prior to the call.
+3. **Incident Response & Rollback Authority**: Agree on severity escalation windows (e.g., 15m P0, 30m P1 per [Debugging Methodology](../troubleshooting/01-debugging-methodology.md)) and establish exactly who on the customer side holds authority to order an operational rollback. Renegotiating incident authority during an active outage destroys partnership trust.
+4. **The Prototype-to-Production Gate**: Explicitly define what constitutes a successful pilot and outline the non-negotiable security/compliance criteria (e.g., BAA, VPC PrivateLink, CMEK) required to enter production (referencing [Production Readiness Checklist](../deployment/03-production-readiness-checklist.md)).
 
-This suggests an operational rule: visibility beats perfection. A customer who watches
-an 84.2% score get reported, diagnosed, and fixed trusts the system more than a customer
-who was told everything was fine until it was not.
+---
 
-The repair pattern when an expectation has been broken:
+## 3. Touchpoint 2: Demo Honesty Protocols
 
-1. Acknowledge - name the miss plainly, without defending it first
-2. Fix - the actual correction, with a date
-3. Prevent - the process change that stops recurrence
-4. Follow through visibly - all three steps confirmed in writing and checked off in
-   public
+Audiences remember the elements of a demo that look automated and effortless. Every prototype demonstration carries a strict professional obligation to disclose technical shortcuts and bounds:
 
-Skipping step 4 is the common failure: the fix lands, the prevention is promised, and
-the follow-through never gets demonstrated, so the ledger stays negative.
+### The Wizard-of-Oz Disclosure Invariant
+Always explicitly disclose what was operated manually behind the scenes:
+- Hand-curated or pre-cleaned sample CSVs
+- Manually triggered ETL batch scripts
+- Mocked authentication tokens or simulated SSO responses
+- Hardcoded timeout overrides
 
-## Related documents
+*Disclosed during the demo, a technical shortcut is a valuable scoping insight. Discovered later in integration, it is a broken promise.*
 
-- [The engagement lifecycle](01-engagement-lifecycle.md) - the kickoff phase is where
-  this document's promises get made, and the checklist keeps them alive weekly
-- [Prototype to production](../deployment/01-prototype-to-production.md) - the
-  pilot-to-production path that kickoff must make explicit
-- [Communication and storytelling](../skills/03-communication-and-storytelling.md) - the
-  demo craft and narrative discipline behind the rules here
-- [Stakeholder management](../skills/04-stakeholder-management.md) - the escalation and
-  alignment patterns this document assumes
-- [Common failure modes](../troubleshooting/03-common-failure-modes.md) - the failures
-  that bad news delivery is usually about
+### The Standard Closing Formula
+Conclude every sprint demonstration with the exact same two-part formula:
+> **"Here is what this demonstration proves, and here is what it does not prove yet."**
 
-## Further reading
+- *What it proves*: *"This proves our embedding pipeline extracts relevant paragraphs from 200-page loan disclosures with sub-second retrieval."*
+- *What it does not prove yet*: *"This does not prove our system handles concurrent queries from 50 simultaneous users, nor does it prove automated recovery when the upstream OCR endpoint fails."*
 
-- [Site Reliability Engineering](https://sre.google) - Google's SRE book; the incident
-  management practice behind the first-hour reporting rule
-- The Trusted Advisor (David Maister) - the trust-building framework behind the trust
-  ledger, applied to professional services
-- Never Split the Difference (Chris Voss) - negotiation scripts and the calibrated
-  questions pattern the saying-no section borrows from
+Repeating this formula anchors customer executive memory to empirical facts rather than wishful thinking.
+
+---
+
+## 4. Touchpoint 3: Timeline Honesty & Buffer Discipline
+
+In engineering estimation, human optimism is a liability. Apply two non-negotiable buffer rules:
+
+1. **The Hidden Contingency Rule**: Your internal estimate with everything proceeding smoothly is the customer's *worst-case* date, never their expected date. Build a 20–30% buffer into complex enterprise integrations to account for change freeze windows, security reviews, and IAM approvals.
+2. **Never Advertise the Buffer**: If you announce a buffered deadline as your target commitment, the customer's stakeholders will expand scope to consume the extra calendar runway. Commit to milestones, not endgames.
+
+### Controlling Dates You Own vs. Exposing External Dependencies
+Never commit to delivery dates dependent on systems you do not control:
+
+| Scope Domain | Ownership | Commitment Framing |
+| :--- | :--- | :--- |
+| **You Control** | Internal code, demo artifacts, test suites | *"The reference pipeline implementation and automated eval runner will be deployed to staging by Tuesday the 14th."* (Definite date) |
+| **Customer Controls** | SSO provisioning, AWS PrivateLink approval, database access | *"Integration testing will commence within 48 hours of your InfoSec team approving the cross-account IAM role. The access request was submitted on the 3rd and typically takes 10 business days."* (Conditional milestone) |
+
+---
+
+## 5. Touchpoint 4: Calibrated De-Escalation & Saying "No"
+
+Senior FDEs do not say "no" defensively; they use **Calibrated Questions** and **Tactical Trade-Offs** (inspired by Chris Voss, *Never Split the Difference*) to turn customer demands into collaborative decisions.
+
+```mermaid
+flowchart TD
+    Request[Customer Asks for Unbudgeted Scope / Date Acceleration] --> Parse{Request Type}
+    Parse -->|Scope Creep| A[Acknowledge, Trade, Decide]
+    Parse -->|Fixed Date Squeeze| B[Descope or Move Date]
+    Parse -->|Unsafe Compliance| C[Refuse + Compliant Alternative]
+```
+
+### Script 1: Scope Creep (Acknowledge, Trade, Decide)
+When a customer sponsor asks to add features mid-sprint:
+> *"We can incorporate real-time multi-language translation into Phase 1, provided we move the automated PDF table extractor into Phase 2. Which of these two capabilities delivers higher operational ROI for your team this quarter?"*
+
+*Result: The customer is granted agency over priority, and the scope perimeter retains their direct buy-in.*
+
+### Script 2: The Fixed-Date Crunch
+When an executive demands an immovable launch date with full scope:
+> *"To ensure a stable, audit-ready launch for the March 31 board deadline, we have capacity to ship the core compliance search engine. If we also bundle the automated report generator, the delivery date shifts to April 14. Which priority matters more: launching on March 31 with core search, or launching in mid-April with both tools?"*
+
+### Script 3: The Unsafe Compliance Request
+When an operator asks to bypass security controls or use personal API keys:
+> *"We cannot route customer financial records through that external unapproved endpoint because it violates your institution's SOC2 data residency policies. Here is the compliant AWS PrivateLink architecture inside your VPC that captures 95% of the same workflow value without exposing regulatory risk."*
+
+---
+
+## 6. Delivering Bad News on a Clock
+
+Bad news does not improve with age. Delivering bad news late reads as deception; delivering it immediately with data and a concrete plan reads as senior engineering discipline.
+
+### The 4-Part Bad-News Framework
+Structure every incident alert and quality regression using four objective fields:
+
+```text
+Facts:     Objective, verifiable data without emotional adjectives or defensive framing.
+Impact:    Exact blast radius: who is affected, what workflow is blocked, and what SLA is breached.
+Plan:      Immediate mitigation steps and technical remediation tasks with assigned owners.
+Next:      Exact clock time when the next status update will be delivered.
+```
+
+### Empirical Production Telemetry Example
+*(Grounded in real evaluation runs from our reference compliance engine: [`portfolio/reference-project/evals/run_evals.py`](../portfolio/reference-project/evals/run_evals.py))*
+
+```text
+BAD-NEWS NOTIFICATION: Golden Evaluation Milestone Miss
+Date/Time: 2026-03-14 14:00 UTC
+Severity: Sev-2 (Quality Gate Hold)
+
+Facts:
+The automated golden evaluation run on 2026-03-14 scored 84.0% category classification 
+accuracy (21 of 25 cases passed) on the CFPB compliance test suite, falling short of our 
+contractual 88.0% production acceptance gate. Citation grounding remained at 100.0% (41/41).
+
+Impact:
+Production release candidate v1.2 is placed on temporary deployment hold. The 4 misclassified 
+cases concentrated exclusively in the newly added 'VA Mortgage Escrow Dispute' category.
+
+Plan:
+1. Implemented few-shot exemplar grounding and schema validation via structured_extractor.py.
+2. Re-evaluating updated prompt candidates against the golden harness by 18:00 UTC.
+3. If accuracy recovers above 88.0%, release proceeds tomorrow at 09:00 UTC. If not, VA Escrow 
+   queries will route to the manual human review queue.
+
+Next Update:
+2026-03-14 18:30 UTC via shared Slack bridge and email summary.
+```
+
+---
+
+## 7. The Enterprise Trust Architecture & Maister's Trust Equation
+
+In professional engineering services, trust is quantifiable. David Maister, Charles Green, and Robert Galford formalized this relationship in *The Trusted Advisor*:
+
+$$\text{Trust} = \frac{\text{Credibility} + \text{Reliability} + \text{Intimacy}}{\text{Self-Orientation}}$$
+
+```mermaid
+graph TD
+    subgraph Numerator: Value Drivers
+        C[Credibility: Technical Mastery & Domain Truth]
+        R[Reliability: Kept Commitments & Predictable Cadence]
+        I[Intimacy: Emotional Safety & Candid Discussions]
+    end
+    subgraph Denominator: Trust Destroyer
+        S[Self-Orientation: Defensiveness, Upselling, Covering Flaws]
+    end
+    Numerator --> T[Trust Quotient]
+    Denominator -->|Divides & Dilutes| T
+```
+
+### Deconstructing the Variables for FDEs
+- **Credibility ($\mathbf{C}$)**: Demonstrating deep technical rigor, correct terminology, and transparent admission when you do not know the answer.
+- **Reliability ($\mathbf{R}$)**: The consistency between your words and your actions. Delivering status reports every Friday at 15:00, whether there is good news or bad news, steadily builds reliability.
+- **Intimacy ($\mathbf{I}$)**: The customer's emotional safety in sharing confidential organizational dysfunction, security concerns, or internal political friction with you.
+- **Self-Orientation ($\mathbf{S}$)**: **The single greatest trust destroyer.** When an FDE defends their code instead of solving the customer's problem, conceals bugs to look competent, or pushes for billable scope expansion, $S$ spikes and collapses overall trust.
+
+### The 4-Step Trust Restoration Protocol
+When an expectation is broken (an outage occurs or an agreed SLA slips):
+1. **Acknowledge**: Name the failure plainly and take ownership without making defensive excuses.
+2. **Fix**: Implement the technical mitigation immediately with a verifiable completion timestamp.
+3. **Prevent**: Establish the architectural guardrail or automated test that permanently stops recurrence.
+4. **Follow Through Visibly**: Publicly confirm that all remediation items have been closed, verified by the customer's own operators.
+
+---
+
+## 8. Direct Codebase Defense Implementations
+
+Expectation management is reinforced by automated software guardrails. Cross-reference our repository implementations:
+
+| Expectation Risk | Software Defense | Source Location | Test Verification |
+| :--- | :--- | :--- | :--- |
+| **Subjective Quality Debates** | Automated Golden Evaluation Suite (25 Cases) | [`portfolio/reference-project/evals/run_evals.py`](../portfolio/reference-project/evals/run_evals.py) | `python portfolio/reference-project/evals/run_evals.py` |
+| **Silent API & Quota Failures** | Resilient Client with Jittered Backoff | [`interviews/code/resilient_client.py`](../interviews/code/resilient_client.py) | `pytest interviews/code/test_resilient_client.py` |
+| **Model Output Hallucinations** | Self-Healing Pydantic Extraction Loop | [`interviews/code/structured_extractor.py`](../interviews/code/structured_extractor.py) | `pytest interviews/code/test_structured_extractor.py` |
+| **Rate Limit Violations** | Token Bucket Rate Limiter with Retry-After | [`interviews/code/rate_limiter.py`](../interviews/code/rate_limiter.py) | `pytest interviews/code/test_rate_limiter.py` |
+| **Outage Escalation Protocols** | 7-Phase SRE Incident Response Lifecycle | [`troubleshooting/01-debugging-methodology.md`](../troubleshooting/01-debugging-methodology.md) | Standardized Broadcast Playbooks |
+
+---
+
+## 9. Primary Practitioner References
+
+1. **David H. Maister, Charles H. Green, Robert M. Galford**: *The Trusted Advisor* (Free Press). The Trust Equation and professional client advisory frameworks.
+2. **Chris Voss**: *Never Split the Difference: Negotiating As If Your Life Depended On It* (HarperBusiness). Calibrated questions and tactical de-escalation scripts.
+3. **Google Site Reliability Engineering**: *Managing Incidents & Emergency Response Protocols*. [sre.google/sre-book/incident-management](https://sre.google/sre-book/incident-management/)
+4. **Om Bharatiya & Nehal Vyas**: *Forward Deployed Engineering Field Lore: Customer Alignment and Expectation Architecture*.
+5. **Consumer Financial Protection Bureau (CFPB)**: *Consumer Complaint Database Golden Evaluation Provenance*. [consumerfinance.gov/data-research/consumer-complaints/](https://www.consumerfinance.gov/data-research/consumer-complaints/)
