@@ -1,206 +1,275 @@
-# A Debugging Methodology for FDEs
+# A Debugging & Incident Response Methodology for FDEs
 
-For FDEs and any engineer fixing a production system they did not build while the
-customer watches. In an FDE engagement, debugging happens on systems you did not write,
-in environments where you cannot see everything, with the sponsor reading over your
-shoulder. A structured method is what separates calm resolution from flailing, and
-flailing in front of a customer is expensive in trust (interpretation from practice;
-the trust mechanics are covered in
-[managing expectations](../customer/04-managing-expectations.md)).
+For Forward Deployed Engineers (FDEs) and technical leads diagnosing high-stakes customer production systems under active customer observation.
 
-The method is seven moves, run roughly in order. Most bad incident responses are order
-failures: hypothesizing before bounding impact, fixing before reproducing, root-causing
-while customers bleed.
+In an FDE engagement, debugging differs fundamentally from internal product engineering: you are operating on systems you did not build, across infrastructure boundaries you do not fully control, under strict security constraints, with customer executive sponsors watching every command. In this environment, unstructured guessing or "shotgun debugging" destroys customer trust within minutes. A battle-tested incident response methodology is the difference between calm, professional resolution and catastrophic project derailment.
 
-- Stabilize first - stop the bleeding before the analysis
-- Build the timeline - turn "it randomly breaks" into dated events
-- Narrow the surface - binary search the request path
-- Form hypotheses, test cheaply - top three candidates, cheapest test first
-- The LLM-specific debug loop - treat quality regressions like code regressions
-- Communicating during the incident - updates on a clock, facts labeled as facts
-- After the fire - postmortem, evals, runbooks, and the pattern library
+This methodology formalizes seven operational phases drawn from **Google SRE Incident Management**, **PagerDuty Incident Command System (ICS)**, and verified field practices from senior FDE practitioners (**Om Bharatiya**, **Nehal Vyas**, **Dr. Sanjay Kumar PhD**).
 
-## The first hour
+---
 
-### Stabilize first
+## The 7-Phase Incident Response Lifecycle
 
-Do four things before any analysis:
-
-1. Reproduce the failure, or classify it as unreproducible and say so out loud. An
-   intermittent bug you cannot reproduce is a different project from one you can, and
-   pretending otherwise burns hours you will later have to explain.
-2. Bound the impact. Who is affected, how many, since when, and what data is wrong.
-   "The assistant gives wrong answers" and "3 of 40 pilot users see stale refund
-   policies since Sunday" are different incidents with different audiences.
-3. Decide whether to mitigate or root-cause first. The rule we recommend: mitigate when
-   customers bleed. Restore from backup, roll back the deploy, disable the feature, or
-   fall back to the manual process, and only then investigate. Root-causing a live
-   incident that mitigation could have stopped is heroics, not engineering.
-4. Apply the rollback bias. If a recent change is suspect, reverting is evidence. A
-   revert that fixes the problem proves the change caused it; a revert that does not
-   eliminates a hypothesis. Either way, you learned it faster than by reading code.
-
-Write the answers down as you go; under stress, memory is the first casualty, and the
-timeline below depends on timestamps.
-
-## Reconstructing history
-
-### Build the timeline
-
-Every incident gets an event table: what changed, when, who noticed, and what else
-happened around then. Keep it in the shared incident document, not in your head. A
-typical early version:
-
-| When | What changed | Who noticed | What else happened |
-| --- | --- | --- | --- |
-| Sun 23:40 | Weekly data refresh ran | Job dashboard | Refresh job config edited Thursday |
-| Mon 06:15 | First user complaints | Support lead | Monday peak load started |
-| Mon 09:02 | Incident declared | FDE | No deploys since Friday |
-
-"It randomly breaks" almost always means an undated timeline. Once every relevant event
-has a timestamp, randomness usually collapses into correlation: the breakage started
-when the refresh job changed, when the provider shipped a model update, or when the
-warehouse moved region.
-
-Correlation discipline: time overlap is not causation, but deploy-to-incident ordering
-is strong evidence. A deploy that precedes the first failure by minutes is a suspect;
-one that has been in production for two weeks while failures started this morning is a
-weaker one. Rank suspects by how tightly they bracket the first bad event, and check
-what else moved in the same window: config changes, upstream releases, provider model
-updates, data refreshes.
-
-## Finding the failing stage
-
-### Narrow the surface
-
-Deployments fail in stages, so debug in stages. Binary search the request path: did
-input parsing fail, did retrieval return the wrong context, did the model call fail or
-hallucinate, did post-processing mangle the output, or did the downstream system reject
-the write? Each answered question cuts the search space in half.
-
-Traces and structured logs answer these questions in seconds when they exist and in
-hours when they do not. The instrumentation that makes this work - spans per stage,
-request IDs propagated end to end, structured log fields instead of prose - is covered
-in [monitoring and reliability](../ai/04-monitoring-and-reliability.md) and the
-[OpenTelemetry documentation](https://opentelemetry.io). If the customer's system lacks
-it, do not wait for a platform project: instrument your side and log the boundary
-contracts - exactly what you sent, exactly what you received, with IDs. Half of all
-cross-system bugs surrender to two logs that face each other.
-
-### Form hypotheses, test cheaply
-
-Once the surface is narrow, write down the top three hypotheses. For each, name the
-cheapest test that would discriminate it from the others:
-
-- Hypothesis: the retrieval index is stale - cheapest test: query the index directly for
-  a fact you know changed last week
-- Hypothesis: the model version changed under you - cheapest test: pin the previous
-  version and replay one failing case
-- Hypothesis: a prompt edit broke output parsing - cheapest test: diff the prompt
-  against the last known-good revision
-
-Run the cheapest test first, not the most likely one. Two cheap tests often beat one
-expensive one, and cheap tests keep you gathering evidence instead of performing
-conviction.
-
-Two disciplines keep this honest. First, the log-and-assert sweep: before running new
-experiments, re-read the logs and assertions you already have; the answer is already on
-disk more often than anyone expects. Second, resist the fix-first instinct. Shotgun
-fixes - change the prompt, bump the temperature, restart the pod, all at once - sometimes
-work, and when they do, they destroy the evidence trail. You will not know which change
-fixed it, the bug will come back, and the next incident starts from zero.
-
-## Debugging probabilistic systems
-
-### The LLM-specific debug loop
-
-LLM failures rarely crash; they degrade. The loop adjusts accordingly:
-
-1. Pull failing examples - not "accuracy dropped", but the twenty actual requests that
-   went wrong this week
-2. Classify them into an error taxonomy - bad retrieval, wrong format, wrong reasoning,
-   stale data, prompt regression. Different categories have different owners and
-   different fixes; a mixed pile is undiagnosable
-3. Check whether the golden-set eval reproduces the failure - if the eval catches it,
-   you have a reproducible bug and a regression test for free; if it does not, the eval
-   set is missing a category, which is itself a finding. Building that eval set is
-   covered in [evaluation and testing](../ai/03-evaluation-and-testing.md)
-4. Bisect the context - remove retrieved chunks, strip conversation history, swap the
-   model version, until the failure appears or disappears
-5. Fix at the source the bisection found, not at the symptom
-
-Treat a quality regression like a code regression: bisect the diff. Something changed -
-the prompt, the model version, the chunking parameters, the data, the retrieval config -
-and each of those has a last known-good version to diff against. "The model got worse"
-is a hypothesis, not a diagnosis; "quality dropped the day the provider swapped the
-served model version behind the same endpoint" is one you can act on.
-
-## People and process
-
-### Communicating during the incident
-
-Send updates on a clock, even with no news: "still narrowing, next update in 30 minutes"
-is a real update. Silence reads as hiding, and the customer fills it with worse
-assumptions than the facts would have given them - the same first-hour rule as
-[managing expectations](../customer/04-managing-expectations.md). Label everything:
-"fact: requests since 09:02 are failing" versus "speculation: the weekend refresh is
-involved, unconfirmed". Speculation labeled as speculation is useful; speculation dressed
-as fact costs you the room when it breaks.
-
-End every incident with a write-up. The five-section template we recommend:
-
-```
-Impact:     Who was affected, for how long, and what data was wrong.
-Timeline:   Key events with timestamps, in one table.
-Root cause: The technical cause, in two sentences.
-Fix:        What was done, and when it was verified.
-Prevention: What changes so this class of failure cannot recur.
+```mermaid
+flowchart TD
+    A[Phase 1: Triage & Blast Radius Bounding] --> B[Phase 2: Incident Command & Severity Matrix]
+    B --> C[Phase 3: Executive & Stakeholder Broadcasts]
+    C --> D[Phase 4: Chronological Timeline Reconstruction]
+    D --> E[Phase 5: Request Path Binary Search & Boundary Probing]
+    E --> F[Phase 6: Probabilistic LLM Quality Debug Loop]
+    F --> G[Phase 7: Blameless Post-Mortem & Preventative Guardrails]
 ```
 
-Aim for half a page. The test: the sponsor can forward it to their boss without a
-translation call.
+---
 
-### After the fire
+## Phase 1: Triage, Blast Radius Bounding & Rollback Bias
 
-The postmortem is an engagement artifact, not an internal chore. Run it blameless - the
-question is why the system allowed the failure, not who typed the wrong command - and
-share a customer-appropriate version with the sponsor. A customer who receives an honest
-half-page postmortem trusts the next launch more; a customer who receives silence treats
-every later wobble as a cover-up. This is interpretation, but it is the cheapest trust
-purchase available after an incident.
+Before executing diagnostics or reading stack traces, the on-call FDE must stabilize the deployment. Root-causing while customer traffic is actively failing is operational malpractice.
 
-Then feed the failure into the system that should have caught it:
+### 1. The Four Immediate Stabilization Invariants
+1. **Reproduce or Classify as Intermittent**: Verify whether the defect reproduces deterministically with a synthetic curl payload. If intermittent, immediately flag it as such and inspect concurrency, rate limits, or scheduled cron collisions.
+2. **Quantify the Blast Radius**: Calculate exact exposure:
+   - *Impacted Entities*: Is this all tenants, a single enterprise tenant, or specific user roles?
+   - *Traffic Percentage*: What percentage of total request volume is failing (e.g., 100% of `/v1/chat/completions` vs. 4.2% of long-context document ingestion)?
+   - *Data Integrity*: Are customer records being silently dropped, corrupted in storage, or cleanly rejected with non-200 HTTP codes?
+3. **Mitigate Before Analyzing**: If customer operations are degraded, apply mitigations immediately:
+   - Drain traffic to the secondary availability zone or fallback model endpoint.
+   - Flip feature flags or disable non-critical background enrichment workers.
+   - Revert recent deployments if a rollback script exists and takes `< 5 minutes`.
+4. **The Rollback Bias**: If a deployment or configuration change occurred within 2 hours of the incident onset, the default action is an immediate rollback. A rollback that resolves the failure proves causality in 120 seconds; a rollback that does not instantly eliminates the release candidate from the hypothesis space.
 
-- Add the failing cases to the eval set, so the same regression is caught before
-  customers see it
-- Write or update the runbook entry, so the next responder starts at step four instead
-  of step one
-- Check the failure against the [common failure modes](03-common-failure-modes.md)
-  catalog - most incidents are a known pattern wearing a new costume
+---
 
-Finally, the pattern-library habit: keep a running list of incident patterns across
-engagements. The first incident of a kind is tuition;
-the second is reinforcement; the third should end in a permanent fix - a guardrail, an
-alarm, a design change - not a fourth. This suggests the real measure of debugging
-maturity is not how fast you resolve incident one; it is whether incident three happens
-at all.
+## Phase 2: Severity Matrix & Escalation Windows
 
-## Related documents
+Standardize incident severity classification across both your engineering organization and the customer's operations team to prevent ambiguity during outages.
 
-- [Debugging customer systems](02-debugging-customer-systems.md) - what this method
-  looks like inside someone else's organization: opaque systems, tickets, shared on-call
-- [Common failure modes](03-common-failure-modes.md) - the catalog to check before
-  forming fresh hypotheses
-- [Monitoring and reliability](../ai/04-monitoring-and-reliability.md) - the traces,
-  dashboards, and drift alarms that make the narrowing step fast
-- [Evaluation and testing](../ai/03-evaluation-and-testing.md) - the golden-set eval
-  that turns quality regressions into reproducible bugs
-- [Managing expectations](../customer/04-managing-expectations.md) - the communication
-  contract that incident updates feed into
+| Severity Level | Definition & Operational Impact | Response SLA | Update Cadence | Escalation Protocol |
+| :--- | :--- | :--- | :--- | :--- |
+| **Sev-0 (Critical)** | Complete service outage; active customer data loss or security breach; all production users blocked from core business workflows. | `< 15 minutes` | Every `20–30 mins` | Page VP of Engineering, Lead FDE, and Customer Executive Sponsor; spin up dedicated war room bridge. |
+| **Sev-1 (Major)** | Core workflow degraded with no immediate workaround; high error rates (`> 5%`); SLA breach imminent within 2 hours. | `< 30 minutes` | Every `45–60 mins` | Notify Engineering Manager, Lead Architect, and Customer Technical Lead. |
+| **Sev-2 (Moderate)** | Non-critical feature impaired (e.g., batch ingestion delayed, async analytics failing); viable manual workaround available. | `< 2 hours` | Every `4 hours` | Assign on-duty FDE ticket; review during daily engineering sync. |
+| **Sev-3 (Minor)** | Cosmetic UI defect, minor documentation typo, or non-blocking prompt formatting edge case affecting `< 0.1%` of requests. | `< 24 hours` | Milestone updates | Log in standard customer sprint backlog. |
 
-## Further reading
+---
 
-- [Site Reliability Engineering](https://sre.google) - Google's SRE book; the postmortem
-  and incident management culture behind the write-up template
-- [OpenTelemetry](https://opentelemetry.io) - the tracing standard behind the
-  stage-by-stage narrowing described here
+## Phase 3: Stakeholder Communication Cadence & Broadcast Templates
+
+Silence during an outage forces customer stakeholders to assume the worst. Send structured updates on a fixed clock regardless of whether new technical findings have emerged.
+
+### Communication Invariant: The Fact vs. Hypothesis Rule
+- **Fact**: *"At 14:02 UTC, 5xx error rates on `/api/v2/extract` increased from 0.02% to 8.4%."*
+- **Hypothesis (explicitly labeled)**: *"Hypothesis: Upstream rate limiting by Azure OpenAI is returning HTTP 429 behind our API gateway. We are inspecting gateway egress logs now to verify."*
+
+### Executive Broadcast Templates
+
+#### 1. Initial Acknowledgment Broadcast (Sent within 15 minutes of Sev-0/Sev-1)
+```text
+INCIDENT ALERT: [Sev-1] Degradation on Document Ingestion Pipeline
+Time Detected: 2026-03-14 09:12 UTC
+Incident Commander: Alex Rivera (Lead FDE)
+Customer Impact: Inbound PDF parsing for Midwest Region claims is timing out. 
+Current Status: Investigating request path and database connection pools.
+Mitigation in Progress: Routing inbound requests to backup processing queue.
+Next Update: 09:45 UTC (or earlier if status changes).
+```
+
+#### 2. Progress & Mitigation Broadcast (Sent every 30-45 minutes)
+```text
+INCIDENT UPDATE #2: [Sev-1] Degradation on Document Ingestion Pipeline
+Current Time: 2026-03-14 09:45 UTC
+Status: Mitigation Deployed - Traffic Stabilizing
+Findings: 
+- Fact: Upstream OCR microservice experienced connection pool exhaustion following 08:30 batch job.
+- Action Taken: Doubled max connection pool limits from 50 to 100 and recycled zombie connections.
+- Current Metrics: Error rate dropped from 14.2% to 0.4%. Queue backlog processing at 450 docs/min.
+Next Steps: Monitoring queue drain rate for 30 minutes to confirm full recovery.
+Next Update: 10:15 UTC.
+```
+
+#### 3. Resolution & Incident Closure Broadcast
+```text
+INCIDENT RESOLVED: [Sev-1] Degradation on Document Ingestion Pipeline
+Time Resolved: 2026-03-14 10:10 UTC
+Total Duration: 58 minutes (09:12 - 10:10 UTC)
+Summary: Document ingestion pipeline fully operational. Backlog drained to 0. Error rate: 0.00%.
+Root Cause: Connection pool exhaustion triggered by unindexed batch query during morning scheduled refresh.
+Remediation: Connection pool enlarged, query optimized, and automated connection health-check alert deployed.
+Follow-up: Full blameless post-mortem report will be delivered within 24 hours.
+```
+
+---
+
+## Phase 4: Chronological Timeline Reconstruction
+
+Every incident requires a single, synchronized timeline maintained in the shared incident channel. "Random" bugs almost always collapse into clear causal sequences once timestamps are aligned.
+
+| Timestamp (UTC) | Source / Actor | Event / Observed Metric | Architectural Context |
+| :--- | :--- | :--- | :--- |
+| `2026-03-14 08:30:00` | Scheduled Cron | Weekly document corpus re-indexing initiated. | Ingested 1.2M chunks instead of typical 35k delta. |
+| `2026-03-14 08:45:12` | Datadog Alert | `pgvector` memory consumption crossed 85% threshold. | Vector index build saturated container RAM. |
+| `2026-03-14 09:02:18` | Ingress Gateway | P99 latency on `/v1/query` spiked from 240ms to 4,800ms. | Database locks blocked incoming read transactions. |
+| `2026-03-14 09:12:00` | Customer Lead | Outage declared; customer support team reported blank UI widgets. | Sev-1 bridge opened. |
+| `2026-03-14 09:25:00` | FDE On-Call | Re-indexing job terminated; read-only replica promoted for search traffic. | Mitigation deployed. |
+| `2026-03-14 09:40:00` | Metrics Check | Latency recovered to 215ms; zero 5xx errors recorded. | System stabilized. |
+
+---
+
+## Phase 5: Request Path Binary Search & Boundary Probing
+
+Deployments fail in stages. Binary search the end-to-end request topology: ingress proxy -> auth gateway -> rate limiter -> orchestrator -> vector store -> LLM endpoint -> response formatter -> downstream sink.
+
+```mermaid
+graph LR
+    Client -->|Step 1: TLS / DNS| Ingress[Ingress Gateway]
+    Ingress -->|Step 2: W3C Trace| Auth[Auth / Rate Limiter]
+    Auth -->|Step 3: Schema Validate| App[Orchestrator Engine]
+    App -->|Step 4: Embedding / ANN| VectorDB[(Vector Store)]
+    App -->|Step 5: Token Streaming| ModelAPI[LLM Provider API]
+    App -->|Step 6: PII / Format| Client
+```
+
+### High-Resolution Network Boundary Diagnostic Playbook
+To pinpoint whether latency or errors originate in network transit, TLS negotiation, or server-side execution, use curl with an explicit timing template.
+
+```bash
+# 1. Create a curl timing format file
+cat << 'EOF' > /tmp/curl-format.txt
+    time_namelookup:  %{time_namelookup}s\n
+       time_connect:  %{time_connect}s\n
+    time_appconnect:  %{time_appconnect}s\n
+   time_pretransfer:  %{time_pretransfer}s\n
+      time_redirect:  %{time_redirect}s\n
+ time_starttransfer:  %{time_starttransfer}s (TTFB)\n
+                    ----------\n
+         time_total:  %{time_total}s\n
+EOF
+
+# 2. Execute high-resolution trace probe
+curl -w "@/tmp/curl-format.txt" -o /dev/null -s \
+  -X POST "https://api.enterprise.customer.com/v1/chat/completions" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ${CUSTOMER_API_KEY}" \
+  -H "traceparent: 00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01" \
+  -d '{"model":"claude-3-5-sonnet","messages":[{"role":"user","content":"healthcheck"}]}'
+```
+
+#### Interpreting Diagnostic Output:
+- **`time_namelookup > 0.5s`**: DNS resolution delay or misconfigured upstream VPC nameserver.
+- **`time_connect > 1.0s`**: TCP handshake bottleneck, firewall SYN packet dropping, or MTU blackholing.
+- **`time_appconnect > 1.5s`**: TLS certificate verification hang or enterprise deep packet inspection (DPI) proxy stall.
+- **`time_starttransfer > 5.0s`**: Upstream model processing latency, vector DB index lock, or connection pool exhaustion.
+
+---
+
+## Phase 6: The Probabilistic LLM Quality Debug Loop
+
+Unlike traditional microservices that crash with stack traces, AI applications degrade probabilistically. A quality regression must be debugged with the same rigor as a deterministic code regression.
+
+```mermaid
+flowchart TD
+    A[Quality Regression Reported] --> B[Step 1: Extract 20 Failing Request-Response Pairs]
+    B --> C[Step 2: Classify Failure Taxonomy]
+    C --> D{Error Category}
+    D -->|Retrieval Failure| E[Audit Chunk Top-K & Cosine Scores]
+    D -->|Lost in Middle| F[Context Window Bisection]
+    D -->|Schema Drift| G[Run Pydantic Self-Healing Validator]
+    D -->|Model Reasoning| H[Pin Model Snapshot & Temperature 0.0]
+    E --> I[Step 3: Reproduce in Golden Eval Harness]
+    F --> I
+    G --> I
+    H --> I
+    I --> J[Step 4: Verify Fix Against Baseline Benchmark]
+```
+
+### Deterministic Context Bisection Protocol
+When an LLM suddenly hallucinates or refuses responses on large multi-document prompts, locate the toxic chunk or prompt contamination using binary context bisection:
+
+```python
+# context_bisect.py - Deterministic Context Bisection Tool
+from typing import List, Callable
+
+def bisect_failing_context(
+    system_prompt: str,
+    chunks: List[str],
+    eval_fn: Callable[[str, List[str]], bool]
+) -> List[str]:
+    """
+    Locates the minimal set of context chunks triggering model failure.
+    eval_fn returns True if prompt succeeds, False if failure reproduces.
+    """
+    if eval_fn(system_prompt, chunks):
+        print("[+] Full context passes. Defect is non-reproducible or intermittent.")
+        return []
+
+    low = 0
+    high = len(chunks)
+    culprits = []
+
+    print(f"[*] Starting bisection across {len(chunks)} context chunks...")
+    
+    # Test individual halves
+    mid = len(chunks) // 2
+    left_half = chunks[:mid]
+    right_half = chunks[mid:]
+
+    if not eval_fn(system_prompt, left_half):
+        print(f"[!] Defect reproduced in first half (chunks 0..{mid}). Bisections continue...")
+        return bisect_failing_context(system_prompt, left_half, eval_fn)
+    elif not eval_fn(system_prompt, right_half):
+        print(f"[!] Defect reproduced in second half (chunks {mid}..{len(chunks)}). Bisections continue...")
+        return bisect_failing_context(system_prompt, right_half, eval_fn)
+    else:
+        print("[!] Multi-chunk interaction detected: defect requires chunks from both partitions.")
+        return chunks
+```
+
+### Integration with Reference Golden Evaluation Harness
+Never deploy a prompt or retrieval fix to a customer environment without proving zero-regression across the golden dataset. Run our verified reference evaluation suite:
+
+```bash
+python portfolio/reference-project/evals/run_evals.py
+```
+*Acceptance gate*: 100% accuracy on category/severity classification, 100% citation grounding, zero hallucinated policy assertions.
+
+---
+
+## Phase 7: Blameless Post-Mortem & Preventative Defenses
+
+The post-mortem is a permanent customer trust asset. A customer who receives an honest, rigorous engineering post-mortem within 24 hours of an outage trusts the partnership more than before the incident.
+
+### The Five Whys Root Cause Protocol
+1. **Why did the extraction API fail?** The worker pods were terminated by the Kubernetes OOM-killer.
+2. **Why were the pods OOM-killed?** Memory usage spiked past 4GB per pod processing a 12,000-page loan portfolio.
+3. **Why did the pod attempt to process 12,000 pages at once?** The customer webhook batch payload contained no file size or page-count limits.
+4. **Why did our service accept an unbounded payload?** The ingress validation layer relied on client-side constraints rather than server-side gateway bounds.
+5. **Why were gateway payload bounds absent?** The initial integration spec omitted payload streaming and memory budgeting invariants.
+
+### Production Defensive Modules in Field Guide Codebase
+Every post-mortem action item should map directly to hardened, tested software patterns. Cross-reference our repository implementations:
+- **Backoff & Circuit Breaking**: [`interviews/code/resilient_client.py`](../interviews/code/resilient_client.py)
+- **Idempotency & Replay Protection**: [`interviews/code/webhook_receiver.py`](../interviews/code/webhook_receiver.py)
+- **Token Bucket Rate Limiting**: [`interviews/code/rate_limiter.py`](../interviews/code/rate_limiter.py)
+- **Self-Healing Structured Data Extraction**: [`interviews/code/structured_extractor.py`](../interviews/code/structured_extractor.py)
+- **Context-Aware Semantic Chunking**: [`interviews/code/chunker.py`](../interviews/code/chunker.py)
+- **Dirty Data Cleaning & Validation Runner**: [`interviews/code/vibe_coding_runner.py`](../interviews/code/vibe_coding_runner.py)
+
+---
+
+## Related Documents
+
+- [Debugging Customer Systems](02-debugging-customer-systems.md) - Operating inside customer environments without direct console or database access.
+- [Common Failure Modes](03-common-failure-modes.md) - Catalog of real-world enterprise outage patterns, diagnostic commands, and remediation recipes.
+- [Production Readiness Checklist](../deployment/03-production-readiness-checklist.md) - Pre-flight verification gates to pass before go-live.
+- [Evaluation and Testing](../ai/03-evaluation-and-testing.md) - Building deterministic regression test suites for probabilistic models.
+- [Managing Expectations](../customer/04-managing-expectations.md) - Managing executive stakeholders during mission-critical production incidents.
+
+---
+
+## Primary Practitioner References
+
+1. **Google Site Reliability Engineering**: *Managing Incidents* (Chapter 14) and *Postmortem Culture: Learning from Failure* (Chapter 15). [sre.google/sre-book/incident-management](https://sre.google/sre-book/incident-management/)
+2. **PagerDuty Incident Response Documentation**: *Incident Commander Principles & Communication Protocols*. [response.pagerduty.com](https://response.pagerduty.com/)
+3. **W3C Distributed Tracing Specification**: *W3C Recommendation for Trace Context and `traceparent` Header Propagation*. [w3.org/TR/trace-context](https://www.w3.org/TR/trace-context/)
+4. **Marc Brooker (AWS VP/Distinguished Engineer)**: *Defensive Distributed Systems and Retries*. [brooker.co.za/blog](https://brooker.co.za/blog/)
+5. **Om Bharatiya & Nehal Vyas**: *Forward Deployed Engineering Field Practices and Production System Triage*.
