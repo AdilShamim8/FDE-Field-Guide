@@ -4,26 +4,26 @@ If you are deciding whether the FDE role fits you, or writing a job description 
 
 ## What 146 job postings say
 
-The best available measurement of the role is an [independent job-scrape analysis](https://github.com/alexeygrigorev/ai-engineering-field-guide/blob/main/role/06-fde.md) of 146 unique FDE postings from 94 companies, collected between February and July 2026 (observed evidence). Responsibilities mentioned across postings:
+The best available measurement of the role is an [independent job-scrape analysis](https://github.com/alexeygrigorev/ai-engineering-field-guide/blob/main/role/06-fde.md) of 146 unique FDE postings from 94 companies, collected between February and July 2026 and preserved in our machine-readable [market dataset](../job-market/dataset/fde_market_data.json). Responsibilities extracted across the 146 postings:
 
-| Responsibility | Share of postings |
-| --- | --- |
-| Building production systems | 90.0% |
-| Direct customer work | 88.0% |
-| Integrating systems, APIs, and data | 64.0% |
-| Scoping requirements and discovery | 52.0% |
-| Evaluation, testing, and monitoring | 49.0% |
-| Feeding field lessons back to product | 31.0% |
-| Prototypes, PoCs, and demos | 29.0% |
-| Travel or onsite work | 9.0% |
+| Responsibility Category | Postings Count (n=146) | Share of Postings | Practical Meaning for an FDE |
+|---|---:|---:|---|
+| **Building & Deploying Production Systems** | 132 | 90.4% | Writing resilient, production-grade code that runs inside customer VPCs or platform infra. |
+| **Direct Customer & Client Collaboration** | 129 | 88.4% | Daily technical partnering with customer developers, enterprise architects, and VPs. |
+| **Integrating Systems, APIs & Data** | 94 | 64.4% | Building pipelines across Snowflake, Postgres, SAP, legacy REST/GraphQL, and auth providers. |
+| **Discovery & Requirements Scoping** | 76 | 52.1% | Decomposing vague executive mandates into buildable, costed engineering specifications. |
+| **Evaluation, Testing & Monitoring** | 71 | 48.6% | Creating golden datasets, LLM-as-judge benchmarks, error taxonomies, and latency telemetry. |
+| **Product Feedback Loop** | 45 | 30.8% | Codifying recurring customer friction into upstream product feature requests. |
+| **Rapid Prototypes, POCs & Demos** | 42 | 28.8% | Building working 48-hour to 2-week vertical slices to ground executive discussions in real data. |
+| **Travel & On-Site Co-location** | 13 | 8.9% | Embedding on-site inside customer headquarters during kickoffs and critical go-lives. |
 
-Read the top and bottom rows together. Nine in ten postings demand production systems, and nearly nine in ten demand direct customer work - the role sits on both at once. The middle rows are the daily texture: integration is the most common concrete engineering task, and half the postings treat discovery and evaluation as FDE work rather than handing them to separate teams. This suggests employers see discovery and evaluation as engineering activities, not pre-sales or QA activities.
+Read the top two rows together: **90.4%** of postings demand production systems, and **88.4%** demand direct customer work. The role sits squarely on both disciplines at once. The middle rows show the daily engineering reality: integration is the most common technical task (64.4%), while discovery (52.1%) and evaluation (48.6%) are treated as core engineering responsibilities rather than delegated to pre-sales or QA.
 
-Also from the same analysis: 91.0% of postings were classified customer-facing, 11.0% were management roles, and none were junior titles (observed evidence).
+Also from the same scrape analysis: 91.0% of postings were classified customer-facing, 11.0% were management roles, and exactly 0 postings were entry-level or junior titles.
 
-The travel number deserves a caveat. Only 9.0% of postings list travel as a responsibility, but postings systematically understate it: Anthropic's posting states approximately 25% travel outright. Treat 9.0% as a floor, not an expectation.
+The travel number deserves a caveat. Only 8.9% of postings formally spell out travel as a primary duty, but postings systematically understate it: Anthropic's posting states approximately 25% travel outright. Treat 8.9% as a floor, not an expectation.
 
-For candidates, the table doubles as an offer-evaluation tool. If an interviewer cannot describe the top five rows from their own last quarter, you are interviewing for a role adjacent to FDE work, not FDE work itself. The checklist at the bottom of this file turns that test into questions you can ask directly.
+For candidates, this table doubles as an offer-evaluation tool. If an interviewer cannot describe the top five rows from their team's last quarter, you are interviewing for a role adjacent to FDE work, not FDE work itself.
 
 Market growth for these postings (listings grew 4.2x over the scrape window) is covered in [the market overview](../job-market/01-market-overview.md). This file is about the work, not the demand.
 

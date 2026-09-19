@@ -6,6 +6,7 @@ this section move fast; each one carries the month it was sourced.
 - [Market overview](01-market-overview.md) - growth data, employers, and role variants
 - [Compensation](02-compensation.md) - sourced 2025-2026 figures and how to read them
 - [Getting hired](03-getting-hired.md) - titles to search, signals that matter, positioning
+- [Empirical market dataset](dataset/README.md) - machine-readable monthly scrape trajectories, top employer counts, and verified benchmarks
 
 Method note: FDE hiring data comes from job-market analyses (Lightcast via Fortune,
 Indeed via Business Insider) and an independent scrape of 146 FDE postings published in

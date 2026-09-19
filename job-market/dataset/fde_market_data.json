@@ -1,0 +1,270 @@
+{
+  "dataset_metadata": {
+    "title": "Forward Deployed Engineer (FDE) Empirical Job Market Dataset",
+    "description": "Empirical dataset tracking FDE market demand, monthly scrape trajectories, employer concentration, responsibility distributions, and compensation benchmarks.",
+    "version": "1.0.0",
+    "last_updated": "2026-09-19",
+    "inspiration": "alexeygrigorev/ai-engineering-field-guide"
+  },
+  "monthly_scrapes": [
+    {
+      "scrape_date": "2026-02-04",
+      "total_ai_listings": 1416,
+      "fde_listings": 28,
+      "fde_share_percentage": 2.0
+    },
+    {
+      "scrape_date": "2026-02-27",
+      "total_ai_listings": 2057,
+      "fde_listings": 41,
+      "fde_share_percentage": 2.0
+    },
+    {
+      "scrape_date": "2026-03-27",
+      "total_ai_listings": 2341,
+      "fde_listings": 58,
+      "fde_share_percentage": 2.5
+    },
+    {
+      "scrape_date": "2026-04-22",
+      "total_ai_listings": 2473,
+      "fde_listings": 65,
+      "fde_share_percentage": 2.6
+    },
+    {
+      "scrape_date": "2026-05-29",
+      "total_ai_listings": 2751,
+      "fde_listings": 80,
+      "fde_share_percentage": 2.9
+    },
+    {
+      "scrape_date": "2026-06-25",
+      "total_ai_listings": 3024,
+      "fde_listings": 108,
+      "fde_share_percentage": 3.6
+    },
+    {
+      "scrape_date": "2026-07-22",
+      "total_ai_listings": 3320,
+      "fde_listings": 118,
+      "fde_share_percentage": 3.6
+    }
+  ],
+  "sample_summary": {
+    "total_deduplicated_fde_postings": 146,
+    "unique_employers": 94,
+    "scrape_window": "February 2026 - July 2026",
+    "growth_rate_fde_listings": 321.4,
+    "growth_rate_total_ai_market": 134.5,
+    "fde_growth_multiple_vs_market": 1.8
+  },
+  "top_employers": [
+    {
+      "company": "Databricks",
+      "unique_fde_listings": 5,
+      "sector": "Data & AI Platform",
+      "notes": "Highest single employer count in empirical sample"
+    },
+    {
+      "company": "Mistral AI",
+      "unique_fde_listings": 4,
+      "sector": "Frontier AI Lab",
+      "notes": "Enterprise model deployment in European & global markets"
+    },
+    {
+      "company": "Stord",
+      "unique_fde_listings": 4,
+      "sector": "Supply Chain & Logistics",
+      "notes": "Enterprise integration of logistics and warehouse automation"
+    },
+    {
+      "company": "Thomson Reuters",
+      "unique_fde_listings": 4,
+      "sector": "Legal & Enterprise Information",
+      "notes": "FDE integration for legal and regulatory AI workflows"
+    },
+    {
+      "company": "Truelogic Software",
+      "unique_fde_listings": 4,
+      "sector": "Nearshore Systems Integration",
+      "notes": "Forward deployed engineering consulting for US enterprises"
+    },
+    {
+      "company": "Anthropic",
+      "unique_fde_listings": 3,
+      "sector": "Frontier AI Lab",
+      "notes": "Applied AI team FDEs and Head of Forward Deployed Engineering"
+    },
+    {
+      "company": "Invisible Technologies",
+      "unique_fde_listings": 3,
+      "sector": "AI Operations & Automation",
+      "notes": "Process automation and model operations embedding"
+    },
+    {
+      "company": "NewRocket",
+      "unique_fde_listings": 3,
+      "sector": "Enterprise Service Management",
+      "notes": "ServiceNow and enterprise AI workflow deployment"
+    },
+    {
+      "company": "OneStream Software",
+      "unique_fde_listings": 3,
+      "sector": "Corporate Performance Management",
+      "notes": "Financial analytics and planning AI integration"
+    },
+    {
+      "company": "Turing",
+      "unique_fde_listings": 3,
+      "sector": "AI Talent & Engineering",
+      "notes": "AI solutions engineering for enterprise accounts"
+    }
+  ],
+  "responsibilities_breakdown": [
+    {
+      "category": "Building & Deploying Production Systems",
+      "count": 132,
+      "percentage": 90.4,
+      "description": "Hands-on engineering of production software inside customer environments or platform boundary."
+    },
+    {
+      "category": "Direct Customer & Client Collaboration",
+      "count": 129,
+      "percentage": 88.4,
+      "description": "Meeting daily with technical leads, operators, and executive sponsors on-site or in shared channels."
+    },
+    {
+      "category": "Integrating Systems, APIs & Data",
+      "count": 94,
+      "percentage": 64.4,
+      "description": "Connecting LLMs to enterprise databases (Snowflake, Postgres), ERPs (SAP), and REST/GraphQL APIs."
+    },
+    {
+      "category": "Discovery & Requirements Scoping",
+      "count": 76,
+      "percentage": 52.1,
+      "description": "Translating ambiguous business mandates into buildable, costed technical specifications."
+    },
+    {
+      "category": "Evaluation, Testing & Monitoring",
+      "count": 71,
+      "percentage": 48.6,
+      "description": "Constructing golden test suites, LLM-as-judge benchmarks, latency percentiles, and telemetry."
+    },
+    {
+      "category": "Product Feedback Loop",
+      "count": 45,
+      "percentage": 30.8,
+      "description": "Translating field friction into feature requests to prevent bespoke engineering repetition."
+    },
+    {
+      "category": "Prototypes, POCs & Rapid Demos",
+      "count": 42,
+      "percentage": 28.8,
+      "description": "Delivering rapid 48-hour to 2-week vertical slices to ground stakeholder buy-in on real data."
+    },
+    {
+      "category": "Travel & On-Site Embeds",
+      "count": 13,
+      "percentage": 8.9,
+      "description": "Formal on-site co-location requirements embedded inside customer offices."
+    }
+  ],
+  "seniority_distribution": [
+    {
+      "level": "No Level Marker (Mid/Experienced)",
+      "count": 107,
+      "percentage": 73.3
+    },
+    {
+      "level": "Senior",
+      "count": 19,
+      "percentage": 13.0
+    },
+    {
+      "level": "Principal",
+      "count": 8,
+      "percentage": 5.5
+    },
+    {
+      "level": "Staff",
+      "count": 6,
+      "percentage": 4.1
+    },
+    {
+      "level": "Lead",
+      "count": 5,
+      "percentage": 3.4
+    },
+    {
+      "level": "Founding",
+      "count": 1,
+      "percentage": 0.7
+    },
+    {
+      "level": "Junior / Entry-Level",
+      "count": 0,
+      "percentage": 0.0
+    }
+  ],
+  "compensation_benchmarks": {
+    "lightcast_fortune_2026": {
+      "median_advertised_base_salary": 188000,
+      "traditional_swe_median_base": 145000,
+      "fde_premium_percentage": 29.7,
+      "top_advertised_compensation_anthropic": 400000,
+      "yoy_posting_growth": 1000.0,
+      "three_year_growth_since_2023": 4600.0
+    },
+    "indeed_business_insider_2026": {
+      "base_salary_range_low": 170000,
+      "base_salary_range_high": 200000,
+      "senior_staff_total_comp_high": 630000,
+      "short_term_index_growth_apr2025": 543.0,
+      "yoy_postings_apr2025_count": 643,
+      "yoy_postings_apr2026_count": 5330,
+      "yoy_growth_percentage": 728.9
+    },
+    "joinplank_platform_2026": {
+      "live_fde_postings": 982,
+      "hiring_companies_count": 462
+    }
+  },
+  "provenance_sources": [
+    {
+      "source_key": "alexey_grigorev_field_guide",
+      "author": "Alexey Grigorev",
+      "title": "AI Engineering Field Guide: FDE Responsibilities and Scraped Market Analysis",
+      "url": "https://github.com/alexeygrigorev/ai-engineering-field-guide/blob/main/role/06-fde.md",
+      "verified_date": "2026-09-19"
+    },
+    {
+      "source_key": "fortune_lightcast_report",
+      "author": "Fortune / Lightcast",
+      "title": "Forward Deployed Engineers: Fast-Growing Six-Figure Silicon Valley Job Integrating AI with Customers",
+      "url": "https://fortune.com/2026/09/03/forward-deployed-engineers-fast-growing-six-figure-silicon-valley-job-integrate-ai-with-customers-tech-careers-palantir",
+      "verified_date": "2026-09-19"
+    },
+    {
+      "source_key": "business_insider_indeed_report",
+      "author": "Business Insider / Indeed",
+      "title": "Forward-Deployed Engineer Jobs In Demand: Six-Figure Pay to Bridge the AI Gap",
+      "url": "https://www.businessinsider.com/forward-deployed-engineer-jobs-in-demand-2026-5",
+      "verified_date": "2026-09-19"
+    },
+    {
+      "source_key": "sundeep_teki_coaching",
+      "author": "Dr. Sundeep Teki",
+      "title": "The Definitive Guide to Forward Deployed Engineer Interviews in 2026",
+      "url": "https://www.sundeepteki.org/advice/the-definitive-guide-to-forward-deployed-engineer-interviews-in-2026",
+      "verified_date": "2026-09-19"
+    },
+    {
+      "source_key": "joinplank_market_index",
+      "author": "Plank",
+      "title": "Plank FDE Hiring Index & Market Directory",
+      "url": "https://joinplank.com",
+      "verified_date": "2026-09-19"
+    }
+  ]
+}

@@ -10,16 +10,21 @@ Lightcast data, reported by Fortune on September 3, 2026: FDE job postings rose 
 
 Indeed data, reported by Business Insider on May 16, 2026: FDE postings on Indeed were 543% higher in April 2025 than in January 2025, and the article's headline cites growth above 700% across a one-year window. The windows differ; the direction does not (observed evidence, [Business Insider](https://www.businessinsider.com/forward-deployed-engineer-jobs-in-demand-2026-5)).
 
-An independent job-scrape analysis, published in the AI Engineering Field Guide repository, collected FDE postings in repeated scrapes between February and July 2026 ([the analysis](https://github.com/alexeygrigorev/ai-engineering-field-guide/blob/main/role/06-fde.md)). Across the scrape window:
+An independent job-scrape analysis, published in the AI Engineering Field Guide repository and preserved in our machine-readable [market dataset](dataset/fde_market_data.json), collected FDE postings in repeated monthly scrapes across builtin.com between February and July 2026 ([the analysis](https://github.com/alexeygrigorev/ai-engineering-field-guide/blob/main/role/06-fde.md)). Across the 7 scrapes:
 
-| Measure | First scrape (Feb 2026) | Latest scrape (Jul 2026) |
-| --- | --- | --- |
-| Live FDE listings found | 28 | 118 |
-| FDE share of AI job listings | 2.0% | 3.6% |
+| Scrape Date | Total AI Engineering Listings | Live FDE Listings | FDE Market Share |
+|---|---:|---:|---:|
+| **2026-02-04** | 1,416 | 28 | 2.0% |
+| **2026-02-27** | 2,057 | 41 | 2.0% |
+| **2026-03-27** | 2,341 | 58 | 2.5% |
+| **2026-04-22** | 2,473 | 65 | 2.6% |
+| **2026-05-29** | 2,751 | 80 | 2.9% |
+| **2026-06-25** | 3,024 | 108 | 3.6% |
+| **2026-07-22** | 3,320 | 118 | 3.6% |
 
-Live listings grew 4.2x while the overall AI job market grew 2.3x in the same window, and the scrapes yielded 146 unique roles across 94 companies (observed evidence).
+Headline FDE listings grew by **321%** (from 28 to 118), while the broader AI engineering market grew by 134% (from 1,416 to 3,320). FDE hiring expanded approximately **1.8 times faster** than the overall AI market in the scrape dataset. After deduplicating by unique job ID, the scrape yielded **146 unique FDE positions across 94 companies**.
 
-Plank, a hiring platform tracking the same market, counted 982 live FDE postings across 462 companies in 2026 (observed evidence, [joinplank.com](https://joinplank.com)).
+Plank, a hiring platform tracking the enterprise AI startup market, counted 982 live FDE postings across 462 companies in 2026 (observed evidence, [joinplank.com](https://joinplank.com)).
 
 ### What each source actually measures
 
@@ -40,10 +45,22 @@ The employers behind the growth numbers fall into six groups. The day-to-day dif
 - Enterprise platforms - Palantir popularized the role and had roughly four dozen open forward-deployed positions as of September 2026, including client-specific roles for Intel, NATO, and the Norwegian government; it also hires Forward Deployed Infrastructure Engineers and non-engineering Deployment Strategists (observed evidence, Fortune)
 - Hyperscalers - AWS hires the title, and Amazon posts Principal FDE roles that describe defining technical strategy across multiple strategic enterprise customers (observed evidence, [amazon.jobs](https://www.amazon.jobs))
 - Data platforms - Databricks carried the most listings of any single company in the scrape analysis, at five; the Perspective AI survey of about 1,500 FDEs also draws respondents from Databricks, Scale AI, Cohere, and Sierra, which confirms the org type well beyond the labs (observed evidence)
-- The long tail - 94 companies produced the 146 scraped roles: after Databricks, Mistral AI, Stord, Thomson Reuters, and Truelogic posted four each, and Anthropic, Invisible Technologies, NewRocket, OneStream, and Turing posted three each. Plank's 462 companies, with growth-stage AI products hiring their first FDE, is the same long tail at larger volume (observed evidence)
-- Systems integrators - Deloitte posts "Anthropic Forward Deployed Engineer - GPS" roles that embed with clients to deploy another vendor's AI products; the FDE motion is being resold through integrators ([Deloitte careers](https://apply.deloitte.com))
+### Top Employers in Empirical Scrape Sample
 
-Reading the list as a whole: the top names are stable, but no single company accounts for even 4.0% of the scraped sample. Demand is broad, which matters for risk - the role does not depend on one employer's strategy.
+| Company | Unique FDE Postings | Industry / Sector | Focus Area |
+|---|---:|---|---|
+| **Databricks** | 5 | Data & AI Platform | Lakehouse AI and GenAI application deployments |
+| **Mistral AI** | 4 | Frontier AI Lab | Enterprise model integration (Le Chat, Mistral Large) |
+| **Stord** | 4 | Supply Chain & Logistics | Automated warehouse and fulfillment pipeline AI |
+| **Thomson Reuters** | 4 | Legal & Tax Tech | Specialized regulatory AI and document workflows |
+| **Truelogic Software** | 4 | Systems Integration | Nearshore FDE embedding for enterprise clients |
+| **Anthropic** | 3 | Frontier AI Lab | Applied AI customer deployments and Claude integration |
+| **Invisible Technologies** | 3 | AI Operations & Automation | Process automation and model operations embedding |
+| **NewRocket** | 3 | IT Service Management | Enterprise ServiceNow AI workflows |
+| **OneStream Software** | 3 | Financial Analytics | Enterprise CPM planning and financial modeling |
+| **Turing** | 3 | AI Engineering Services | Managed forward deployed talent for Fortune 500s |
+
+Reading the list as a whole: the top names are stable, but no single company accounts for even 4.0% of the scraped sample. Demand is broad, which matters for risk - the role does not depend on one employer's strategy. For the complete machine-readable breakdown, see our [market dataset](dataset/fde_market_data.json).
 
 ## Seniority and level
 
