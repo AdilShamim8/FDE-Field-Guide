@@ -1,158 +1,212 @@
-# Common Failure Modes
+# Common Enterprise Failure Modes and Field Troubleshooting
 
-For FDEs operating customer-facing deployments and for engineers on call for them. This
-is a short catalog of the failures that recur across engagements, each with the tell
-(how it presents), the cause, and the fix or prevention. Reading it costs twenty
-minutes; recognizing one of these in production saves days. The catalog is practitioner
-knowledge (industry pattern tier), not measured frequencies - base rates vary by
-industry and stack.
+This guide is an operational field catalog of the recurring failure modes that strike enterprise customer deployments, forward deployed engineering integrations, and on-call rotations. In customer environments, failures rarely present as clean stack traces; they manifest as silent data drops, intermittent latency spikes, quota exhaustion, and subtle model hallucinations.
 
-## The catalog
+For each failure mode, this catalog documents:
+- **The Tell**: How the failure manifests in telemetry and user symptoms.
+- **The Root Cause**: The underlying architectural mechanism.
+- **The Immediate Containment**: How to stop customer bleeding within 15 minutes.
+- **The Permanent Remediation (Prevention)**: The architectural invariant to eliminate the failure class permanently.
+- **Runnable Implementation**: Direct cross-reference to production patterns in [`interviews/code/`](../interviews/code/).
 
-### Data failures
+---
 
-- Stale corpus - the tell is answers that reference old reality: last quarter's prices,
-  retired policies, departed people. The cause is a refresh job that stopped, slowed, or
-  silently shrank. The fix is a freshness check on the maximum source timestamp, with an
-  alarm tied to the expected cadence; the pipeline-side design is in
-  [data pipelines](../engineering/03-data-pipelines.md).
-- Upstream schema drift - the tell is fields that are suddenly empty, or a metric that
-  drops to zero overnight with no deploy. The cause is a column renamed, retyped, or
-  moved upstream with no notice. The fix is schema validation at ingestion that rejects
-  and alerts, plus a scheduled check against the live source schema.
-- Duplicate ingestion - the tell is inflated metrics, or the assistant giving the same
-  answer twice on one page. The cause is a batch loaded twice, usually after a rerun
-  without idempotency. The fix is idempotent loads keyed on batch or event ID, plus a
-  row-count delta alarm that catches sudden jumps.
-- Encoding and timezone corruption - the tell is timestamps off by a fixed number of
-  hours, or joins that silently miss. The cause is mixed UTC and local times, or
-  encoding remnants that make `"gold "` and `"gold"` different join keys. The fix is
-  store UTC and convert at display, validate encodings at the boundary, and test joins
-  against known rows.
+## 1. Data and Pipeline Failures
 
-### Integration failures
+---
 
-- Expired credentials and quotas - the tell is intermittent 401s or 429s that cluster at
-  busy hours or after weekends. The cause is a token lifetime nobody calendared, or a
-  quota the workload outgrew. The fix is rotation tested until it is a non-event, plus
-  client-side pacing against the granted quota.
-- Webhook silence - the tell is a queue that starves with no error anywhere. The cause
-  is delivery that is best-effort on their side and unmonitored on yours. The fix is a
-  reconciliation poll that measures webhook lag, and an alarm when lag exceeds the
-  window.
-- Pagination truncation - the tell is results that quietly stop early, with everything
-  looking healthy at half the volume. The cause is a cursor treated as an offset, or a
-  page limit assumed instead of read from the response. The fix is a boundary test that
-  walks every page until the API says stop, run on a schedule.
-- Staging-versus-production confusion - the tell is a fix that works in testing and
-  changes nothing in production, or a resource "missing" that everyone can see. The
-  cause is config pointing at the wrong tenant, environment, or region. The fix is the
-  environment stamped into every log line, and per-environment credentials so the wrong
-  tenant fails loudly.
+### Failure 1.1: Silent UTF-8 BOM & Non-Standard Currency Corruption
+- **The Tell**: Daily batch ingestion drops 3% of records without a fatal crash, or financial totals in downstream data warehouses disagree with the source ERP export.
+- **The Root Cause**: Upstream legacy systems (e.g. SAP, on-premise Windows servers, or Excel exports) prepend a Byte Order Mark (`\xef\xbb\xbf`) to CSV exports and format monetary figures using European comma decimals (`€1.450,50`) or trailing currency codes (`"450.00 USD"`). Standard parsers silently truncate or choke on numeric conversions.
+- **The Immediate Containment**: Deploy a hotfix parser that inspects byte prefixes for `\xef\xbb\xbf`, decodes with `utf-8-sig` fallback, and strips non-numeric characters using regex before float conversion.
+- **The Permanent Remediation**: Implement an auditable `ParseReport` and defect ledger. Zero unhandled exceptions; every dropped or repaired row is recorded with exact line numbers and reasons.
+- **Runnable Reference**: See [`interviews/code/parser.py`](../interviews/code/parser.py) and [`interviews/code/vibe_coding_runner.py`](../interviews/code/vibe_coding_runner.py).
 
-### LLM failures
+---
 
-- Retrieval misses - the tell is the model being confidently, fluently wrong, and right
-  again when the answer is pasted into the prompt. The cause is the context: chunks
-  missing, stale, ranked badly, or crowded out. The fix is debugging retrieval first,
-  separately from the model; the model is usually the last suspect.
-- Format regressions after prompt edits - the tell is a parser failure spike hours after
-  a prompt change. The cause is an edit that fixed one example and broke the output
-  contract. The fix is evals in CI: no prompt reaches production without a golden-set
-  run; the eval design is in [evaluation and testing](../ai/03-evaluation-and-testing.md).
-- Provider model silent upgrade - the tell is quality that shifts with no deploy, no
-  config change, and no data change. The cause is the provider changing the served model
-  version behind the same endpoint. The fix is version pinning where offered, a
-  changelog subscription, and a scheduled eval run that catches drift independently of
-  your own release cadence; provider release notes live at
-  [Anthropic documentation](https://docs.anthropic.com) and
-  [OpenAI documentation](https://platform.openai.com/docs).
-- Context overflow after data growth - the tell is failures that start when the
-  customer's data grows past a threshold, or answers that degrade as conversation
-  history lengthens. The cause is a context window treated as infinite during the pilot.
-  The fix is token budgets with written truncation rules, and an alarm on p99 prompt
-  size before it reaches the limit.
-- Prompt injection surfacing as weird answers - the tell is responses that follow
-  instructions no user gave, usually traceable to retrieved content. The cause is
-  untrusted text treated as instructions. The fix is architectural: treat retrieved
-  content as data, never as directions; the review-facing guidance is in
-  [security and compliance](../engineering/05-security-and-compliance.md).
+### Failure 1.2: Upstream Schema Drift & Silent Field Dropping
+- **The Tell**: Critical downstream models begin producing degraded outputs, or extraction confidence scores drop to zero overnight with zero deployments on your side.
+- **The Root Cause**: A customer data engineering team renamed a column in their export (e.g. `customer_id` became `client_account_number`) or altered data types from integer to string without notifying integration partners.
+- **The Immediate Containment**: Enable strict ingress schema validation that rejects modified batches into a dead-letter quarantine and alerts on-call operators, preventing corrupted data from entering vector stores or databases.
+- **The Permanent Remediation**: Implement automated schema contract assertions on every scheduled batch run and establish row-count and null-percentage delta alarms in Datadog or CloudWatch.
+- **Runnable Reference**: See [`interviews/code/structured_extractor.py`](../interviews/code/structured_extractor.py).
 
-### Infrastructure failures
+---
 
-- Egress blocked by org policy - the tell is a model API call that times out only inside
-  the customer's network. The cause is a default-deny egress policy nobody mentioned,
-  because it is someone else's normal. The fix is listing every external destination
-  during architecture review, not at integration time.
-- DNS and firewall asymmetry between environments - the tell is a service that resolves
-  and connects in staging and fails in production with identical config. The cause is
-  different network rules per environment, which is normal and undocumented. The fix is
-  a connectivity probe per environment in the readiness checklist.
-- Cold-start timeouts at low traffic - the tell is the first request after an idle
-  period failing or crawling, while everything under load is fine. The cause is
-  serverless scaling meeting an impatient timeout. The fix is a warmer, a provisioned
-  floor, or latency numbers that honestly include the cold path.
-- Cost alarms firing at 3am - the tell is a budget alert rather than an outage. The
-  cause is a backfill, a retry storm, or an embedding job with no cost ceiling. The fix
-  is budgets and alerts per environment from day 1, and scheduled heavy jobs run with
-  the budget owner aware.
+### Failure 1.3: Duplicate Ingestion & Non-Idempotent Replays
+- **The Tell**: Total customer records jump 2x overnight; enterprise search assistants return identical duplicate documents with different chunk IDs.
+- **The Root Cause**: A network timeout caused an ingestion cron job or webhook worker to retry a batch without an idempotency key or content hash deduplication.
+- **The Immediate Containment**: Pause the ingestion pipeline. Run a deduplication query partitioning by `(customer_tenant_id, document_sha256_hash)` to delete duplicate records while keeping the earliest timestamped entry.
+- **The Permanent Remediation**: Enforce SHA-256 payload fingerprinting and idempotency keys at the API gateway layer, caching execution records with a 24-hour TTL in Redis.
+- **Runnable Reference**: See [`interviews/code/webhook_receiver.py`](../interviews/code/webhook_receiver.py).
 
-### Human-system failures
+---
 
-- Nobody owns the on-call - the tell is an alert firing into a void, discovered by the
-  customer before the vendor. The cause is an alerting owner left implicit at launch.
-  The fix is a named owner per component - yours until handover, theirs after - with the
-  date the baton passes written down.
-- The runbook never rehearsed - the tell is a recovery that takes four hours for a
-  four-minute procedure. The cause is a runbook written once and never executed by
-  anyone who did not author it. The fix is a rehearsal calendar: run the runbook
-  quarterly, with a different person each time.
-- The temporary manual step - the tell is an incident that only happens when one
-  specific person is on leave. The cause is a "temporary" manual step that became
-  load-bearing and undocumented. The fix is auditing for these during handover, then
-  automating or deleting them before the engagement ends.
-- The departed champion - the tell is questions that used to take one message now taking
-  a week. The cause is the one person who knew the pipeline leaving with the knowledge
-  in their head. The fix is writing decisions down while they are being made, and
-  keeping the data inventory and runbooks current enough that no single departure is an
-  outage.
+### Failure 1.4: Stale Vector Index & Grounding Drift
+- **The Tell**: The AI assistant quotes retired policies, superseded pricing tiers, or departed executives, despite documents having been updated in SharePoint or Confluence.
+- **The Root Cause**: The vector database ingestion job stalled, silent permissions changes blocked the service account from crawling new folders, or embedding recalculation was skipped due to API cost limits.
+- **The Immediate Containment**: Pin user sessions to strict dual-citation fallback mode. If a response relies on chunks older than the configured freshness window, route to a human specialist.
+- **The Permanent Remediation**: Deploy an automated background freshness canary that runs hourly synthetic queries with known ground-truth dates, alerting when max source timestamp lag exceeds 24 hours.
 
-## The meta-fixes
+---
 
-Four permanent defenses prevent most of the catalog. Install them during the
-prototype-to-production crossing, not after the first incident
-([prototype to production](../deployment/01-prototype-to-production.md)):
+## 2. Integration, Network, and Quota Failures
 
-1. Evals in CI - catches format regressions, provider drift, and retrieval misses before
-   customers do, and turns "quality feels off" into a diff
-2. Freshness checks - catches the stale corpus and most silent data failures at the
-   pipeline layer, where they are cheap
-3. Boundary logging - catches schema drift, webhook silence, pagination truncation, and
-   every cross-organization dispute, because the evidence of what crossed the boundary
-   is already on disk
-4. Named ownership - catches the on-call void, the unrehearsed runbook, and the manual
-   step, because every component having a person turns the rest of the catalog into a
-   checklist instead of archaeology
+---
 
-We recommend treating these four as the minimum production bar for any customer-facing
-deployment: each is cheap to install and pays for itself the first time it fires.
+### Failure 2.1: Token Cache Expiry Thundering Herd (Top-of-Hour 504s)
+- **The Tell**: Customer authentication endpoints experience sharp 50x request volume spikes and HTTP 504 Gateway Timeouts at minute `:00` of every hour, while remaining quiet at minute `:30`.
+- **The Root Cause**: Hundreds of distributed worker pods cache OAuth / JWT bearer tokens with a fixed 3,600-second (60-minute) TTL without jitter. All tokens expire simultaneously at top-of-hour, unleashing a synchronized wave of re-authentication requests.
+- **The Immediate Containment**: Increase the auth service instance count and connection pool limits temporarily to absorb the wave.
+- **The Permanent Remediation**: Inject randomized uniform jitter into token cache lifetimes:  
+  $$\text{TTL}_{\text{effective}} = \text{TTL}_{\text{base}} - \text{uniform}(300, 600) \text{ seconds}$$  
+  This spreads token renewals uniformly across a 10-minute window, eliminating peak synchronization.
+- **Runnable Reference**: See [`interviews/code/resilient_client.py`](../interviews/code/resilient_client.py).
 
-## Related documents
+---
 
-- [A debugging methodology](01-debugging-methodology.md) - the method that turns a
-  recognized failure into a confirmed cause and fix
-- [Debugging customer systems](02-debugging-customer-systems.md) - what half of these
-  look like from inside someone else's process
-- [Data pipelines](../engineering/03-data-pipelines.md) - the ingestion and validation
-  design that prevents the data failures
-- [Evaluation and testing](../ai/03-evaluation-and-testing.md) - the eval practice
-  behind the LLM defenses
-- [Prototype to production](../deployment/01-prototype-to-production.md) - the crossing
-  where the four meta-fixes get installed
+### Failure 2.2: HTTP 429 Rate-Limit Thundering Herd Waves
+- **The Tell**: Client calls to an upstream LLM API encounter HTTP 429 (Too Many Requests), followed by repeated waves of 429s every 10 seconds.
+- **The Root Cause**: Distributed worker threads execute naive fixed-interval retry loops or standard exponential backoff without randomized jitter, causing retrying clients to hit the rate-limited gateway in lockstep waves.
+- **The Immediate Containment**: Throttle client worker concurrency and configure client-side token-bucket rate limiters to cap outbound request rates below the upstream quota.
+- **The Permanent Remediation**: Implement **Full Jitter Exponential Backoff** (Marc Brooker, AWS Architecture):  
+  $$\text{Sleep} = \text{uniform}(0, \min(\text{MaxDelay}, \text{BaseDelay} \times 2^{\text{attempt}}))$$  
+  Respect upstream `Retry-After` headers deterministically.
+- **Runnable Reference**: See [`interviews/code/resilient_client.py`](../interviews/code/resilient_client.py) and [`interviews/code/rate_limiter.py`](../interviews/code/rate_limiter.py).
 
-## Further reading
+---
 
-- [Prometheus](https://prometheus.io) - the alerting model behind the freshness, lag,
-  and budget alarms in this catalog
-- [Anthropic documentation](https://docs.anthropic.com) - provider release notes; the
-  subscription habit that defangs silent model upgrades
+### Failure 2.3: Socket Timeouts & TCP Half-Close Application Hangs
+- **The Tell**: Microservice worker threads hang indefinitely, exhausting thread pools and causing cascading outages without throwing an error.
+- **The Root Cause**: Python `requests` or `urllib` calls executed without explicit timeout parameters (`requests.get(url)` defaults to `timeout=None`). When an upstream customer firewall or NAT gateway silently drops idle connections without sending TCP FIN/RST packets, the client socket waits indefinitely.
+- **The Immediate Containment**: Restart hung worker pods.
+- **The Permanent Remediation**: Enforce mandatory connection and read timeouts on every outbound HTTP client session:  
+  `timeout=(3.05, 10.0)` (3.05s connect timeout, 10s read timeout) and enable TCP keep-alive probes at the OS layer.
+
+---
+
+### Failure 2.4: Pagination Cursor Truncation
+- **The Tell**: Backfill jobs report successful completion, but downstream datasets contain only 50% of the expected historical records.
+- **The Root Cause**: The integration code assumed a fixed page size limit or treated an opaque cursor string as a numeric offset, terminating pagination when an empty page was encountered instead of checking the `has_more` response flag.
+- **The Immediate Containment**: Check source API documentation; query maximum primary key IDs to identify the exact truncation boundary.
+- **The Permanent Remediation**: Write comprehensive boundary unit tests that mock multi-page API responses, validating that the pagination loop walks all pages until `has_more == False`.
+
+---
+
+## 3. Applied AI and Model Runtime Failures
+
+---
+
+### Failure 3.1: Context Window Truncation & "Lost in the Middle"
+- **The Tell**: The RAG assistant accurately answers questions based on the first or last retrieved document chunk, but repeatedly misses critical policy clauses placed in the middle chunks.
+- **The Root Cause**: LLM attention mechanisms exhibit positional bias ("Lost in the Middle" phenomenon), degrading recall for facts embedded in the center of multi-thousand-token context windows.
+- **The Immediate Containment**: Reduce retrieved chunk count from $K=10$ to $K=4$, and apply a cross-encoder reranker (e.g. Cohere Rerank or BGE-Reranker) to place the highest-confidence chunk at position 1.
+- **The Permanent Remediation**: Implement sentence-aware chunking with sliding overlap and document metadata lineage, ensuring chunks contain self-contained semantic assertions.
+- **Runnable Reference**: See [`interviews/code/chunker.py`](../interviews/code/chunker.py).
+
+---
+
+### Failure 3.2: Format Regressions Post-Prompt Modification
+- **The Tell**: An engineer modifies a system prompt to fix one customer edge case; hours later, structured output parsers experience a 15% spike in `JSONDecodeError` exceptions.
+- **The Root Cause**: Ad-hoc prompt changes made under pressure introduce unmeasured regressions across other query distributions, causing the model to emit markdown wrappers (````json ... ````) or omit mandatory boolean fields.
+- **The Immediate Containment**: Roll back the prompt modification immediately.
+- **The Permanent Remediation**: Enforce a strict golden evaluation harness. No prompt edit is pushed to production without passing automated regression testing across at least 25 golden edge cases.
+- **Runnable Reference**: See [`interviews/code/structured_extractor.py`](../interviews/code/structured_extractor.py) and [`portfolio/reference-project/evals/run_evals.py`](../portfolio/reference-project/evals/run_evals.py).
+
+---
+
+## 4. Production Diagnostic Command Cheat Sheet
+
+When triaging production incidents inside customer networks with limited observability, execute these diagnostic commands:
+
+### Network & Ingress Inspection
+```bash
+# Detailed HTTP connection timing breakdown (DNS, connect, TLS handshake, TTFB, total)
+curl -w "DNS: %{time_namelookup}s | Connect: %{time_connect}s | TLS: %{time_appconnect}s | TTFB: %{time_starttransfer}s | Total: %{time_total}s\n" \
+  -so /dev/null https://api.customer-estate.internal/v1/health
+
+# Verify TLS certificate chain and expiry date on private endpoints
+openssl s_client -connect api.customer-estate.internal:443 -servername api.customer-estate.internal < /dev/null 2>/dev/null | openssl x509 -noout -dates -subject
+
+# Capture live TCP RST packets on eth0 to diagnose dropped connections
+tcpdump -i eth0 'tcp[tcpflags] & (tcp-rst) != 0' -nn -c 20
+```
+
+### PostgreSQL Lock & Vector Index Inspection
+```sql
+-- Identify long-running queries holding locks on active customer tables
+SELECT pid, now() - pg_stat_activity.query_start AS duration, query, state
+FROM pg_stat_activity
+WHERE state != 'idle' AND (now() - pg_stat_activity.query_start) > interval '5 seconds'
+ORDER BY duration DESC;
+
+-- Inspect pgvector index build progress
+SELECT phase, round(blocks_done * 100.0 / nullif(blocks_total, 0), 2) AS pct_done, tuples_done
+FROM pg_stat_progress_create_index;
+```
+
+### Structured Log Triage with `jq`
+```bash
+# Filter structured JSON logs for HTTP 5xx errors and extract correlation IDs
+cat /var/log/fde-service.log | jq -r 'select(.status >= 500) | {timestamp, trace_id, error_code, customer_tenant_id, path}'
+
+# Calculate error distribution by category over the last 1,000 log lines
+tail -n 1000 /var/log/fde-service.log | jq -r '.defect_type // empty' | sort | uniq -c | sort -nr
+```
+
+---
+
+## 5. Enterprise Blameless Post-Mortem Template
+
+Every high-severity incident must produce an auditable post-mortem document within 24 hours. Use this standard template:
+
+```markdown
+# P0 Post-Mortem: Intermittent Ingestion Timeouts During Overnight Sync
+
+## 1. Executive Summary
+- **Incident Date**: 2026-04-12
+- **Severity**: P0 (Production Customer Impact)
+- **Duration**: 42 minutes (02:30 UTC to 03:12 UTC)
+- **Customer Blast Radius**: 40 regional distribution centers; 14,200 invoices delayed by 45 minutes. Zero permanent data loss.
+
+## 2. Root Cause Analysis (Five Whys)
+1. **Why did the batch fail?** Downstream invoice workers hung and timed out after 30 seconds.
+2. **Why did workers hang?** Outbound calls to the customer's legacy ERP authentication gateway returned HTTP 504 Gateway Timeouts.
+3. **Why did the auth gateway time out?** The gateway experienced a 60x traffic spike at 02:30 UTC, exhausting thread pools.
+4. **Why was there a 60x spike?** 200 distributed worker pods were scheduled to start simultaneously at 02:30 UTC, and all requested new OAuth tokens without jitter.
+5. **Why was there no jitter?** The authentication client used fixed-delay retries without randomized exponential backoff.
+
+## 3. Chronological Incident Timeline
+- **02:30 UTC**: Scheduled cron triggers nightly batch of 14,200 invoices.
+- **02:32 UTC**: First HTTP 504 alerts fire in Datadog (`auth_service_errors > 5%`).
+- **02:40 UTC**: On-call FDE receives escalation page; confirms worker pool thread exhaustion.
+- **02:48 UTC**: FDE applies immediate containment: throttles worker concurrency from 200 to 20 threads.
+- **02:55 UTC**: Auth gateway recovers; invoices begin flowing at reduced rate.
+- **03:05 UTC**: FDE deploys hotfix enabling client-side Full Jitter retry logic.
+- **03:12 UTC**: Entire batch completes ingestion with 99.9% accuracy; incident resolved.
+
+## 4. Permanent Remediation Actions (STAR+P Prevention)
+- [x] **Client-Side Full Jitter**: Merged `ResilientCaller` with randomized full jitter to upstream auth client (`PR #142`).
+- [x] **Token Cache Jitter**: Injected random $\pm 300\text{s}$ jitter to token cache expiration to prevent synchronized expiry.
+- [x] **Ingress Automated Contract Tests**: Added automated schema assertion and row-count alert at ingress gateway.
+- [x] **Runbook Update**: Authored operator runbook detailing step-by-step concurrency throttling during auth outages.
+```
+
+---
+
+## Related Documents
+
+- [Debugging Methodology](01-debugging-methodology.md) - the 7-step incident response process
+- [Debugging in Customer Systems](02-debugging-customer-systems.md) - navigating opaque enterprise security perimeters
+- [Coding Round Solutions](../interviews/08-coding-solutions.md) - runnable implementations of resilient clients and parsers
+- [Customer Scenario Rounds](../interviews/04-customer-scenarios.md) - adversarial incident de-escalation playbooks
+
+---
+
+## References & Further Reading
+
+1. **Marc Brooker**: [AWS Architecture Blog: Exponential Backoff And Jitter](https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/)
+2. **Nehal Vyas**: [Forward Deployed Engineer Interview Questions & Answers](https://fde.hinehal.com/blogs/fde-interview-questions)
+3. **Dr. Sanjay Kumar PhD**: [Top 25 Forward Deployed Engineer (FDE) Interview Questions and Answers](https://skphd.medium.com/top-25-forward-deployed-engineer-fde-interview-questions-and-answers-ad9ac4a6ad7f)
+4. **Om Bharatiya**: [AI Engineer Interview Questions: Forward Deployed Engineer Guide](https://github.com/ombharatiya/AI-Engineer-Interview-Questions/blob/main/15-role-guides/forward-deployed-engineer.md)
+5. **Alexey Grigorev**: [AI Engineering Field Guide: FDE Responsibilities and Skills Analysis](https://github.com/alexeygrigorev/ai-engineering-field-guide/blob/main/role/06-fde.md)
