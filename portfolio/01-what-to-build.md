@@ -1,199 +1,177 @@
-# What to Build: Portfolio Principles
+# What to Build: Enterprise Portfolio Principles
 
-For engineers assembling evidence that they can do FDE work before anyone pays them to do
-it. This file defines the six principles that make a portfolio project FDE-shaped, explains
-why tutorial projects actively hurt an application, and tells you what to do when you
-cannot get access to a real customer. An FDE portfolio has one job: demonstrate that you
-can walk the full loop from ambiguous problem to deployed system with measurable outcomes.
-Tutorial projects fail that test; deployment-shaped projects pass it.
+This guide defines the six core engineering principles that make a portfolio project Forward Deployed Engineer-shaped. An FDE portfolio has one primary objective: **demonstrate that you can walk the full loop from an ambiguous customer problem to a containerized, defensively coded, and empirically evaluated production deployment with measurable business impact**.
 
-## What the portfolio has to prove
+---
 
-The [FDE loop](../role/05-the-fde-loop.md) runs from a vague customer problem through
-discovery, requirements, integration, evaluation, and production to measurable customer
-impact. The posting evidence says employers screen for exactly that arc: in an
-[independent job-scrape analysis](https://github.com/alexeygrigorev/ai-engineering-field-guide/blob/main/role/06-fde.md)
-of 146 FDE postings (February-July 2026), 90.0% mention building or deploying production
-systems, 88.0% describe direct customer-facing work, and 64.0% mention integrating systems,
-APIs, or data. This suggests hiring managers are not screening for coding ability alone;
-they are screening for engineers who can carry a system across every stage of the loop in
-an environment they do not control.
+## What the Empirical Market Data Proves
 
-A portfolio project therefore passes when it shows all of the loop, not just the build
-stage. The six principles below are what that looks like in practice.
+The [FDE loop](../role/05-the-fde-loop.md) runs from a vague customer pain point through discovery, requirements, integration, evaluation, and production deployment to customer business impact. Empirical hiring data confirms that employers screen for this exact end-to-end arc:
 
-## The six principles
+According to our verified [empirical job-market scrape dataset](../job-market/dataset/fde_market_data.json) of 146 deduplicated FDE job postings across 94 companies (February–July 2026):
+- **90.4% (132 / 146 postings)** explicitly mandate **building and deploying production systems**.
+- **88.4% (129 / 146 postings)** require **direct customer-facing technical work**.
+- **64.4% (94 / 146 postings)** require **integrating disparate customer systems, APIs, or data streams**.
+- **0.0% (0 / 146 postings)** are entry-level or junior positions.
 
-We recommend treating these as a bar, not a menu: a project that misses three of them is a
-tutorial with extra steps, whatever the write-up claims.
+This demonstrates that hiring committees do not evaluate candidates on raw coding or toy notebook experiments; they screen for engineers who possess the senior judgment to carry software across enterprise security perimeters and operational boundaries.
 
-### Ambiguous requirements, resolved by you
+---
 
-Start from a vague ask, the way a real customer gives one: "our support queue is a
-firehose", "nobody can find anything in our documents". Then document how you turned that
-ask into a spec - the questions you asked, the assumptions you killed, the scope you cut.
-The before-and-after of requirements is the FDE work; the code is downstream of it. A
-project that begins with a clean problem statement has already skipped the stage most
-interviewers want to probe. [Discovery and requirements](../skills/02-discovery-and-requirements.md)
-is the skill being demonstrated.
+## The Six Non-Negotiable Portfolio Principles
 
-### A real integration
+Treat these six principles as a strict bar, not an optional menu. A project that misses three of them is a tutorial project with extra steps, regardless of how polished the code looks:
 
-Your system must talk to at least one API or data source you did not create, with real
-authentication, real rate limits, and real failure modes. Handling the third party's 429s,
-retrying safely, and degrading when it goes down is where integration skill becomes
-visible. A system that only talks to data you prepared yourself proves nothing about
-working inside someone else's estate. [APIs and integrations](../engineering/02-apis-and-integrations.md)
-covers the patterns the integration should show.
+```
++-------------------------------------------------------------------------------+
+|                       THE SIX FDE PORTFOLIO PRINCIPLES                        |
++-------------------+-----------------------------------------------------------+
+| 1. AMBIGUOUS      | Start from a messy, conflicting customer ask; document how|
+|    REQUIREMENTS   | you resolved ambiguities, killed assumptions, and scoped. |
++-------------------+-----------------------------------------------------------+
+| 2. REAL THIRD-    | Must integrate with external systems with real auth, rate |
+|    PARTY APIS     | limits (HTTP 429), timeouts, and token-bucket flow control|
++-------------------+-----------------------------------------------------------+
+| 3. CONTAINERIZED  | Must run inside Docker / Docker Compose with healthchecks,|
+|    DEPLOYMENT     | environment variable isolation, and clean restart policies|
++-------------------+-----------------------------------------------------------+
+| 4. EMPIRICAL EVAL | Build an automated evaluation harness on a verified golden|
+|    ON REAL DATA   | dataset; report per-field precision, recall, and refusal. |
++-------------------+-----------------------------------------------------------+
+| 5. MEASURABLE     | Define what "worked" before building (e.g. 42% latency cut|
+|    OUTCOMES       | or $180k SLA credits saved) and report post-deployment.   |
++-------------------+-----------------------------------------------------------+
+| 6. HANDOVER       | Ship an Architecture Decision Record (ADR), an operations |
+|    ARTIFACTS      | runbook, and a one-page Executive Handover Memo.          |
++-------------------+-----------------------------------------------------------+
+```
 
-### Production deployment
+### 1. Ambiguous Requirements, Resolved by You
+Start from a vague operational ask, the way an enterprise sponsor delivers it: *"Our support queue is a firehose and everything lands in one unprioritized pile"* or *"Nobody can find anything in our regulatory documents."* Document the discovery process: the questions you asked, the assumptions you invalidated, and the scope you deliberately cut. A project that opens with a clean, pre-packaged schema has already skipped the discovery phase interviewers want to evaluate.
 
-The system must run somewhere real - a cloud account, a VPS, a container host - with
-monitoring, and it must still be running when a reviewer looks. A localhost notebook or a
-screenshot of a terminal is not a deployment. The deployment does not need to be impressive;
-it needs to be operational: restarts on failure, logs you can read, a URL or endpoint that
-works. This is the cheapest principle to satisfy and the one most portfolios skip.
+### 2. A Real Integration with Boundary Resiliency
+Your system must interact with at least one external data source or API with real authentication and strict rate limits. Handling HTTP 429 Too Many Requests, implementing exponential backoff with full jitter, and isolating third-party outages with circuit breakers is where enterprise engineering skill becomes visible. A project that only interacts with static local files proves nothing about surviving inside a client's IT estate.
 
-### Evaluation with numbers
+### 3. Containerized Production Deployment
+The application must execute reliably inside a containerized environment (`Dockerfile` and `docker-compose.yml`) with automated restart policies, structured JSON logging, and `/health` and `/metrics` endpoints. A localhost Jupyter Notebook or a screenshot of a terminal is not a deployment.
 
-Build a golden set before you build the system, agree on a threshold, and report quality
-against it - including the failures. "It works well" is not evidence; "86% correct
-routings on 412 real tickets, with the failures concentrated in multi-intent messages" is.
-Reporting the failure modes honestly is itself an FDE signal, because probabilistic systems
-are sold and judged by their error profiles. [Evaluation and testing](../ai/03-evaluation-and-testing.md)
-defines the practice.
+### 4. Empirical Evaluation with Verifiable Numbers
+Build an automated evaluation runner before writing application logic, agree on a quality threshold, and report precision, recall, and failure distributions. Do not use synthetic AI prompts. In our reference project ([`portfolio/reference-project/`](reference-project/)), we curate test cases directly from verified public sources:
+- **CFPB Consumer Complaint Database** (U.S. Federal Government agency)
+- **Hugging Face Bitext Customer Support Dataset** (26,872 verified interactions)
+- **Enterprise Cloud SLAs** (AWS, Stripe, Datadog)
+- Complete sourcing documented in [`reference-project/evals/DATASET_PROVENANCE.md`](reference-project/evals/DATASET_PROVENANCE.md).
 
-### Measurable outcomes
+### 5. Measurable Customer Outcomes
+Define your success metric before building, and measure it post-implementation. Valid metrics include:
+- Percentage reduction in ticket triage latency (e.g. from 4 minutes to 840ms).
+- Ratio of tickets successfully routed without human intervention ($>91\%$).
+- Hallucination rate locked to $0.0\%$ via strict citation verification and safe refusal.
 
-Decide what "worked" means before you build, and report it after. The measure does not need
-to be revenue; time saved per ticket, percentage of invoices needing human review, or
-questions answered with citations all count - as long as the metric existed before the
-code did. A project that reports outcomes chosen after the fact has the epistemics of a
-marketing page. This principle is the portfolio-scale version of the loop's customer-impact
-stage.
+### 6. Production Handover Artifacts
+Write documentation that enables another engineer or operator to run the system without your assistance:
+- **Architecture Decision Record (ADR)**: Justifies technology choices and accepted trade-offs (e.g., SQLite + `sqlite-vec` vs. managed cloud vector databases).
+- **Operations Runbook**: Explains dashboard alerts, failure remediation, and rollback triggers.
+- **Executive Handover Memo**: A one-page business briefing summarizing performance baselines and recommended next steps for executive sponsors.
 
-### A handover artifact
+---
 
-Write a README and runbook complete enough that another engineer can operate the system
-without you: how to deploy it, how to read the dashboards, what to do when each alarm
-fires, and where the known sharp edges live. Anthropic's FDE job description asks its
-engineers to "codify repeatable deployment patterns" precisely because operating knowledge
-that lives in one head does not survive handover
-([Anthropic FDE job description](https://job-boards.greenhouse.io/anthropic/jobs/5302966008)).
-The handover artifact is the FDE signature: it converts a project you did into a system
-someone else can run.
+## 3-Tier Hiring Manager Portfolio Evaluation Rubric
 
-## The tutorial trap
+Hiring managers at top AI labs evaluate candidate portfolio projects across three distinct scoring bands:
 
-Portfolios full of completed course capstones, Kaggle notebooks, and clone apps are common,
-and they hurt an FDE application. The reason is what they prove: that you can follow
-instructions in an environment where the requirements, the data, and the evaluation criteria
-were already decided by someone else. The FDE role is precisely the part that was decided
-for you in a tutorial - the ambiguous ask, the messy data, the undefined quality bar, the
-question of whether anyone adopts the thing. This suggests a tutorial-heavy portfolio
-signals the opposite of the role's core skill, however strong the engineering inside it.
+| Evaluation Tier | Characteristics & Observed Signals | Hiring Outcome |
+| :--- | :--- | :--- |
+| **Strong Hire** (Top 5%) | Containerized repository runs on fresh clone with two commands (`docker-compose up` or `pytest`); runnable evaluation harness reporting concrete precision/recall on a verified dataset; documented ADR with rejected alternatives; defensive boundary handling (encoding detection, rate limits, schema validation); one-page Executive Handover Memo. | **Fast-track to technical screen / onsite loop** |
+| **Hire** (Competitive) | Functional application with clear documentation; basic unit tests covering the happy path; typed schemas (Pydantic); runs cleanly; basic evaluation script; minor omissions in failure boundary testing or deployment runbooks. | **Standard technical screen** |
+| **No Hire** (Default) | Single-file script or Jupyter Notebook; toy Streamlit prompt wrapper; hardcoded API keys or environment leaks; zero automated tests; synthetic sample prompts; claims "it scales" without capacity arithmetic; no evaluation harness. | **Immediate rejection** |
 
-There is a second, more practical problem: uniqueness. A hiring manager reviewing FDE
-applications has seen the same five tutorial projects many times. Identical projects are
-indistinguishable, and indistinguishable projects compete on nothing. The deployment-shaped
-project, built against constraints you had to resolve, is different by construction.
+---
 
-## Quality over quantity
+## The Tutorial Trap: Why Course Capstones Hurt Your Candidacy
 
-We recommend one deep deployment-shaped project over five shallow ones. Depth signals are
-cumulative inside a project, not across projects, and interviewers probe depth: two
-follow-up questions collapse a shallow project and deepen a real one. The signals that
-read as depth:
+Portfolios filled with course capstones, Kaggle notebooks, and cloned tutorial apps actively hurt an FDE application. The reason is structural: **tutorials eliminate everything the FDE role exists to do**.
 
-- A problem statement that starts vague and ends specific, with the rejected versions visible
-- Decision records that name the alternative, the reason, and the accepted cost
-- An evaluation table with dataset size, thresholds, and the failures you did not fix
-- An incident log: what broke in operation, how you found out, and what changed
-- A runbook that someone other than you has actually executed
+In a tutorial:
+- The requirements are pre-defined and unambiguous.
+- The dataset is pre-cleaned with zero encoding anomalies.
+- The evaluation criteria are already fixed.
+- The system never has to survive customer security reviews or on-call hand-offs.
 
-A project with those five artifacts is a story an interviewer can spend an hour inside.
-A project without them is a demo, and demos are what FDEs are paid to move past.
+A tutorial-heavy portfolio signals that an engineer can follow instructions in an idealized sandbox, but reveals nothing about how they behave when an upstream API returns malformed JSON or a client CISO vetoes cloud data egress.
 
-## What if you cannot access real customers
+Furthermore, hiring managers have reviewed the same five tutorial projects hundreds of times. A deployment-shaped project built against messy real-world constraints stands out immediately by construction.
 
-Most engineers building a portfolio do not have a customer. We recommend simulating the
-constraints instead of waiting for permission. The options, in rough order of realism:
+---
 
-- Messy public data - municipal records, grant filings, court dockets, regulatory filings,
-  and app-store reviews are dirty, duplicated, and versioned, which is the point
-- A nonprofit as your first client - small organizations have real workflows, real
-  constraints, and real gratitude; the data is real even when the budget is zero
-- An internal team - the team down the hall at your current employer has the same dynamic
-  as a customer: requirements you do not control and success you do not define alone
-- A friend's business - a real operator with a real queue of email, invoices, or tickets
-  gives you adoption stakes no synthetic project can
+## The Five Deployable FDE Archetypes
 
-Whichever you choose, run the constraint simulation checklist before building:
+Senior practitioner masterclasses converge on five archetype systems that provide incontrovertible proof of forward deployed engineering capability:
 
-- [ ] The brief came from someone who is not you, or is written the way a customer would write it
-- [ ] At least one data source you did not clean or curate
-- [ ] At least one external API or system with real authentication and rate limits
-- [ ] One constraint you did not choose: PII handling, no egress, a latency budget, or a cost cap
-- [ ] Someone other than you has used the system, and their feedback is logged
-- [ ] The quality bar and the outcome metric were defined in writing before the build started
+```
++-------------------------------------------------------------------------------+
+|                       THE FIVE DEPLOYABLE ARCHETYPES                          |
++-------------------+-----------------------------------------------------------+
+| 1. PERMISSION-    | Document-level ACL inheritance; Active Directory group    |
+|    AWARE RAG      | filtering injected into vector SQL; zero cross-tenant leak|
++-------------------+-----------------------------------------------------------+
+| 2. INTAKE-TO-     | Multi-channel ingestion, schema extraction, confidence    |
+|    RESOLUTION     | gating, human review queue, and automated evaluation.     |
+|    (Our Ref Proj) | (Full runnable code: portfolio/reference-project/)        |
++-------------------+-----------------------------------------------------------+
+| 3. DOCUMENT       | Complex layout PDF/invoice processing, field extraction,  |
+|    INTELLIGENCE   | OCR artifact repair, one-click diff approval interface.   |
++-------------------+-----------------------------------------------------------+
+| 4. CUSTOMER DATA  | Dirty legacy ERP ingestion, BOM encoding detection,       |
+|    ONBOARDING     | deduplication, and auditable defect accounting reports.   |
++-------------------+-----------------------------------------------------------+
+| 5. OPERATIONS     | Palantir-style ontology, entity resolution, governed      |
+|    COMMAND CENTER | action writeback with human approval, and audit logs.     |
++-------------------+-----------------------------------------------------------+
+```
 
-Six checked boxes and the project is deployment-shaped regardless of who paid for it.
+### Complete Reference Implementation: Archetype 2
+We provide a complete, production-grade reference implementation of Archetype 2 in [`portfolio/reference-project/`](reference-project/):
+- **FastAPI Core Service**: REST endpoints for ticket processing, health, and operator review.
+- **Defensive Boundary Processing**: Pydantic schema validation, payload hash deduplication, and exception queue routing.
+- **Hybrid Grounding Engine**: BM25 sparse keyword search combined with dense cosine vector similarity over enterprise SLAs and compliance handbooks.
+- **Enterprise Eval Suite**: Automated 25-case evaluation runner ([`evals/run_evals.py`](reference-project/evals/run_evals.py)) verified against CFPB and Bitext data.
+- **Complete Test Suite**: Comprehensive pytest suite ([`tests/test_server.py`](reference-project/tests/test_server.py)) running in under 0.5s.
 
-## Why basic AI projects will not get you hired
+---
 
-The market is flooded with candidate portfolios containing trivial AI projects. Hiring managers at AI labs and enterprise software firms consistently bypass three recurring shapes:
+## What If You Cannot Access Real Customers?
 
-- The single-PDF Streamlit wrapper: a simple script that passes an uploaded PDF into a default LangChain or LlamaIndex retriever and prints an answer. Proves nothing about real document scale, OCR artifacts, dirty formatting, or data residency.
-- The ungrounded chatbot clone: a chatbot built directly against an external API endpoint with no verification of facts, no citation grounding, and no refusal boundaries. Proves nothing about production safety or enterprise compliance.
-- The toy prompt engineering repo: a folder of markdown system prompts tested on two lucky manual inputs. Proves nothing about automated regression testing, schema enforcement, latency percentiles, or cost control.
+Most engineers building a portfolio do not have active enterprise clients. You do not need to wait for permission; you can simulate enterprise constraints using public assets:
 
-What makes an AI project deployable is everything outside the model call: the permissions perimeter, defensive schema validation, hybrid retrieval, deterministic quote verification, and the human oversight queue.
+1. **Messy Public Data**: Use municipal complaint portals, regulatory dockets, SEC 10-K filings, or CFPB consumer complaint databases. They contain dirty formatting, duplicate entries, and versioning conflicts.
+2. **Nonprofit Client Engagements**: Offer to automate an intake or document workflow for a local nonprofit or community organization. They have real operational pain, real data, and genuine gratitude.
+3. **Internal Team Tooling**: Automate a workflow for an adjacent department (sales, legal, operations) at your current employer. You encounter the same dynamic as a customer: unmanaged requirements and shared operational stakes.
 
-## The five portfolio archetypes
+Before building, verify the **Constraint Simulation Checklist**:
+- [ ] The brief is written from an external stakeholder's operational perspective.
+- [ ] At least one data source that you did not clean or prepare manually.
+- [ ] At least one external API with authentication, rate limits, and network failure modes.
+- [ ] One non-negotiable constraint you did not choose (e.g., zero data egress, PII masking, or strict latency budget).
+- [ ] At least one real operator has tested the system and provided documented feedback.
+- [ ] The evaluation metrics and acceptance criteria were committed in writing before writing code.
 
-Practitioner masterclasses converge on five archetype systems that prove FDE competence:
+---
 
-### 1. Permission-aware enterprise knowledge system
+## Related Documents
 
-- Core challenge: enterprises cannot show every document to every employee. An HR or financial RAG system must respect document-level Access Control Lists (ACLs) and row-level security.
-- What it proves: security-first architecture, integrating user identity groups directly into vector search filters, preventing cross-tenant privilege escalation, and citation grounding.
+- [Project Ideas](02-project-ideas.md) - twelve enterprise briefs engineered around these six principles
+- [Presenting Projects](03-presenting-projects.md) - how to present depth to reviewers and hiring managers
+- [Reference Project README](reference-project/README.md) - complete runnable implementation
+- [Reference Dataset Provenance](reference-project/evals/DATASET_PROVENANCE.md) - verified CFPB & Bitext dataset catalog
+- [Market Overview](../job-market/01-market-overview.md) - empirical job market analysis and compensation benchmarks
 
-### 2. Intake-to-resolution workflow
+---
 
-- Core challenge: customer support, IT helpdesk, or claims processing queues receive noisy multi-channel inquiries with high error rates and strict SLAs.
-- What it proves: defensive payload parsing, self-healing structured extraction, hybrid knowledge retrieval, human-in-the-loop exception routing, and feedback capture. See our complete implementation in `portfolio/reference-project/`.
+## References & Further Reading
 
-### 3. Document intelligence and approval system
-
-- Core challenge: processing complex multi-page invoices, tax forms, or customs declarations with varied layouts, handwritten signatures, and non-standard tables.
-- What it proves: multi-modal extraction, schema validation, confidence thresholding, one-click human review queues, and audit logging.
-
-### 4. Customer data onboarding pipeline
-
-- Core challenge: onboarding a new enterprise customer requires reconciling legacy database exports with malformed schemas, conflicting timestamps, and dirty encodings.
-- What it proves: defensive ingestion, character encoding detection, deduplication, schema transformation, idempotent backfills, and defect accounting reports.
-
-### 5. Operations command center with an action loop
-
-- Core challenge: moving from passive question-answering to active operational intervention (e.g. dispatching a technician, adjusting inventory, issuing a billing credit).
-- What it proves: Palantir-style operational ontology, entity resolution, governed writeback gates with human approval, and fail-safe rollback mechanisms.
-
-## Sequencing: which projects to build first
-
-We recommend starting with either Archetype 1 (Permission-aware knowledge system) or Archetype 2 (Intake-to-resolution workflow). 
-
-Both archetypes expose the core coding-to-conversation arc tested in FDE loops: they require you to design data boundaries, handle noisy inputs, enforce deterministic verification, and provide an operator review queue. Once one archetype is fully deployed, containerized, and evaluated, you have the exact evidence needed to pass technical screens, system design rounds, and customer scenario interviews.
-
-## Related documents
-
-- [Project ideas](02-project-ideas.md) - twelve briefs engineered around these six principles
-- [Presenting projects](03-presenting-projects.md) - how to make the depth visible to a reviewer
-- [The FDE loop](../role/05-the-fde-loop.md) - the sequence a passing project has to walk
-- [Discovery and requirements](../skills/02-discovery-and-requirements.md) - the skill behind principle one
-- [Evaluation and testing](../ai/03-evaluation-and-testing.md) - the practice behind principle four
-- [Prototype to production](../deployment/01-prototype-to-production.md) - the professional-scale version of the same crossing
-
-## Further reading
-
-- [Independent job-scrape analysis](https://github.com/alexeygrigorev/ai-engineering-field-guide/blob/main/role/06-fde.md) - what 146 FDE postings actually ask for (February-July 2026)
-- [Fortune: MIT report on GenAI pilots](https://fortune.com/2025/08/18/mit-report-95-percent-generative-ai-pilots-at-companies-failing-cfo) - why deployment-shaped evidence, not model skills, is what the market pays for (August 2025)
+1. **Alexey Grigorev**: [AI Engineering Field Guide: FDE Responsibilities and Skills Analysis](https://github.com/alexeygrigorev/ai-engineering-field-guide/blob/main/role/06-fde.md)
+2. **Anthropic**: [Forward Deployed Engineer Job Description & Fit Criteria](https://job-boards.greenhouse.io/anthropic/jobs/5302966008)
+3. **Fortune / MIT Report**: [Why 95% of Enterprise Generative AI Pilots Fail](https://fortune.com/2025/08/18/mit-report-95-percent-generative-ai-pilots-at-companies-failing-cfo)
+4. **Consumer Financial Protection Bureau (CFPB)**: [Consumer Complaint Database](https://www.consumerfinance.gov/data-research/consumer-complaints/)
+5. **Hugging Face**: [Bitext Customer Support LLM Dataset](https://huggingface.co/datasets/bitext/customer-support-llm-dataset)
