@@ -1,142 +1,210 @@
-# Portfolio Project Ideas
+# Portfolio Project Ideas: 12 Enterprise Deployment Briefs
 
-Twelve project specs written the way real customer briefs arrive: deliberately ambiguous on
-the surface, with the hard problems hidden underneath. Each spec gives you the brief as a
-customer would say it, the ambiguity you must resolve before building, the skills it proves,
-the depth markers that separate a pass from a strong build, and the hidden depth that makes
-it FDE-shaped. All twelve are fictional composites; none describes a real company's system.
+This guide provides twelve production-grade project specifications modeled on real-world forward deployed engineering engagements across enterprise AI platforms, fintech, logistics, and healthcare. Each specification reflects how customer briefs arrive in the field: **deliberately ambiguous on the surface, with the critical technical, security, and operational constraints hidden underneath**.
 
-## How to use these briefs
+To eliminate synthetic shortcuts, every brief includes recommended **verified public empirical datasets** and concrete depth markers that separate a passing prototype from a production system.
 
-- The brief is written as a customer would say it - vague on purpose; resist cleaning it up before writing it down, because the cleaning is the work
-- The ambiguity line names the decisions you must resolve first - resolving them with interviews, notes, and a spec is the FDE demonstration
-- The skills line maps to the guide sections that teach the techniques
-- The depth markers line is what a strong build shows over a passing one; treat the markers as the definition of done
-- The hidden depth line is the part that makes the project deployment-shaped rather than a demo
+---
 
-These twelve specs are recommendations, not requirements: swap the domain, keep the
-structure. Pick one project, not six, and walk it through the
-[FDE loop](../role/05-the-fde-loop.md) end to end.
+## How to Use These Briefs
 
-## The twelve briefs
+- **The Brief**: Written from the customer's operational perspective. Resist the urge to clean it up before writing down your requirements; translating messy human intent into a technical specification is the core work of an FDE.
+- **The Ambiguity Line**: Identifies the unstated assumptions you must resolve through discovery documentation.
+- **Empirical Dataset**: Real-world public data sources you can ingest immediately without creating synthetic toy prompts.
+- **Skills Demonstrated**: Maps directly to production architecture and engineering competencies.
+- **Depth Markers**: The specific criteria hiring managers use to distinguish a senior deployment from an amateur demo.
+- **Hidden Operational Iceberg**: The operational failure mode that ruins the project if ignored.
 
-### 1. Support-ticket triage for a mid-size SaaS
+> [!TIP]
+> Pick **one project, not five**. A single end-to-end deployment with a container, a golden evaluation suite, an Architecture Decision Record (ADR), and an operations runbook carries significantly more weight than multiple shallow GitHub repositories.
 
-- Brief - "Our support queue is a firehose and everything lands in one pile. Make tickets route themselves and the urgent ones jump the line."
-- Ambiguity - nobody has defined "urgent" or the routing classes, and nobody has said what happens when the classifier is unsure
-- Skills - classification, confidence thresholds, human review queues, feedback capture
-- Depth markers - per-class routing accuracy on a golden set, a review queue a human actually works, and a written threshold decision with the trade-off named
-- Hidden depth - the review queue and the threshold are the product; the classifier is a component, and misrouting feedback is what makes it improve
-- Complete reference implementation - see [reference-project/README.md](reference-project/README.md) for the full runnable repository with FastAPI, hybrid grounding, golden evaluation harness, and operations runbook.
+---
 
-### 2. Document Q&A over a messy public corpus
+## The Twelve Enterprise Briefs
 
-- Brief - "People keep asking us questions our documents already answer. Build something that answers them, with the receipt attached."
-- Ambiguity - which documents count as the corpus, how to treat amended and superseded versions, and what citation satisfies a skeptical reader
-- Skills - RAG, ingestion over dirty corpora, citation grounding, retrieval-versus-generation evaluation
-- Depth markers - a retrieval failure analysis on real queries, handling for amended documents, and honest "I don't know" behavior when retrieval comes up empty
-- Hidden depth - retrieval quality over dirty, duplicated, contradictory documents is the whole project; the model is incidental and swappable
+---
 
-### 3. Invoice-extraction pipeline for a bookkeeping firm
+### 1. Support-Ticket Triage for Mid-Size SaaS (Reference Implementation)
 
-- Brief - "We retype supplier invoices into ledgers all day. Read the invoices and fill the ledger."
-- Ambiguity - the accuracy bar per field, what counts as an exception, and who fixes exceptions and how fast
-- Skills - structured outputs, schema validation, exception queues, idempotent ingestion
-- Depth markers - per-field accuracy numbers, a working exception queue with a human workflow, and a schema that survived twenty vendors' formats
-- Hidden depth - a silent 3% error rate is worse than a loud one; the exception queue, not the extraction, is what makes it deployable
+> [!NOTE]
+> **Complete Reference Project Available**: We have fully implemented this brief in [`portfolio/reference-project/`](reference-project/) with FastAPI, hybrid BM25 + dense search, golden evaluation harnesses, and an operations runbook.
 
-### 4. Meeting-notes-to-CRM updater
+- **The Customer Brief**: *"Our support queue is a firehose and everything lands in one unprioritized pile. We need incoming tickets classified automatically, urgent SLA-breach tickets escalated instantly, and draft answers prepared from our compliance and SLA handbooks."*
+- **The Ambiguity**: Nobody has defined the severity taxonomy or routing classes; nobody has stated what happens when model confidence is low ($<0.85$); nobody has designed the operator feedback loop.
+- **Empirical Dataset**:
+  - [CFPB Consumer Complaint Database](https://www.consumerfinance.gov/data-research/consumer-complaints/) (U.S. Federal Government agency)
+  - [Hugging Face Bitext Customer Support Dataset](https://huggingface.co/datasets/bitext/customer-support-llm-dataset) (26,872 multi-channel enterprise tickets)
+  - Cloud Service Level Agreements (AWS, Stripe, Datadog)
+  - Complete catalog documented in [`reference-project/evals/DATASET_PROVENANCE.md`](reference-project/evals/DATASET_PROVENANCE.md).
+- **Skills Demonstrated**: Pydantic schema validation, hybrid retrieval, confidence gating, human-in-the-loop exception queues, automated golden evals.
+- **Depth Markers**: Per-class precision/recall on a 25-case golden set, deterministic citation verification (zero ungrounded claims), and a one-click operator resolution queue.
+- **Hidden Operational Iceberg**: The human review queue and confidence thresholding *are* the product. The LLM is just a component; operator override feedback is what prevents model drift.
 
-- Brief - "After every customer call the notes never make it into the CRM. Update the CRM from the notes automatically."
-- Ambiguity - which fields an automated writer may touch, what requires human approval, and how to avoid duplicating or overwriting edits made by hand
-- Skills - agents with tools, approval gates, idempotency, audit trails
-- Depth markers - a write-policy matrix of field against confidence against approval, updates that are safe to replay, and a working undo path
-- Hidden depth - write discipline, not extraction, is the hard problem; unconditional CRM write access is a liability no customer accepts
+---
 
-### 5. Data-warehouse enrichment pipeline
+### 2. Regulatory Document Q&A with Verbatim Citation Receipts
 
-- Brief - "Our account table is a graveyard of free-text sales notes. Enrich it so marketing can actually segment."
-- Ambiguity - which fields to enrich, how backfills interact with live rows, and what happens when enrichment disagrees with a human-entered value
-- Skills - batch LLM enrichment, idempotent backfills, data-quality checks, cost control
-- Depth markers - a backfill you ran twice with identical results, quality checks with a quarantine path, and a cost-per-row figure you can defend
-- Hidden depth - re-runs and backfills dominate the engineering; the model call is the easy 10%, and idempotency is what separates a pipeline from a script
+- **The Customer Brief**: *"Our legal and compliance analysts spend hours checking insurance contracts against regional regulatory statutes. Build an assistant that answers policy coverage questions and attaches exact paragraph receipts."*
+- **The Ambiguity**: Which documents are legally binding versus superseded; how to handle conflicting clauses across policy addendums; how to structure an absolute refusal when context is missing.
+- **Empirical Dataset**:
+  - [SEC EDGAR 10-K & 10-Q Financial Filings](https://www.sec.gov/edgar/searchedgar/companysearch) (public corporate disclosure filings)
+  - [EUR-Lex European Union Regulations & Directives](https://eur-lex.europa.eu/) (official European legal texts)
+- **Skills Demonstrated**: Token-aware sliding chunking, document-level ACL metadata, hybrid dense/sparse search, deterministic character-level citation verification.
+- **Depth Markers**: Automated evaluation measuring citation grounding precision; explicit refusal mode when retrieval fails; handling amended and superseded document versions.
+- **Hidden Operational Iceberg**: Confident hallucinations on legal clauses create regulatory liability. A system that cleanly refuses when uncertain scores higher than one that guesses.
 
-### 6. Compliance-review assistant for a nonprofit grant process
+---
 
-- Brief - "Volunteers review grant applications against a 90-page rulebook and things slip through. Help them check."
-- Ambiguity - whether the system assists or decides, what the audit trail must reconstruct, and what to do when the rulebook contradicts itself
-- Skills - RAG over policy text, audit trails, citation-grounded answers, designing for non-technical users
-- Depth markers - an audit trail that reconstructs every recommendation, citations on every claim, and a documented assistive-only boundary
-- Hidden depth - auditability and the assistive-only boundary are what let the system near a compliance process; capability alone gets it rejected
+### 3. Multi-Vendor Invoice Extraction & Defect Ledger
 
-### 7. Multi-source dashboard ingest
+- **The Customer Brief**: *"Our accounts payable department manually keys 5,000 PDF invoices per month into SAP. Extract the line items, validate the math, and flag discrepancies."*
+- **The Ambiguity**: Missing purchase order numbers, multi-page tables, currency format inconsistencies (comma decimals vs. period decimals), and non-standard tax calculations.
+- **Empirical Dataset**:
+  - [Document Understanding CORD Dataset](https://huggingface.co/datasets/naver-clova-ix/cord-v2) (receipt and invoice layout annotations)
+  - [RVL-CDIP Document Image Dataset](https://huggingface.co/datasets/rvl_cdip) (scanned enterprise business documents)
+- **Skills Demonstrated**: Multi-modal document parsing, Pydantic data normalization, arithmetic reconciliation assertions, dead-letter defect accounting.
+- **Depth Markers**: Defect ledger accounting for every dropped or repaired line; regex normalization of European and US currencies; zero unhandled parsing exceptions.
+- **Hidden Operational Iceberg**: A silent 2% error rate in accounts payable causes accounting reconciliation failure. Loud, auditable defect quarantine is mandatory.
 
-- Brief - "We pay for two data tools and neither shows the numbers we need together. Pull both into one dashboard."
-- Ambiguity - the rate limits differ per source, the numbers disagree between sources, and someone has to decide whose figures are authoritative
-- Skills - third-party API integration, rate-limit pacing, reconciliation, scheduled ingestion
-- Depth markers - a reconciliation report that surfaces discrepancies, backoff that survived a real quota window, and a written tie-breaking rule
-- Hidden depth - the integration is easy once; the project is surviving schema drift, quota resets, and sources that disagree about the same metric
+---
 
-### 8. Voice-of-customer classifier over public app reviews
+### 4. Meeting-Notes-to-CRM Governed Updater with Rollback Gates
 
-- Brief - "Read the app-store reviews and tell us what users actually complain about, by app version."
-- Ambiguity - nobody has defined the complaint taxonomy, reviews mix several issues at once, and some classes will have almost no examples
-- Skills - classification, per-class metrics, drift monitoring, taxonomy design
-- Depth markers - per-class precision and recall with the weak classes named, a drift alarm that fired on a real change, and version-sliced trends
-- Hidden depth - the class distribution is imbalanced and partly junk; per-class honesty, not headline accuracy, is the deliverable
+- **The Customer Brief**: *"Sales reps take messy free-form notes during client calls, but never update Salesforce. Automatically parse meeting transcripts and update the deal stage, ARR, and next steps in the CRM."*
+- **The Ambiguity**: Which fields an automated worker is authorized to overwrite; how to prevent overwriting manual human updates made during the call; how to handle ambiguous customer names.
+- **Empirical Dataset**:
+  - [HubSpot Developer Sandbox API](https://developers.hubspot.com/) & Public CRM Datasets
+  - [Enron Email Corpus / Business Communication Archives](https://www.cs.cmu.edu/~enron/) (real enterprise communications)
+- **Skills Demonstrated**: Tool-calling agents, stateful idempotency, entity resolution, governed human approval gates, audit trails.
+- **Depth Markers**: Write-policy matrix (autonomous update for low-risk notes vs. human-gated approval for deal amount changes $> \$5{,}000$); replay-safe idempotency; full before/after diff visualization.
+- **Hidden Operational Iceberg**: Unconditional write access to production CRMs will corrupt the sales pipeline. Write governance and one-click undo are non-negotiable.
 
-### 9. Internal-wiki RAG with freshness checks
+---
 
-- Brief - "Our wiki is huge and half of it is out of date. Answers need a freshness guarantee."
-- Ambiguity - nobody can say how to measure staleness, what should happen to stale pages, or which of three overlapping pages is authoritative
-- Skills - incremental ingestion, staleness alarms, RAG over evolving corpora
-- Depth markers - incremental ingestion that updates without a full rebuild, staleness surfaced in the answers themselves, and an alarm that caught a real freeze
-- Hidden depth - freshness is a data-engineering property, not a prompt; the incremental pipeline and its alarms are the project, the chat is the interface
+### 5. High-Scale Data-Warehouse Free-Text Enrichment
 
-### 10. Order-email parser for a small e-commerce operation
+- **The Customer Brief**: *"Our data warehouse has 250,000 legacy account rows with unstructured text notes. Enrich them with industry classification, company size, and tech stack tags so marketing can segment."*
+- **The Ambiguity**: Rate limits on model APIs; cost ceiling for processing a quarter-million rows; reconciling enrichment with existing human tags; backfill checkpointing.
+- **Empirical Dataset**:
+  - [Kaggle Enterprise B2B Company Profiles](https://www.kaggle.com/) (real firmographic enterprise datasets)
+  - [SEC EDGAR Company Profiles](https://www.sec.gov/edgar/searchedgar/companysearch)
+- **Skills Demonstrated**: Batch LLM processing, token-bucket client-side rate limiting, resume-from-checkpoint state machines, cost budgeting.
+- **Depth Markers**: A backfill script that can be paused, killed, and resumed without re-processing records; defensible cost calculation ($\text{cost/row} \le \$0.002$); schema validation on output.
+- **Hidden Operational Iceberg**: Network hiccups midway through a 10-hour batch run. Without idempotent checkpointing, you either duplicate charges or lose progress.
 
-- Brief - "Orders arrive as emails in six different formats. Turn them into clean records and tell me which ones need a human."
-- Ambiguity - the record schema, the trigger for human review, and the handling of partial or self-contradicting emails
-- Skills - extraction, structured output, human-in-the-loop design, daily digests
-- Depth markers - an exception queue with a named owner and turnaround, a daily digest the owner actually reads, and replay-safe ingestion
-- Hidden depth - the workflow of queue, digest, and replay is the product; the parser is one component that must fail loudly into it
+---
 
-### 11. Self-hosted model deployment in a locked-down environment
+### 6. Compliance-Review Assistant for Regulated Grant Processing
 
-- Brief - "Security says nothing leaves the building, and the AI tooling all assumes internet. Run it inside our network anyway."
-- Ambiguity - no egress means no package or model downloads, so updates, artifacts, and evaluation all need a new answer
-- Skills - self-hosted inference, `docker compose`, artifact mirrors, offline evaluation, air-gapped operations
-- Depth markers - a documented offline install from a mirror you stood up, an eval suite that runs with egress blocked, and a tested rollback procedure
-- Hidden depth - the constraint changes every habit: since you likely cannot borrow a locked-down network, simulate it - block egress at the network layer, host the mirror locally, and prove the system under the rules a customer would impose
+- **The Customer Brief**: *"Staff review regional research grant applications against a complex federal compliance handbook. Build a tool to assist reviewers in identifying non-compliant budget items and eligibility gaps."*
+- **The Ambiguity**: Determining whether the AI assists or decides; legal liability for missed disqualifications; handling contradictory federal guidance.
+- **Empirical Dataset**:
+  - [Grants.gov Uniform Guidance (2 CFR 200)](https://www.ecfr.gov/current/title-2/subtitle-A/chapter-II/part-200) (official federal grant compliance regulations)
+  - [National Science Foundation (NSF) Public Award Summaries](https://www.nsf.gov/awardsearch/)
+- **Skills Demonstrated**: Regulatory RAG, immutable audit logging, assistive-only UI boundaries, strict quote attribution.
+- **Depth Markers**: Audit trail recording prompt version, model version, and exact regulatory clause cited; clear assistive disclaimers; deterministic failure fallbacks.
+- **Hidden Operational Iceberg**: If the system makes autonomous decisions, it breaches federal administrative compliance. The assistive-only boundary must be enforced in architecture.
 
-### 12. Monitoring and eval harness for someone else's LLM feature
+---
 
-- Brief - "Another team shipped an AI feature. It works, mostly. We need to know the moment it stops."
-- Ambiguity - you do not own the feature, so you must negotiate what you can instrument, which quality metric its owner accepts, and who gets paged
-- Skills - evaluation harness design, dashboards and alerting, incident runbooks, working with an owner who did not ask for you
-- Depth markers - a golden set built from their real traffic, dashboards someone else checks weekly, and a runbook another person has executed
-- Hidden depth - negotiating instrumentation with an uninterested owner is the FDE skill; the harness is the artifact, and the agreement is the deployment
+### 7. Multi-Source Financial Reconciliation Ingest
 
-## How to pick
+- **The Customer Brief**: *"We process transactions across Stripe, Adyen, and internal ledger exports. The numbers never match at the end of the month. Ingest all three sources and generate an automated reconciliation report."*
+- **The Ambiguity**: Different source schemas, time-zone alignment on midnight transactions, differing rate limits per gateway, and resolving conflicting transaction statuses.
+- **Empirical Dataset**:
+  - [Stripe Developer Sandbox & Mock API Fixtures](https://stripe.com/docs/api)
+  - Synthetic and anonymized banking ledgers
+- **Skills Demonstrated**: Third-party API integration, exponential backoff with full jitter, deterministic transaction matching, scheduled reconciliation pipelines.
+- **Depth Markers**: Reconciliation report detailing matched transactions, unmatched items, and floating-point rounding adjustments; handling gateway 429 retries.
+- **Hidden Operational Iceberg**: Time-zone offsets between payment gateways cause transactions near midnight to record on different calendar days. Normalization must precede matching.
 
-- Pick the brief closest to a domain you already know - domain knowledge turns a demo into a credible deployment story, and it is the one input you cannot fake
-- Two projects done deeply beat six started - the depth signals accumulate inside a project, and interviewers find them with two questions
-- The workflow-embedded briefs (1, 3, 4, 10) exercise the integration dimension the MIT NANDA research ties to success ([Fortune, August 2025](https://fortune.com/2025/08/18/mit-report-95-percent-generative-ai-pilots-at-companies-failing-cfo))
-- If you come from infrastructure, briefs 11 and 12 differentiate strongly, because operations-shaped portfolios are rare
+---
 
-Whichever you pick, read [what to build](01-what-to-build.md) first and hold the project to
-its six principles.
+### 8. Voice-of-Customer Multi-Label Classifier over Public App Reviews
 
-## Related documents
+- **The Customer Brief**: *"Our product team receives 10,000 mobile app reviews per month across Google Play and iOS. Classify user sentiment, extract bug reports, and track feature complaints across app versions."*
+- **The Ambiguity**: Reviews containing multiple conflicting sentiments; slang, sarcasm, and typos; highly imbalanced class distributions (many general complaints, few specific crashes).
+- **Empirical Dataset**:
+  - [Hugging Face App Store & Google Play Reviews](https://huggingface.co/datasets/app_reviews) (public scraped app feedback)
+- **Skills Demonstrated**: Multi-label classification, data drift detection, precision/recall threshold optimization, weekly trend reporting.
+- **Depth Markers**: Per-class precision and recall metrics detailing weak categories; automated drift detector flagging novel error keywords; version-stratified trend analytics.
+- **Hidden Operational Iceberg**: Global accuracy metrics hide minority-class failures. A classifier with 92% overall accuracy might catch 0% of critical security bug reports.
 
-- [Reference project](reference-project/README.md) - a complete production-grade implementation of brief 1
-- [What to build](01-what-to-build.md) - the principles these briefs are engineered around
-- [Presenting projects](03-presenting-projects.md) - how to write up whichever brief you pick
-- [The FDE loop](../role/05-the-fde-loop.md) - walk your chosen brief through every stage
-- [Discovery and requirements](../skills/02-discovery-and-requirements.md) - resolving the ambiguity line is this skill in practice
-- [Agents and tools](../ai/02-agents-and-tools.md) - the tool and agent design behind briefs 4 and 12
-- [Data pipelines](../engineering/03-data-pipelines.md) - the ingestion and idempotency work behind briefs 5, 7, 9, and 10
+---
 
-## Further reading
+### 9. Internal-Wiki RAG with Incremental Ingestion & Freshness Canaries
 
-- [Independent job-scrape analysis](https://github.com/alexeygrigorev/ai-engineering-field-guide/blob/main/role/06-fde.md) - the posting evidence behind the skills lines (February-July 2026)
+- **The Customer Brief**: *"Our engineering wiki has 8,000 pages, and half of them contain outdated architectural guidelines. When engineers ask technical questions, ensure answers prioritize the freshest documentation."*
+- **The Ambiguity**: Defining what constitutes a "stale" document; resolving conflicting guidance between old and new RFCs; executing incremental ingestion without full index re-indexing.
+- **Empirical Dataset**:
+  - [Wikimedia Foundation Public Dumps](https://dumps.wikimedia.org/) or enterprise Confluence markdown archives
+- **Skills Demonstrated**: Incremental embedding updates, document versioning graphs, staleness scoring heuristics, background freshness canaries.
+- **Depth Markers**: Webhook-driven incremental chunk updates; freshness metadata displayed in query citations; automated canary tests alerting on stale retrieved documents.
+- **Hidden Operational Iceberg**: Re-indexing 8,000 documents on every git commit is computationally unfeasible. Incremental CDC (Change Data Capture) is mandatory.
+
+---
+
+### 10. Multi-Format Order-Email Parser with Exception Queue
+
+- **The Customer Brief**: *"Wholesale customer purchase orders arrive as unstructured emails, attached CSVs, or scanned PDFs. Convert them into clean database orders and route ambiguous orders to a human dispatcher."*
+- **The Ambiguity**: Incomplete SKU descriptions, ambiguous quantities ("three boxes" vs. "three units"), conflicting delivery addresses, and duplicate email resends.
+- **Empirical Dataset**:
+  - [Enron Email Dataset](https://www.cs.cmu.edu/~enron/) or public e-commerce Shopify webhook test payloads
+- **Skills Demonstrated**: Defensive parsing, Pydantic schema validation, hash-based deduplication, dispatcher exception queue.
+- **Depth Markers**: Exception queue with assigned owner and priority SLA; daily audit digest; idempotent replay protection for re-sent emails.
+- **Hidden Operational Iceberg**: An order processed twice due to email retries causes duplicate physical shipments. Idempotent deduplication keys must be derived from payload content.
+
+---
+
+### 11. Self-Hosted Model Deployment in a Locked-Down Air-Gapped Network
+
+- **The Customer Brief**: *"Our security policy mandates that zero data can leave our private on-premise infrastructure. No external cloud APIs, no package downloads, and no internet access. Deploy a local model pipeline."*
+- **The Ambiguity**: Package dependencies cannot be downloaded via `pip` at runtime; model weights must be pre-packaged; telemetry cannot use cloud dashboards.
+- **Empirical Dataset**:
+  - Open-source enterprise compliance guidelines ([NIST SP 800-53 / DISA STIG](https://csrc.nist.gov/))
+  - Local open weights (e.g. Llama-3-8B or Qwen-2.5 on local vLLM / Ollama)
+- **Skills Demonstrated**: Local containerized inference (vLLM / Ollama), offline Docker image bundling, local Prometheus/Grafana telemetry, air-gapped evaluation.
+- **Depth Markers**: Fully functional deployment executed with networking disabled (`docker run --network none`); local vector index; offline test and eval suite.
+- **Hidden Operational Iceberg**: Modern AI libraries assume active internet access for huggingface token downloads. Building fully hermetic offline containers is the engineering test.
+
+---
+
+### 12. Production Observability & Automated Eval Harness for Upstream Models
+
+- **The Customer Brief**: *"Our product engineering team deployed an LLM-based customer onboarding assistant. It works well today, but we have no visibility into latency, cost, token drift, or when model accuracy degrades."*
+- **The Ambiguity**: Negotiating telemetry instrumentation with an engineering team that did not ask for oversight; establishing acceptable error budget thresholds.
+- **Empirical Dataset**:
+  - [OpenTelemetry Semantic Conventions for Generative AI](https://opentelemetry.io/docs/specs/semconv/gen-ai/)
+  - Real production traces and prompt logs
+- **Skills Demonstrated**: OpenTelemetry instrumentation, Prometheus metric export, automated golden canary evaluation cron, alert routing.
+- **Depth Markers**: Structured JSON traces containing prompt tokens, completion tokens, latency percentiles, and cost; automated hourly canary query testing grounding accuracy.
+- **Hidden Operational Iceberg**: Logging full prompt payloads to central aggregators leaks customer PII and violates privacy regulations. Automatic PII masking before trace export is required.
+
+---
+
+## How to Select and Execute Your Project
+
+1. **Leverage Existing Domain Knowledge**: If you have a background in finance, pick Brief 3 or 7; if healthcare or compliance, pick Brief 2 or 6; if DevOps or SRE, pick Brief 11 or 12.
+2. **Commit to the Six Principles**: Verify your project against the six principles in [What to Build](01-what-to-build.md).
+3. **Use Real Empirical Data**: Never build against synthetic sample data. Ingest one of the verified public datasets listed above.
+4. **Study Our Reference Project**: Use [`portfolio/reference-project/`](reference-project/) as your architectural template for FastAPI structure, Pydantic schemas, and pytest evaluation harnesses.
+
+---
+
+## Related Documents
+
+- [Reference Project Implementation](reference-project/README.md) - complete runnable implementation of Brief 1
+- [Reference Dataset Provenance](reference-project/evals/DATASET_PROVENANCE.md) - verified CFPB & Bitext dataset documentation
+- [What to Build](01-what-to-build.md) - six non-negotiable portfolio principles and 3-tier rubrics
+- [Presenting Projects](03-presenting-projects.md) - writing up architecture and demonstrating depth
+- [The FDE Loop](../role/05-the-fde-loop.md) - walking the project through discovery, build, and production
+
+---
+
+## References & Further Reading
+
+1. **Alexey Grigorev**: [AI Engineering Field Guide: FDE Responsibilities and Skills Analysis](https://github.com/alexeygrigorev/ai-engineering-field-guide/blob/main/role/06-fde.md)
+2. **Consumer Financial Protection Bureau (CFPB)**: [Consumer Complaint Database](https://www.consumerfinance.gov/data-research/consumer-complaints/)
+3. **Hugging Face**: [Bitext Customer Support LLM Dataset](https://huggingface.co/datasets/bitext/customer-support-llm-dataset)
+4. **SEC EDGAR**: [Company Financial Filings Search](https://www.sec.gov/edgar/searchedgar/companysearch)
+5. **OpenTelemetry**: [Semantic Conventions for Generative AI Systems](https://opentelemetry.io/docs/specs/semconv/gen-ai/)
