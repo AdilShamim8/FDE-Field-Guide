@@ -1,159 +1,203 @@
-# FDE Project Selection Masterclass: The Five Enterprise Archetypes
+# FDE Project Selection Masterclass: Five Enterprise Archetypes and Reviewer Rubrics
 
-This file provides an authoritative, practitioner-grounded guide to selecting, architecting, and packaging portfolio projects that pass senior FDE hiring loops at AI labs and enterprise software firms. It incorporates the framework from the FDE Academy Masterclass (FDE Academy, 2026), documents the five core enterprise project archetypes, details verified public datasets with zero hallucination, and provides a candidate background sequencing roadmap.
+This guide provides an authoritative, practitioner-grounded framework for selecting, architecting, and packaging portfolio projects that pass senior Forward Deployed Engineer hiring loops at frontier AI labs and enterprise software firms. It incorporates the framework from the FDE Academy Masterclass, analyzes the five core enterprise project archetypes, details verified public empirical datasets, provides a candidate background sequencing roadmap, and establishes the exact **five-pillar code review rubric** senior hiring managers use during portfolio walkthrough rounds.
 
-## Why basic AI projects get candidates rejected
+---
 
-Hiring managers at Palantir, OpenAI, Anthropic, Databricks, and enterprise software firms consistently bypass candidates whose portfolios contain generic tutorial projects. An analysis of industry evaluation rubrics reveals seven fatal flaws that disqualify applicant portfolios:
+## Why Basic AI Projects Get Candidates Rejected
 
-1. The single-document toy RAG flaw: building a script that loads one PDF into an in-memory vector store via a high-level framework wrapper (LangChain or LlamaIndex) without handling real-world document scale, mixed layouts, tables, or OCR noise.
-2. The missing permission boundary: assuming all users have global access to all data. Real enterprise deployments require multi-tenant isolation, role-based access control (RBAC), and document-level access control lists (ACLs) injected into retrieval filters.
-3. Synthetic clean data: training or evaluating models on pristine, pre-curated benchmark datasets. Enterprise reality is dirty CSV exports, missing primary keys, corrupted timestamps, and conflicting character encodings.
-4. Absence of human-in-the-loop oversight: letting probabilistic LLM generations communicate directly with end users without confidence thresholding, exception queues, or supervisor approval gates.
-5. Lack of deterministic evaluation: claiming a system works because five manual prompts looked reasonable in a chat interface, rather than publishing an automated evaluation harness with golden datasets, precision, recall, and citation validity scores.
-6. Zero operational artifacts: submitting code without an operational runbook, disaster recovery kill-switch, service level agreements (SLAs), or Architecture Decision Records (ADRs).
-7. Ignoring cost and latency budgets: designing systems that invoke expensive frontier models on every keystroke without token budgeting, caching, or latency percentiles (p50, p90, p95, p99).
+Hiring managers at Palantir, Anthropic, OpenAI, Databricks, and enterprise AI startups consistently bypass candidates whose portfolios contain generic tutorial projects. Our [empirical job-market scrape dataset](../job-market/dataset/fde_market_data.json) of 146 deduplicated postings confirms that **90.4% of roles mandate deploying production systems**, **88.4% require customer-facing technical leadership**, and **0.0% are junior or entry-level positions**.
 
-The FDE role is precisely the discipline of solving the seven problems above. A project that ignores them proves only that you can follow a library tutorial.
+An analysis of industry evaluation rubrics reveals **seven fatal flaws** that disqualify applicant portfolios:
 
-## What an FDE portfolio must prove
+```
++-------------------------------------------------------------------------------+
+|                 THE SEVEN FATAL PORTFOLIO FLAWS TO AVOID                      |
++-------------------+-----------------------------------------------------------+
+| 1. TOY RAG FLAW   | Single-PDF script using default LangChain/LlamaIndex;     |
+|                   | fails to handle OCR noise, multi-page tables, or scale.   |
++-------------------+-----------------------------------------------------------+
+| 2. NO PERMISSIONS | Assumes all users see all data; ignores enterprise multi- |
+|                   | tenancy, RBAC, and document Access Control Lists (ACLs).  |
++-------------------+-----------------------------------------------------------+
+| 3. SYNTHETIC DATA | Evaluates on clean toy prompts; ignores dirty encodings,  |
+|                   | missing primary keys, corrupted amounts, and malformed CSV|
++-------------------+-----------------------------------------------------------+
+| 4. NO HUMAN LOOP  | Lets probabilistic models write directly to customers     |
+|                   | without confidence gating, exception queues, or overrides.|
++-------------------+-----------------------------------------------------------+
+| 5. NO EVAL HARNESS| Claims "it works" after 5 manual chat prompts; lacks an   |
+|                   | automated golden evaluation runner on real test cases.    |
++-------------------+-----------------------------------------------------------+
+| 6. ZERO RUNBOOKS  | Submits bare code with no Architecture Decision Record    |
+|                   | (ADR), operations runbook, or Executive Handover Memo.    |
++-------------------+-----------------------------------------------------------+
+| 7. NO COST/LATENCY| Ignores token budgeting, caching, and latency percentiles |
+|    BUDGETS        | (p50, p90, p95, p99); invokes frontier models on every key|
++-------------------+-----------------------------------------------------------+
+```
 
-Senior interview loops evaluate four competencies across portfolio artifacts:
+The FDE role is precisely the discipline of solving these seven failure modes. A project that ignores them proves only that you can follow a library tutorial.
 
-- Boundary and permission discipline: can you enforce data perimeters and access control lists so users never see unauthorized customer data?
-- Ambiguity and dirty data resilience: can you ingest malformed legacy data, state your assumptions in writing, and report every dropped record with an explicit defect accounting ledger?
-- Closed-loop action and workflow: does your system integrate into existing enterprise systems of record (CRM, ERP, ticketing queues) with governed writeback gates?
-- Rigorous deterministic verification: do you verify every model citation verbatim against source documents and measure performance with an automated golden evaluation suite?
+---
 
-## The five enterprise project archetypes
+## What an FDE Portfolio Must Prove
 
-The FDE Academy Masterclass defines five distinct archetype systems that provide unambiguous evidence of customer-facing engineering capability.
+Senior hiring committees evaluate four core competencies across portfolio artifacts:
 
-### Archetype 1: Permission-aware enterprise knowledge system
+1. **Boundary and Permission Discipline**: Can you enforce data perimeters and access control lists so users never see unauthorized customer data?
+2. **Ambiguity and Dirty Data Resilience**: Can you ingest malformed legacy data, state your assumptions in writing, and report every dropped record with an explicit defect accounting ledger?
+3. **Closed-Loop Action and Workflow**: Does your system integrate into existing enterprise systems of record (CRM, ERP, ticketing queues) with governed writeback gates?
+4. **Rigorous Deterministic Verification**: Do you verify every model citation verbatim against source documents and measure performance with an automated golden evaluation suite?
 
-- The business problem: a multinational enterprise needs a unified question-answering assistant across internal Google Drive, SharePoint, and Confluence estates. However, internal documents carry strict security classifications: engineering staff cannot view HR salary bands, sales reps cannot access unreleased source code, and regional staff must adhere to regional data residency rules.
-- Architectural components:
-  1. Identity and authorization gateway: integrates with SAML 2.0 or OIDC identity providers to resolve user group memberships at query time.
-  2. Metadata-tagged vector store: during ingestion, document chunks inherit parent document access control lists (ACLs), tenancy IDs, and classification tiers.
-  3. Pre-retrieval security filtering: vector queries execute SQL WHERE clauses or metadata filters that restrict cosine search exclusively to chunks authorized for the active user session.
-  4. Deterministic citation grounding: generated answers cite exact document IDs and section titles, verifying that quotes appear verbatim in retrieved text.
-- Verifiable public datasets:
-  - SEC EDGAR financial filings: quarterly 10-Q and annual 10-K filings with real financial disclosures across multiple corporate entities.
-  - Enron email corpus: a public archive of 500,000 corporate emails providing real enterprise email threads with organizational hierarchy.
-- Minimum viable bar: multi-user test harness demonstrating that querying the exact same prompt with two different user roles returns filtered, permission-isolated answers.
+---
 
-### Archetype 2: Intake-to-resolution enterprise workflow
+## The Five Enterprise Project Archetypes
 
-- The business problem: a high-volume B2B enterprise receives thousands of support exceptions, payment disputes, and SLA credit claims daily across disparate channels. Support engineers spend hours manually categorizing tickets, reviewing policy manuals, and drafting replies.
-- Architectural components:
+Practitioner masterclasses converge on five distinct archetype systems that provide unambiguous evidence of customer-facing engineering capability:
+
+---
+
+### Archetype 1: Permission-Aware Enterprise Knowledge System
+- **The Business Problem**: A multinational enterprise needs a unified question-answering assistant across internal Google Drive, SharePoint, and Confluence estates. However, internal documents carry strict security classifications: engineering staff cannot view HR salary bands, sales reps cannot access unreleased source code, and regional staff must adhere to regional data residency rules.
+- **Architectural Components**:
+  1. Identity and authorization gateway: Integrates with SAML 2.0 or OIDC identity providers to resolve user group memberships at query time.
+  2. Metadata-tagged vector store: During ingestion, document chunks inherit parent document access control lists (ACLs), tenancy IDs, and classification tiers.
+  3. Pre-retrieval security filtering: Vector queries execute SQL WHERE clauses or metadata filters that restrict cosine search exclusively to chunks authorized for the active user session.
+  4. Deterministic citation grounding: Generated answers cite exact document IDs and section titles, verifying that quotes appear verbatim in retrieved text.
+- **Verifiable Public Datasets**:
+  - [SEC EDGAR System](https://www.sec.gov/edgar/searchedgar/companysearch): Official 10-K annual and 10-Q quarterly reports with real corporate disclosures.
+  - [Enron Email Dataset](https://www.cs.cmu.edu/~enron/): Public archive of 500,000 corporate emails providing real organizational hierarchies.
+- **Minimum Viable Bar**: Multi-user test harness demonstrating that querying the exact same prompt with two different user roles returns filtered, permission-isolated answers.
+
+---
+
+### Archetype 2: Intake-to-Resolution Enterprise Workflow (Reference Project)
+
+> [!NOTE]
+> **Complete Reference Project Available**: We have fully implemented Archetype 2 in [`portfolio/reference-project/`](reference-project/) featuring FastAPI, hybrid BM25 + dense search, golden evaluation harnesses, and an operations runbook.
+
+- **The Business Problem**: A high-volume B2B enterprise receives thousands of support exceptions, payment disputes, and SLA credit claims daily across disparate channels. Support engineers spend hours manually categorizing tickets, reviewing policy manuals, and drafting replies.
+- **Architectural Components**:
   1. Defensive ingestion API: REST and webhook receiver with idempotency key caching, payload checksum verification, and defensive schema parsing.
-  2. Self-healing structured extraction: extracts target fields (account ID, defect category, severity level, urgency score) with an automated repair loop that feeds validation errors back to the model.
+  2. Self-healing structured extraction: Extracts target fields (account ID, defect category, severity level, urgency score) with an automated repair loop that feeds validation errors back to the model.
   3. Hybrid knowledge index: BM25 keyword matching combined with dense vector retrieval to ground answers against official SLA and customer service handbooks.
-  4. Human-in-the-loop exception queue: tickets with confidence scores below 0.85 or P0 severity are routed to an operator review queue with one-click approval and override capture.
-- Verifiable public datasets:
-  - Consumer Financial Protection Bureau (CFPB) complaint database: over 4 million real consumer financial complaints with company responses, dispute flags, and product categories.
-  - Hugging Face Bitext customer support dataset: 27,000 categorized enterprise customer service interactions with intent tags and sentiment ratings.
-- Minimum viable bar: see the complete reference implementation in `portfolio/reference-project/` featuring FastAPI, hybrid retrieval, a 25-case golden evaluation harness, and operations runbooks.
+  4. Human-in-the-loop exception queue: Tickets with confidence scores below 0.85 or P0 severity are routed to an operator review queue with one-click approval and override capture.
+- **Verifiable Public Datasets**:
+  - [Consumer Financial Protection Bureau (CFPB) Complaint Database](https://www.consumerfinance.gov/data-research/consumer-complaints/): Over 4 million real consumer financial disputes with company responses and resolution flags.
+  - [Hugging Face Bitext Customer Support Dataset](https://huggingface.co/datasets/bitext/customer-support-llm-dataset): 27,000 categorized enterprise customer service interactions.
+  - Sourcing documented in [`reference-project/evals/DATASET_PROVENANCE.md`](reference-project/evals/DATASET_PROVENANCE.md).
+- **Minimum Viable Bar**: 25-case golden evaluation suite reporting 100% citation grounding and automated exception queue routing.
 
-### Archetype 3: Document intelligence and multi-stage approval system
+---
 
-- The business problem: a logistics or insurance firm receives multi-page vendor invoices, bills of lading, and customs declarations in PDF and image formats. Legacy OCR produces fragmented tables, misread digits, and corrupted alphanumeric codes.
-- Architectural components:
-  1. Layout-aware document parsing: preserves table structures, key-value coordinate boundaries, and hierarchical sections.
-  2. Strict schema validation: parses extracted fields into typed Pydantic models with mathematical reconciliation (e.g. line items sum must match total invoice amount).
-  3. Confidence thresholding and exception flagging: flags records where OCR character confidence is low or arithmetic checks fail.
-  4. Human supervisor sign-off interface: displays side-by-side document views with bounding boxes, allowing human accountants to review and approve flagged discrepancies.
-  5. Immutable audit ledger: logs every field edit, model trace ID, and supervisor sign-off with WORM (write once, read many) integrity.
-- Verifiable public datasets:
-  - DocVQA and CORD datasets: public datasets of receipts, invoices, and business forms with layout annotations.
-  - Open customs declaration forms: standardized international trade documents from public regulatory authorities.
-- Minimum viable bar: an extraction pipeline processing twenty multi-vendor invoices with an exception queue that surfaces arithmetic reconciliation errors.
+### Archetype 3: Document Intelligence and Multi-Stage Approval System
+- **The Business Problem**: A logistics or insurance firm receives multi-page vendor invoices, bills of lading, and customs declarations in PDF and image formats. Legacy OCR produces fragmented tables, misread digits, and corrupted alphanumeric codes.
+- **Architectural Components**:
+  1. Layout-aware document parsing: Preserves table structures, key-value coordinate boundaries, and hierarchical sections.
+  2. Strict schema validation: Parses extracted fields into typed Pydantic models with mathematical reconciliation (line items sum must match total invoice amount).
+  3. Confidence thresholding and exception flagging: Flags records where OCR character confidence is low or arithmetic checks fail.
+  4. Human supervisor sign-off interface: Displays side-by-side document views with bounding boxes, allowing human accountants to review and approve flagged discrepancies.
+  5. Immutable audit ledger: Logs every field edit, model trace ID, and supervisor sign-off with WORM (write once, read many) integrity.
+- **Verifiable Public Datasets**:
+  - [CORD Dataset](https://huggingface.co/datasets/naver-clova-ix/cord-v2) & [RVL-CDIP Dataset](https://huggingface.co/datasets/rvl_cdip): Standardized business forms with layout annotations.
+- **Minimum Viable Bar**: An extraction pipeline processing twenty multi-vendor invoices with an exception queue that surfaces arithmetic reconciliation errors.
 
-### Archetype 4: Customer data onboarding and schema reconciliation pipeline
+---
 
-- The business problem: onboarding a new enterprise client requires migrating years of legacy database exports into your platform. The client exports messy CSV files with mixed character encodings (CP1252, Latin-1, UTF-8 with BOM), missing primary keys, non-standard timestamps, and duplicate customer records.
-- Architectural components:
-  1. Multi-encoding stream reader: detects byte order marks and attempts safe decoding cascades without crashing.
-  2. Entity deduplication and fuzzy matching: identifies duplicate records across varying company name spellings and addresses.
-  3. Idempotent backfill engine: allows multi-gigabyte ingestion jobs to pause, resume, and replay without duplicating rows or corrupting ledger state.
-  4. Defect accounting report: outputs an exact audit log detailing total records processed, valid rows, repaired entries, and dropped rows with line numbers and reasons.
-- Verifiable public datasets:
-  - US Municipal open data portals: government vendor expenditure exports (e.g. City of Chicago or New York City open data) containing dirty vendor names, inconsistent date formats, and missing departments.
-  - Open public ERP test databases: anonymized ERP database dumps with relational foreign-key anomalies.
-- Minimum viable bar: a runnable command-line or API pipeline that ingests a 100,000-row malformed export and outputs a structured Defect Accounting Report and clean database table.
+### Archetype 4: Customer Data Onboarding and Schema Reconciliation Pipeline
+- **The Business Problem**: Onboarding a new enterprise client requires migrating years of legacy database exports into your platform. The client exports messy CSV files with mixed character encodings (CP1252, Latin-1, UTF-8 with BOM), missing primary keys, non-standard timestamps, and duplicate customer records.
+- **Architectural Components**:
+  1. Multi-encoding stream reader: Detects byte order marks and attempts safe decoding cascades without crashing.
+  2. Entity deduplication and fuzzy matching: Identifies duplicate records across varying company name spellings and addresses.
+  3. Idempotent backfill engine: Allows multi-gigabyte ingestion jobs to pause, resume, and replay without duplicating rows or corrupting ledger state.
+  4. Defect accounting report: Outputs an exact audit log detailing total records processed, valid rows, repaired entries, and dropped rows with line numbers and reasons.
+- **Verifiable Public Datasets**:
+  - [US Municipal Open Data Portals](https://data.cityofchicago.org/): City vendor expenditure exports containing dirty vendor names, inconsistent date formats, and missing departments.
+- **Minimum Viable Bar**: A runnable pipeline that ingests a 100,000-row malformed export and outputs a structured Defect Accounting Report and clean database table.
 
-### Archetype 5: Operations command center with an action loop
+---
 
-- The business problem: enterprise operators need a system that does not merely answer questions, but takes governed operational actions: re-routing inventory, updating CRM deal stages, or dispatching field service personnel.
-- Architectural components:
-  1. Operational ontology layer: maps underlying relational tables, ERP endpoints, and warehouse schemas into canonical business objects (Accounts, Incidents, Technicians, Parts).
-  2. Governed action execution engine: models propose actions with structured JSON arguments; actions are validated against business rules (e.g. actions exceeding $500 require VP sign-off).
-  3. Dual-phase commit and rollback mechanism: all state modifications support automated rollback if downstream webhooks or ERP transactions fail.
-  4. Operator feedback capture: every human override logs the original proposal and the operator modification, continuously enriching the golden test suite.
-- Verifiable public datasets:
-  - MIMIC-IV Clinical Database Demo: anonymized intensive care unit records providing realistic operational events, patient telemetry, and protocol actions.
-  - Public supply chain logistics data: shipment dispatch logs with carrier assignments, port dwell times, and exception events.
-- Minimum viable bar: an operational dashboard and event loop where the model proposes three distinct operational actions, with at least one requiring human supervisor sign-off before database commit.
+### Archetype 5: Operations Command Center with an Action Loop
+- **The Business Problem**: Enterprise operators need a system that does not merely answer questions, but takes governed operational actions: re-routing inventory, updating CRM deal stages, or dispatching field service personnel.
+- **Architectural Components**:
+  1. Operational ontology layer: Maps underlying relational tables, ERP endpoints, and warehouse schemas into canonical business objects (Accounts, Incidents, Technicians, Parts).
+  2. Governed action execution engine: Models propose actions with structured JSON arguments; actions are validated against business rules (e.g. actions exceeding $500 require VP sign-off).
+  3. Dual-phase commit and rollback mechanism: All state modifications support automated rollback if downstream webhooks or ERP transactions fail.
+  4. Operator feedback capture: Every human override logs the original proposal and the operator modification, continuously enriching the golden test suite.
+- **Verifiable Public Datasets**:
+  - [MIMIC-IV Clinical Database Demo](https://physionet.org/content/mimiciv/): Anonymized hospital operational data and clinical event telemetry.
+  - [OpenTelemetry GenAI Semantic Conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/): Production traces and prompt telemetry.
+- **Minimum Viable Bar**: An operational event loop where the model proposes three distinct operational actions, with at least one requiring human supervisor sign-off before database commit.
 
-## Real-world public dataset sourcing directory
+---
 
-To ensure your portfolio contains zero synthetic shortcuts, use verified public enterprise datasets. Below are primary sources:
+## Senior Hiring Manager Portfolio Code Review Rubric
 
-- [Consumer Financial Protection Bureau (CFPB) Complaint Database](https://www.consumerfinance.gov/data-research/consumer-complaints/): real consumer financial disputes against banks and credit bureaus. Ideal for Archetype 2 and Archetype 4.
-- [SEC EDGAR System](https://www.sec.gov/edgar/searchedgar/companysearch): official 10-K annual and 10-Q quarterly reports. Ideal for Archetype 1 and Archetype 3.
-- [Hugging Face Bitext Customer Support Dataset](https://huggingface.co/datasets/bitext/customer-support-llm-dataset): 27,000 categorized enterprise customer support intents with sentiment ratings. Ideal for Archetype 2.
-- [Hugging Face Banking77 Intent Dataset](https://huggingface.co/datasets/PolyAI/banking77): 13,082 customer service queries across 77 fine-grained banking intents. Ideal for classification and routing benchmarks.
-- [Enron Email Dataset at Carnegie Mellon](https://www.cs.cmu.edu/~enron/): historical corpus of 500,000 real corporate email interactions. Ideal for identity mapping, thread extraction, and permission boundary simulation.
-- [PhysioNet MIMIC-IV Clinical Database Demo](https://physionet.org/content/mimiciv/): real anonymized hospital operational data and clinical event telemetry. Ideal for Archetype 5.
-- [Public Enterprise SLA Handbooks](https://aws.amazon.com/legal/service-level-agreements/): official terms from AWS Service Level Agreements, [Stripe Legal Services Agreement](https://stripe.com/legal/ssa), and [Datadog Service Level Objectives](https://docs.datadoghq.com/monitors/service_level_objectives/). Ideal for knowledge grounding and compliance citation indices.
+When hiring managers conduct a 45-minute portfolio walkthrough, they grade the repository against this 100-point rubric:
 
-## Candidate background selection matrix
+| Pillar | Weight | Strong Hire Standard | Fatal Elimination Trigger (No Hire) |
+| :--- | :---: | :--- | :--- |
+| **1. Architecture & Perimeter Discipline** | 25% | Clear separation of API, pipeline, validation, and storage; document ACL filtering; zero hardcoded credentials; pinned dependencies. | Flat monolithic script; hardcoded API keys; global unrestricted data access; no typed schemas. |
+| **2. Boundary Defense & Defect Isolation** | 25% | Defensive parsing on dirty encodings/currencies; exponential backoff with full jitter; dead-letter defect accounting reports. | Pipeline crashes on malformed inputs; silent data drops with no audit trail; infinite retry loops. |
+| **3. Empirical Evaluation Rigor** | 20% | Runnable evaluation script (`run_evals.py`); 25-case golden dataset from verified public data; reported precision/recall/latency. | Zero automated tests; evaluation claimed via 5 subjective chat screenshots; synthetic test data. |
+| **4. Governance, ADRs & Handover Docs** | 20% | Architecture Decision Record (ADR) justifying trade-offs; operations runbook with alarm thresholds; Executive Handover Memo. | Empty README; no documentation of assumptions or trade-offs; commands fail on fresh clone. |
+| **5. Production Readiness & Observability** | 10% | Reproducible `Dockerfile` and `docker-compose.yml`; structured JSON logging with trace IDs; health check endpoints. | Localhost-only dependencies; Jupyter notebook submission; zero logging or telemetry. |
 
-Map your starting background to the recommended project archetype to maximize interview conversion:
+---
 
-- Transitioning from Software Engineer: build Archetype 2 (Intake-to-resolution workflow). Your coding baseline is strong; this proves customer discovery, probabilistic boundary handling, and human exception review design.
-- Transitioning from Data Engineer: build Archetype 4 (Customer data onboarding pipeline) or Archetype 1 (Permission-aware knowledge system). Your pipeline skills are proven; this demonstrates metadata-driven access control and operational reliability.
-- Transitioning from AI/ML Engineer: build Archetype 5 (Operations command center) or Archetype 2 (Intake-to-resolution workflow). You already understand model training; this proves you can bind models to governed business actions and operational workflows.
-- Transitioning from Solutions Engineer or Consultant: build Archetype 3 (Document intelligence) or Archetype 2 (Intake-to-resolution workflow). You have customer presence; this provides concrete code evidence of production engineering ownership.
+## Candidate Background Selection Matrix
 
-## The 90-day project execution roadmap
+Map your current engineering background to the recommended project archetype to maximize interview conversion:
 
-### Month 1: Discovery, data curation, and architecture specification (Weeks 1 to 4)
+| Current Background | Recommended Archetype | Strategic Rationale |
+| :--- | :--- | :--- |
+| **Software Engineer** | **Archetype 2** (Intake-to-Resolution Workflow) | Your backend coding is strong; this proves customer discovery, probabilistic boundary handling, and human exception review design. |
+| **Data Engineer** | **Archetype 4** (Customer Data Onboarding) or **Archetype 1** (Permission-Aware RAG) | Your pipeline skills are proven; this demonstrates metadata-driven access control, encoding resilience, and operational auditability. |
+| **AI / ML Engineer** | **Archetype 5** (Operations Command Center) or **Archetype 2** (Intake-to-Resolution) | You already understand model architectures; this proves you can bind models to governed business actions and operational workflows. |
+| **Solutions Engineer / Consultant** | **Archetype 3** (Document Intelligence) or **Archetype 2** (Intake-to-Resolution) | You have customer presence; this provides concrete code evidence of production software engineering and automated evaluation rigor. |
+
+---
+
+## The 90-Day Project Execution Roadmap
+
+### Month 1: Discovery, Data Curation, and Architecture Specification (Weeks 1 to 4)
 - Pick one archetype from the selection matrix. Do not build three at once.
-- Source a real public enterprise dataset from the directory above.
-- Write the project brief as a customer would speak it (ambiguous and unpolished).
+- Source a real public enterprise dataset from the directory above (never synthetic data).
+- Write the project brief as an enterprise sponsor would speak it (ambiguous and unpolished).
 - Author `docs/ARCHITECTURE.md`, `docs/SOW.md`, and `docs/ADR-001.md` before writing application code.
 
-### Month 2: Core pipeline, boundary defense, and exception queue (Weeks 5 to 8)
+### Month 2: Core Pipeline, Boundary Defense, and Exception Queue (Weeks 5 to 8)
 - Build the ingestion engine with defensive parsing, encoding cascades, and idempotency key caching.
 - Implement the model engine with self-healing schema validation and feedback repair loops.
 - Construct the hybrid search index and enforce deterministic quote verification.
 - Implement the human-in-the-loop review queue for low-confidence or high-severity cases.
 
-### Month 3: Golden evaluation harness, containerization, and video demo (Weeks 9 to 12)
+### Month 3: Golden Evaluation Harness, Containerization, and Video Demo (Weeks 9 to 12)
 - Build a golden dataset of at least 25 edge cases (clean, noisy, adversarial, out-of-domain).
 - Author `run_evals.py` to calculate precision, recall, citation validity rate, and latency percentiles.
 - Containerize the entire application with `Dockerfile` and `docker-compose.yml`.
 - Record a three-minute technical walkthrough: demonstrate one happy path, one malformed input triggering automated repair, and one low-confidence ticket routed to the operator review queue.
 
-## Related documents
+---
 
-- [What to build](01-what-to-build.md) - six portfolio principles that separate deployment systems from tutorials
-- [Project ideas](02-project-ideas.md) - twelve customer briefs with hidden depth
-- [Enterprise reference project](reference-project/README.md) - complete production implementation of Archetype 2
-- [Presenting projects](03-presenting-projects.md) - how to present this system to hiring managers
-- [System design reference architectures](../system-design/02-reference-architectures.md) - enterprise architecture patterns
+## Related Documents
 
-## Further reading
+- [What to Build](01-what-to-build.md) - six portfolio principles and 3-tier rubrics
+- [Project Ideas](02-project-ideas.md) - twelve enterprise customer briefs with hidden depth
+- [Enterprise Reference Project](reference-project/README.md) - complete production implementation of Archetype 2
+- [Reference Dataset Provenance](reference-project/evals/DATASET_PROVENANCE.md) - verified CFPB & Bitext dataset catalog
+- [Presenting Projects](03-presenting-projects.md) - how to present this system to hiring managers
+- [System Design Reference Architectures](../system-design/02-reference-architectures.md) - enterprise architecture patterns
 
-- [FDE Academy Masterclass: Project Selection & Portfolio Archetypes](https://youtu.be/Fruw822BMBc) - video breakdown of what FDE portfolios must prove and why basic AI projects fail
-- [End-to-End Real FDE Project Development](https://youtu.be/Ycl5aiYRcmU) - video walkthrough from customer problem statement to production
-- [FDE: The $1M/Year AI Job Explained](https://youtu.be/zXysLUTLjw4) - Palantir origins, audit-to-deployment blueprint, and client discovery
-- [Complete End-to-End AI FDE Project Implementation](https://youtu.be/FSZhPDzESPU) - enterprise AI deployment and real pipelines
-- [Palantir and AI FDE Interview Breakdown](https://youtu.be/CCt0csEqul0) - live coding, system design, and customer role-play rounds decoded
-- [FDE Roadmap and Core Tech Stack](https://youtu.be/kBM5UXRbo3U) - 90-day technical transition plan
-- [Systems Design and Technical Skills for FDEs](https://youtu.be/9CmIPfIYPws) - customer-flavored distributed architecture and Python fluency
-- [From Software Engineer to FDE](https://youtu.be/vLlIBT0HSSc) - transition guidance for traditional engineers
-- [FDE Academy YouTube Channel](https://www.youtube.com/@fdeacademy) - masterclasses and video tutorials for forward deployed engineers
-- [CFPB Consumer Complaint Database](https://www.consumerfinance.gov/data-research/consumer-complaints/) - public enterprise customer disputes
+---
 
+## References & Further Reading
+
+1. **Alexey Grigorev**: [AI Engineering Field Guide: FDE Responsibilities and Skills Analysis](https://github.com/alexeygrigorev/ai-engineering-field-guide/blob/main/role/06-fde.md)
+2. **Anthropic**: [Forward Deployed Engineer Job Description & Fit Criteria](https://job-boards.greenhouse.io/anthropic/jobs/5302966008)
+3. **Consumer Financial Protection Bureau (CFPB)**: [Consumer Complaint Database](https://www.consumerfinance.gov/data-research/consumer-complaints/)
+4. **Hugging Face**: [Bitext Customer Support LLM Dataset](https://huggingface.co/datasets/bitext/customer-support-llm-dataset)
+5. **SEC EDGAR**: [Company Financial Filings Search](https://www.sec.gov/edgar/searchedgar/companysearch)
+6. **OpenTelemetry**: [Semantic Conventions for Generative AI Systems](https://opentelemetry.io/docs/specs/semconv/gen-ai/)
+7. **FDE Academy**: [YouTube Masterclass Series for Forward Deployed Engineers](https://www.youtube.com/@fdeacademy)
