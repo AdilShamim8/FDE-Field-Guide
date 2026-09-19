@@ -35,71 +35,91 @@ The difference between passing and scoring well is usually hardening: candidates
 
 One more habit worth naming: spend the first five minutes reading before writing. Candidates who type immediately and refactor later lose more time than they gain, and the refactor rarely happens under a clock.
 
-## A practice problem set
+## The Google FDE "Vibe Coding" & Rapid Build Round
 
-All problems are fictional but representative. We recommend solving each in 30-45 minutes with a timer and a running commentary.
+The signature practical round in modern FDE loops—standardized at Google, Palantir, and frontier labs—is the **60-Minute "Vibe Coding" / Rapid Live Build** ([YagyanshB Google FDE Guide](https://github.com/YagyanshB/google-fde-interview-guide), [Om Bharatiya](https://github.com/ombharatiya/AI-Engineer-Interview-Questions/blob/main/15-role-guides/forward-deployed-engineer.md)).
 
-### Parse the malformed export
+Unlike algorithmic whiteboarding, the candidate is provided an API key and a messy enterprise dataset (corrupted CSV/JSON with mixed encodings, null values, and dirty types). The goal is building a working, resilient integration under clock pressure.
 
-Given a CSV export from a fictional customer system with missing columns, mixed encodings, and duplicate rows, produce a summary of defect counts by type. Tests input handling, defensive parsing, and whether you state assumptions instead of silently skipping rows. Strong answers report what they dropped and why.
+### The 60-Minute Tactical Timebox
 
-### Design an idempotent webhook receiver
+- **Minutes 0 to 10 (Inspection & Alignment)**: Inspect the raw payload schema immediately. Print sample anomalies (null keys, mixed timestamp formats, currency strings with commas). State assumptions aloud: "I notice 8% of records lack customer IDs; I will record them in a defect ledger rather than crashing the batch." Agree with the interviewer on the single core happy path.
+- **Minutes 10 to 35 (Core Engine & Integration)**: Build the data transformation and ingestion pipeline. Write clean, testable procedural functions with type hints rather than over-engineered abstract class hierarchies. Connect to the LLM or target API seam.
+- **Minutes 35 to 50 (Hardening & Edge Cases)**: Add validation checks, defensive fallbacks, and boundary error handling. Run 3-4 unit test assertions on edge cases (e.g. empty strings, token limit overflows, 429 backpressure).
+- **Minutes 50 to 60 (Run & Production Tradeoff Narration)**: Execute the script live on sample data. Narrate remaining production debt cleanly: "In production, I would replace this in-memory dictionary with a distributed Redis sliding window, add OpenTelemetry distributed spans, and deploy an item-level dead letter queue."
 
-A vendor retries webhook deliveries; your receiver must deduplicate without losing events. Tests delivery semantics, idempotency keys, deduplication windows, and ordering. Strong answers name the at-least-once assumption out loud.
+---
 
-### Find the bug in the failing trace
+## Verified Practical Problem Set
 
-You get a trace showing intermittent timeouts between a queue consumer and an external API. Tests hypothesis discipline: narrowing by evidence, forming the cheapest discriminating test, and resisting the shotgun fix. The method is in [debugging methodology](../troubleshooting/01-debugging-methodology.md).
+All problems reflect verified technical patterns from enterprise interview loops ([Om Bharatiya](https://github.com/ombharatiya/AI-Engineer-Interview-Questions), [Nehal Vyas](https://fde.hinehal.com/blogs/fde-interview-questions), [YagyanshB](https://github.com/YagyanshB/google-fde-interview-guide)). Production-grade runnable implementations and pytest suites are provided in [interviews/code/](code/):
 
-### Extract structured fields from messy text
+### 1. Parse the malformed customer export (`code/parser.py`)
+- **Verified Source**: [YagyanshB Google FDE Guide](https://github.com/YagyanshB/google-fde-interview-guide)
+- **Problem**: Given a CSV export from a legacy ERP with mixed character encodings (UTF-8, UTF-8-BOM, CP1252), missing IDs, and dirty currency strings, produce a summary of defect counts by type and return repaired records.
+- **Tests**: [test_parser.py](code/test_parser.py) (`pytest interviews/code/test_parser.py`)
 
-Free-text incident reports must become typed records, with a validation step and a retry when fields are missing. Tests structured-output handling, schema validation, and a retry loop that feeds the validation error back. Strong answers include a small eval over five fixed cases.
+### 2. Design an idempotent webhook receiver (`code/webhook_receiver.py`)
+- **Verified Source**: [Nehal Vyas](https://fde.hinehal.com/blogs/fde-interview-questions)
+- **Problem**: A customer webhook delivery service retries at-least-once deliveries; design an idempotent receiver with payload hash deduplication, sliding TTL cache, and partial failure isolation.
+- **Tests**: [test_webhook_receiver.py](code/test_webhook_receiver.py)
 
-### Implement exponential backoff with jitter
+### 3. Implement exponential backoff with full jitter (`code/resilient_client.py`)
+- **Verified Source**: [Alexey Grigorev](https://github.com/alexeygrigorev/ai-engineering-field-guide)
+- **Problem**: A client calling an upstream LLM API encounters 429 Too Many Requests; implement an adaptive retry decorator respecting `Retry-After` headers and randomized full jitter backoff.
+- **Tests**: [test_resilient_client.py](code/test_resilient_client.py)
 
-A client for a rate-limited API needs retries that do not synchronize into a thundering herd. Tests resilience primitives, whether you can explain why jitter exists, and testability: a fake clock beats a bare `time.sleep`.
+### 4. Extract structured fields with validation and error-feedback retry (`code/structured_extractor.py`)
+- **Verified Source**: [Om Bharatiya](https://github.com/ombharatiya/AI-Engineer-Interview-Questions)
+- **Problem**: Free-text customer incident logs must become typed Pydantic records; when the LLM returns missing or invalid fields, capture the schema exception and feed it back in a one-turn auto-correction retry.
+- **Tests**: [test_structured_extractor.py](code/test_structured_extractor.py)
 
-### Review the snippet that leaks credentials
+### 5. Multi-tenant sliding window rate limiter (`code/rate_limiter.py`)
+- **Verified Source**: [YagyanshB Google FDE Guide](https://github.com/YagyanshB/google-fde-interview-guide)
+- **Problem**: Protect downstream model provider quotas with a sliding-window rate limiter enforcing tiered per-tenant requests and token burst caps.
+- **Tests**: [test_rate_limiter.py](code/test_rate_limiter.py)
 
-A working integration snippet logs full request bodies including an authorization header, and stores an API key in source. Tests review instincts: secrets handling, log hygiene, and how you deliver findings without grandstanding.
+### 6. Token-aware document chunker with sliding overlap (`code/chunker.py`)
+- **Verified Source**: [Dr. Sanjay Kumar PhD](https://skphd.medium.com/top-25-forward-deployed-engineer-fde-interview-questions-and-answers-ad9ac4a6ad7f)
+- **Problem**: Ingest enterprise contract documents into token-budgeted chunks with sliding window overlap and structural heading metadata preservation.
+- **Tests**: [test_chunker.py](code/test_chunker.py)
 
-## The AI-flavored round
+### 7. Google FDE Vibe Coding Integration Runner (`code/vibe_coding_runner.py`)
+- **Verified Source**: [YagyanshB Google FDE Guide](https://github.com/YagyanshB/google-fde-interview-guide)
+- **Problem**: Ingest, normalize, rate-limit, and validate dirty enterprise payloads under 60-minute timebox constraints, generating structured run ledgers and defect metrics.
+- **Tests**: [test_vibe_coding_runner.py](code/test_vibe_coding_runner.py)
 
-When the exercise touches an LLM, the scoring follows the same logic with different nouns. Expect some combination of calling a model API with structured outputs, handling rate limits and partial failure, and writing a small eval that checks output quality on fixed cases.
+---
 
-Two calibrations from practitioner reports (pattern):
+## Preparation Checklist
 
-- Pure-prompt answers score low - a paragraph of prompt engineering with no validation, retries, or evaluation is the easy half of the job, and interviewers know it
-- Testable code scores high - a schema check, a retry that feeds the error back, and five golden test cases turn the same prompt into a deployable system
-
-The practical implication: when the exercise says "use an LLM here", budget most of your time for everything around the call. The call itself is one line; the contract around it is the work.
-
-If you can build the extraction problem above and explain when you would escalate from prompt fixes to pipeline changes, you are prepared for this round. The underlying patterns are cataloged in [LLM application patterns](../ai/01-llm-application-patterns.md) and the eval habit in [evaluation and testing](../ai/03-evaluation-and-testing.md).
-
-## Preparation checklist
-
-Work through this list before scheduling the loop; each item is a concrete rehearsal, not a reading task:
+Work through this list before scheduling the loop; each item is a concrete rehearsal:
 
 - [ ] I can parse and validate messy CSV and JSON input in under 20 minutes from memory
 - [ ] I can write an idempotent handler and explain the delivery semantics it assumes
-- [ ] I can implement retry with exponential backoff and jitter without looking it up
+- [ ] I can implement retry with exponential backoff and full jitter without looking it up
 - [ ] I can call an LLM API with a structured output schema and validate the result
 - [ ] I can write a five-case eval for an extraction or classification task
 - [ ] I can read a trace or log excerpt and state a top-three hypothesis list
 - [ ] I can review an integration snippet and find the secrets, PII, and error-handling defects
 - [ ] I narrate constraints and assumptions before coding in practice sessions, not just in interviews
-- [ ] I have completed at least one timed mock with a peer watching
+- [ ] I have completed at least one timed 60-minute mock run of `vibe_coding_runner.py`
 
-## Related documents
+---
 
-- [The interview process](01-interview-process.md) - where this round sits in the loop
-- [Take-home assignments](06-take-homes.md) - the same skills tested asynchronously, with a timebox
-- [LLM application patterns](../ai/01-llm-application-patterns.md) - the patterns behind the AI-flavored tasks
-- [Evaluation and testing](../ai/03-evaluation-and-testing.md) - the eval habit this round rewards
-- [APIs and integrations](../engineering/02-apis-and-integrations.md) - boundary handling in depth
-- [Project ideas](../portfolio/02-project-ideas.md) - specs that double as practice material
+## Related Documents
 
-## Further reading
+- [Coding round solutions and narration playbooks](08-coding-solutions.md) - verbatim verbal scripts and architectures
+- [Runnable test suite](code/) - complete pytest implementations
+- [Question bank](07-question-bank.md) - round-by-round interview question directory
+- [The interview process](01-interview-process.md) - stage breakdown and hiring pipelines
 
-- [fde.academy](https://fde.academy) - practitioner guides on technical round expectations
-- [Exponent](https://tryexponent.com) - FDE interview guides and community-sourced question patterns
+---
+
+## References & Further Reading
+
+1. **YagyanshB**: [Google Forward Deployed Engineering Interview Prep Guide](https://github.com/YagyanshB/google-fde-interview-guide)
+2. **Om Bharatiya**: [AI Engineer Interview Questions: Forward Deployed Engineer Guide](https://github.com/ombharatiya/AI-Engineer-Interview-Questions/blob/main/15-role-guides/forward-deployed-engineer.md)
+3. **Nehal Vyas**: [Forward Deployed Engineer Interview Questions & Answers](https://fde.hinehal.com/blogs/fde-interview-questions)
+4. **Dr. Sanjay Kumar PhD**: [Top 25 Forward Deployed Engineer (FDE) Interview Questions and Answers](https://skphd.medium.com/top-25-forward-deployed-engineer-fde-interview-questions-and-answers-ad9ac4a6ad7f)
+5. **Alexey Grigorev**: [AI Engineering Field Guide: FDE Responsibilities and Skills Analysis](https://github.com/alexeygrigorev/ai-engineering-field-guide/blob/main/role/06-fde.md)
