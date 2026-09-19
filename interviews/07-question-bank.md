@@ -29,10 +29,10 @@ Following the data-first methodology of [alexeygrigorev/ai-engineering-field-gui
 - **A customer signed a contract because their CEO said "we need AI." They cannot articulate a use case. Walk me through your first two weeks.** - *signal: hunting operator pain over executive hype; rapid vertical slicing* `[Source: Om Bharatiya, Sundeep Teki]`
 - **An enterprise COO says: "Our emergency room wait times are too long. Can AI fix this?" Decompose the problem.** - *signal: pipeline deconstruction; recognizing when NOT to use AI; HIPAA/EHR constraints* `[Source: Om Bharatiya]`
 - **A VP says "make our reporting smarter". What do you do first?** - *signal: reaching for discovery and operator workflows before software solutions* `[Source: Nehal Vyas]`
-- **The data owner refuses to give access. Walk me through your next move.** - *signal: escalation discipline, governance respect, and unblocking data as critical path* `[Source: fde.academy]`
+- **The data owner refuses to give access. Walk me through your next move.** - *signal: escalation discipline, governance respect, and unblocking data as critical path* `[Source: Om Bharatiya, Startup.jobs]`
 - **How do you tell a real production use case from an executive vanity demo?** - *signal: workflow-integration instinct; measuring daily operator repetition* `[Source: Sundeep Teki]`
 - **What belongs in a one-page problem statement before writing code?** - *signal: artifact discipline, quantitative success metrics, named veto stakeholders* `[Source: Startup.jobs]`
-- **Two stakeholders give you conflicting requirements. What do you do?** - *signal: resolving contradictions in the room with data, not silently in the code* `[Source: Nehal Vyas]`
+- **Two stakeholders give you conflicting requirements. What do you do?** - *signal: resolving contradictions in the room with data, not silently in the code* `[Source: Startup.jobs, Nehal Vyas]`
 - **How do you manage an engagement operating under "ambiguity by default"?** - *signal: establishing two-week clickable software cadences; ADR delta logs* `[Source: Sundeep Teki]`
 
 ### 2. Practical Coding and Technical Integration
@@ -40,9 +40,9 @@ Following the data-first methodology of [alexeygrigorev/ai-engineering-field-gui
 - **In a 60-minute Google FDE "Vibe Coding" / rapid live build round, you receive dirty CSV/JSON data and an API key. How do you structure your time?** - *signal: scoping down to critical path; dirty data defensive parsing; testable seams* `[Source: YagyanshB Google FDE]`
 - **Build an idempotent API endpoint that integrates an LLM to extract structured entities from documents, with streaming responses and error recovery.** - *signal: FastAPI, Pydantic schemas, Redis idempotency keys, SSE streaming, auto-retry loops* `[Source: Nehal Vyas]`
 - **You have 48 hours before an executive demo to a Fortune 500 leadership team using their proprietary data. What do you build and what do you deliberately cut?** - *signal: ruthlessness in scoping; curated data ingestion; citation trails; failure scripting* `[Source: Om Bharatiya]`
-- **A 429 Too Many Requests hits mid-batch. What happens to the rest of the batch?** - *signal: item-level state tracking, Retry-After header with full jitter backoff, checkpointed resume, dead-letter queues* `[Source: fde.academy]`
-- **Parse this malformed export and report defect counts by type.** - *signal: input handling, defensive null checking, and explicit assumption stating* `[Source: Exponent]`
-- **Design a sliding window rate limiter with tiered tenant quotas.** - *signal: multi-tenant quota isolation and boundary burst defense* `[Source: YagyanshB]`
+- **A 429 Too Many Requests hits mid-batch. What happens to the rest of the batch?** - *signal: item-level state tracking, Retry-After header with full jitter backoff, checkpointed resume, dead-letter queues* `[Source: Alexey Grigorev, Om Bharatiya]`
+- **Parse this malformed export and report defect counts by type.** - *signal: input handling, defensive null checking, and explicit assumption stating* `[Source: YagyanshB Google FDE]`
+- **Design a sliding window rate limiter with tiered tenant quotas.** - *signal: multi-tenant quota isolation and boundary burst defense* `[Source: YagyanshB Google FDE]`
 - **Make this customer integration testable without access to their staging environment.** - *signal: seams, mock fixtures, synthetic record generators, and contractual fakes* `[Source: Alexey Grigorev]`
 
 ### 3. LLM and Applied AI Engineering
@@ -52,29 +52,30 @@ Following the data-first methodology of [alexeygrigorev/ai-engineering-field-gui
 - **The model worked in the demo and fails in production. Why?** - *signal: distribution shift, OCR noise, index staleness, context window pollution, and schema drift* `[Source: Om Bharatiya]`
 - **The customer wants zero hallucinations. What do you say?** - *signal: probabilistic system framing, groundness metrics, citation verification, and fallback routing* `[Source: Sundeep Teki]`
 - **Latency doubled after you added retrieval. What are your options?** - *signal: semantic caching, asynchronous chunk pre-fetching, model tiering (small rerankers), streaming for perceived latency* `[Source: Nehal Vyas]`
-- **Structured outputs come back malformed about 2% of the time. What do you build?** - *signal: JSON schema enforcement via instructor/Pydantic, validation exception feedback retry loop, deterministic parser fallback* `[Source: fde.academy]`
+- **Structured outputs come back malformed about 2% of the time. What do you build?** - *signal: JSON schema enforcement via instructor/Pydantic, validation exception feedback retry loop, deterministic parser fallback* `[Source: Om Bharatiya, Sanjay Kumar PhD]`
 
 ### 4. Enterprise System Design and Deployment
 
+- **If a customer needs our product deployed into their AWS VPC with SSO (SAML/OIDC) and secure ingestion from Snowflake, how would you architect it at a high level?** - *signal: federated SAML/OIDC SSO, PrivateLink network perimeter, secure key-pair Snowflake authentication, zero public egress* `[Source: Startup.jobs]`
 - **Design an enterprise document Q&A assistant for a regulated financial institution with strict data residency, auditability, and air-gapped VPC requirements.** - *signal: AWS PrivateLink / Azure Private Link, customer-managed KMS encryption, on-prem vLLM inference, append-only audit logging* `[Source: Sanjay Kumar PhD]`
 - **We are rolling this system out from 1 pilot to 50 enterprise customers. What breaks first and how do you monitor it?** - *signal: model provider rate limits, per-tenant cost explosion, silent schema drift, OpenTelemetry latency and recall metrics* `[Source: Nehal Vyas]`
 - **Where does the model run in this design, and why?** - *signal: data residency perimeters, egress costs, latency budgets, and compliance posture* `[Source: Sundeep Teki]`
-- **What data leaves the customer boundary in this design?** - *signal: proactive CISO architecture delivery; 3-tier egress classification (PII, vector embeddings, telemetry)* `[Source: fde.academy]`
-- **Who is on call when this breaks at 2 a.m.?** - *signal: phased operational handover (pilot -> shadowing -> customer ownership), runbook verification, SLA escalation contracts* `[Source: fde.academy]`
+- **What data leaves the customer boundary in this design?** - *signal: proactive CISO architecture delivery; 3-tier egress classification (PII, vector embeddings, telemetry)* `[Source: Om Bharatiya, Sanjay Kumar PhD]`
+- **Who is on call when this breaks at 2 a.m.?** - *signal: phased operational handover (pilot -> shadowing -> customer ownership), runbook verification, SLA escalation contracts* `[Source: Nehal Vyas, Startup.jobs]`
 
 ### 5. Live Production Debugging
 
 - **The pilot RAG system is giving wrong answers on customer contracts. You are on-site tomorrow. How do you debug it?** - *signal: bisection methodology (retrieval miss vs. generation hallucination); chunk inspection; adding regression tests to golden suite* `[Source: Om Bharatiya]`
 - **The customer's integration suddenly returns empty results in production. What do you check first?** - *signal: structured triage (reproduce -> change check -> auth/quota -> network proxy -> data schema)* `[Source: Nehal Vyas]`
-- **Answers are wrong every Monday. Hypotheses?** - *signal: Sunday night scheduled ETL batch sync failure, timezone boundary edge cases, weekend ticket backlog queue starvation* `[Source: fde.academy]`
-- **Two services disagree about the same record. Which is right, and how do you find out?** - *signal: authoritative systems of record by business domain, message lineage inspection, diff reconciliation reports, signed ADRs* `[Source: fde.academy]`
+- **Answers are wrong every Monday. Hypotheses?** - *signal: Sunday night scheduled ETL batch sync failure, timezone boundary edge cases, weekend ticket backlog queue starvation* `[Source: Nehal Vyas, Om Bharatiya]`
+- **Two services disagree about the same record. Which is right, and how do you find out?** - *signal: authoritative systems of record by business domain, message lineage inspection, diff reconciliation reports, signed ADRs* `[Source: Startup.jobs, Alexey Grigorev]`
 
 ### 6. Customer Simulation and Role-Play
 
 - **Interviewer role-plays a furious VP: "Your implementation is two weeks late and my CEO is asking why we hired you." How do you respond?** - *signal: composure under pressure; non-defensive validation; honest root-cause status; concrete date commitments; clear stakeholder asks* `[Source: Nehal Vyas]`
 - **The customer insists on an architectural approach you think is wrong and will fail in production. What do you do?** - *signal: uncovering underlying motivation; translating technical risk into dollar/latency terms; running 48-hour side-by-side benchmarks; disagree-and-commit with ADR* `[Source: Nehal Vyas]`
 - **"Our CEO saw a demo and wants AI everywhere across 4 divisions by next quarter."** - *signal: scoping under hype; identifying one high-ROI beachhead workflow; protecting client engineering from distraction* `[Source: Sundeep Teki]`
-- **"Your system gave a wrong answer to an external client today."** - *signal: disciplined 4-phase incident triage (immediate acknowledgement -> trace bisection -> blast radius containment -> postmortem regression closure)* `[Source: fde.academy]`
+- **"Your system gave a wrong answer to an external client today."** - *signal: disciplined 4-phase incident triage (immediate acknowledgement -> trace bisection -> blast radius containment -> postmortem regression closure)* `[Source: Om Bharatiya, Nehal Vyas]`
 
 ### 7. Behavioral and Ownership
 

@@ -298,5 +298,45 @@
       "url": "https://github.com/alexeygrigorev/ai-engineering-field-guide/blob/main/role/06-fde.md",
       "verified_date": "2026-09-19"
     }
+  },
+  {
+    "id": "FDE-SYS-003",
+    "stage": "System Design & Architecture",
+    "question": "If a customer needs our product deployed into their AWS VPC with SSO (SAML/OIDC) and secure ingestion from Snowflake, how would you architect it at a high level?",
+    "tested_at": ["Startup.jobs FDE Series", "Databricks", "Enterprise SaaS AI"],
+    "core_signal": "Enterprise VPC architecture, private connectivity (PrivateLink), IAM/SSO federation (Okta/Azure AD via SAML 2.0/OIDC), secure Snowflake key-pair authentication, data residency enforcement",
+    "senior_response_playbook": "I architect this across 4 decoupled layers: (1) Identity & Access Management: Integrate with the customer's identity provider (Okta, Ping, or Azure AD) using SAML 2.0 or OIDC. Enforce Role-Based Access Control (RBAC) where SAML group assertions map dynamically to internal application roles. (2) VPC & Network Perimeter: Deploy the application across multi-AZ private subnets with an internal Application Load Balancer (ALB). Outbound connectivity to Snowflake and LLM inference endpoints traverses AWS PrivateLink interface endpoints, guaranteeing zero traffic egresses across the public internet. (3) Snowflake Ingestion: Establish a secure database integration using Snowflake Key-Pair authentication with RSA 2048-bit keys stored in AWS Secrets Manager (rotated every 90 days), or AWS IAM role federation via Snowflake Storage Integration. Queries execute via dedicated warehouse quotas with read-only permissions and row-level security. (4) Auditability: Stream CloudTrail logs, authentication access logs, and query audit histories into the customer's enterprise SIEM (Datadog/Splunk).",
+    "red_flag_response": "Suggests using username/password basic authentication for Snowflake, stores credentials in environment variables, or routes database traffic across the public internet without VPC peering or PrivateLink.",
+    "scoring_rubric": {
+      "strong_hire": "Architects federated SAML/OIDC SSO with role mapping; designs private VPC deployment using AWS PrivateLink; uses key-pair/IAM Snowflake authentication with least-privilege read-only warehouses; routes audit logs to enterprise SIEM.",
+      "hire": "Designs a standard VPC setup with SSO and private database credentials.",
+      "no_hire": "Proposes hardcoding database passwords; ignores network egress and PrivateLink; does not know how enterprise SSO works."
+    },
+    "primary_source": {
+      "author": "Startup.jobs",
+      "title": "Forward Deployed Engineer Interview Questions & Core Competencies",
+      "url": "https://startup.jobs/interview-questions/forward-deployed-engineer",
+      "verified_date": "2026-09-19"
+    }
+  },
+  {
+    "id": "FDE-DISC-004",
+    "stage": "Discovery & Decomposition",
+    "question": "Two enterprise stakeholders give you conflicting requirements for the deployment. How do you resolve the impasse?",
+    "tested_at": ["Startup.jobs", "Palantir", "Frontier AI Labs"],
+    "core_signal": "Stakeholder mediation, data-driven tradeoff analysis, aligning on customer business ROI, documented escalation paths",
+    "senior_response_playbook": "(1) Active listening and root-cause inquiry: Meet separately with each stakeholder to understand the underlying business driver behind their ask (e.g., Compliance Officer wants zero data retention for risk mitigation, while Head of Support wants 90-day history for QA auditability). (2) Quantify tradeoffs: Present the technical and operational implications of both options in concrete metrics (cost, compliance exposure, user latency). (3) Propose an integrative synthesis: Often, requirements conflict because of binary thinking. In this case, propose a compromise (e.g., retain anonymized query metadata for 90 days while wiping customer PII after 24 hours). (4) Document and escalate with consensus: If an impasse remains, convene both leaders with a 1-page Architecture Decision Record (ADR) outlining trade-offs, and have the executive sponsor sign off rather than deciding unilaterally in code.",
+    "red_flag_response": "Picks whichever stakeholder has the higher corporate title, or writes hidden toggle flags to satisfy both without addressing the architectural contradiction.",
+    "scoring_rubric": {
+      "strong_hire": "Uncovers root motivations behind conflicting asks; quantifies business tradeoffs; engineers creative synthetic compromises; escalates with an ADR when necessary.",
+      "hire": "Talks to both stakeholders and facilitates a meeting to agree on a path forward.",
+      "no_hire": "Silently picks one side; ignores compliance concerns; or complains about stakeholder dysfunction."
+    },
+    "primary_source": {
+      "author": "Startup.jobs",
+      "title": "Forward Deployed Engineer Interview Questions & Core Competencies",
+      "url": "https://startup.jobs/interview-questions/forward-deployed-engineer",
+      "verified_date": "2026-09-19"
+    }
   }
 ]
