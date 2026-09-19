@@ -1,168 +1,189 @@
-# The FDE Loop
+# The FDE Loop: The 11-Stage Operational Mental Model
 
-Every FDE engagement, however messy, runs the same loop. This is the mental model behind every other document in this guide, and the most honest answer to "what does an FDE do all day": you move a customer around this loop, then find the next problem and go again.
+Every enterprise Forward Deployed Engineering (FDE) engagement, regardless of industry sector or
+underlying tech stack, runs the exact same delivery loop. This is the foundational mental model
+governing the profession: taking an ambiguous, painful customer business problem, moving it through
+rigorous technical phases, deploying it into production, proving business impact, and iterating.
 
-If you read only one file in this guide, read this one. Each stage below names the artifact that proves it happened, the way it classically fails, and the section that covers it in depth.
+OpenAI's Forward Deployed Engineer role specification compresses this lifecycle into a single
+operational mandate: lead *"technical discovery, architecture, implementation, evaluation,
+productionization, and handoff"* ([OpenAI Careers, 2026](https://openai.com/careers)).
 
-## The loop in one view
+---
 
-The stages, in order:
+## 1. The Cyclical Delivery Loop & Recursive Topologies
 
-1. Problem
-2. Discovery
-3. Requirements
-4. Architecture
-5. Prototype
-6. Integration
-7. Deployment
-8. Evaluation
-9. Iteration
-10. Production
-11. Customer impact
+The FDE Loop is not a rigid waterfall; it is an active, iterative engineering circuit. Forward
+progress is gated by verifiable artifacts, while recursive feedback loops handle edge-case discovery
+and metric drift:
 
-Then back to new problems. OpenAI's FDE postings compress the same sequence into one job-description line: lead "technical discovery, architecture, implementation, evaluation, productionization, and handoff" (observed evidence, [OpenAI careers](https://openai.com/careers), 2026).
+```mermaid
+graph TD
+    S1[1. Problem Formulation] --> S2[2. Discovery & Shadowing]
+    S2 --> S3[3. Requirements & Spec]
+    S3 --> S4[4. Architecture & Security]
+    S4 --> S5[5. Walking Skeleton Prototype]
+    S5 --> S6[6. Production Integration]
+    S6 --> S7[7. Deployment & Readiness]
+    S7 --> S8[8. Golden Evaluation]
+    S8 --> S9[9. Defect Iteration]
+    S9 --> S10[10. Production Go-Live]
+    S10 --> S11[11. Customer Impact & Handover]
+    S11 -->|Exposes Next Pain Point| S1
+    
+    %% Recursive Feedback Loops
+    S8 -.->|Metric Drift / Flawed Assumptions| S3
+    S9 -.->|Parameter Limits Exceeded| S4
+    S7 -.->|Hidden Auth / Proxy Obstacles| S6
+```
 
-## The stages
+### The Three Legitimate Recursion Loops
 
-Each stage has four parts: the goal, the key artifact, the FDE's job, and the classic failure. The artifact matters more than it looks: engagements drift when stages produce conversations instead of documents.
+1. **Evaluation $\rightarrow$ Requirements (The Spec Drift Loop)**: When automated evaluation against
+   the golden benchmark reveals that a requirement was mathematically unviable or based on corrupted
+   historical assumptions, halt development and update the signed [Requirements Specification](../customer/02-requirements-to-spec.md).
+2. **Iteration $\rightarrow$ Architecture (The Structural Refactor Loop)**: When error distributions
+   cannot be resolved via prompt tuning or threshold adjustments, stop patching and reopen the
+   [Architectural Decision Record (ADR)](../system-design/03-trade-offs-and-decision-records.md) to
+   introduce new structural primitives (e.g. adding semantic chunking or hybrid sparse indices).
+3. **Deployment $\rightarrow$ Integration (The Enterprise Network Reality Loop)**: When staging drills
+   reveal corporate TLS interception proxies or undisclosed network chokepoints, pause deployment to
+   implement necessary CA cert bundles or SSM port forwarding ([Working in Customer Environments](../customer/03-working-in-customer-environments.md)).
 
-### 1. Problem
+---
 
-- Goal - turn a vague customer ask into a problem statement the customer recognizes as their own
-- Key artifact - a one-page problem statement naming the business metric the system should move
-- The FDE's job - interview stakeholders until the real problem, not the requested feature, is on paper
-- Classic failure - building what was asked for instead of what was meant, and finding out at evaluation
+## 2. The 11-Stage Operational Execution Matrix
 
-### 2. Discovery
+To prevent engagements from degenerating into endless informal meetings, every stage must be gated
+by a concrete, verifiable engineering artifact:
 
-- Goal - map the workflows, data, systems, and people the problem actually touches
-- Key artifact - discovery notes: workflow maps, system inventory, data sources, constraints, and the politics
-- The FDE's job - sit with the people who do the work and watch the real process, not the documented one
-- Classic failure - discovering in week six that the real workflow runs in a spreadsheet nobody mentioned
+| Stage # | Stage Name | Target Objective | Verifiable Artifact | FDE Responsibility | Fatal Failure Mode | Codebase Defense Anchor |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **1** | **Problem** | Convert vague customer pain into a quantifiable metric | One-page Quantified Problem Statement | Interrogate executive and operational sponsors for true drivers | Building the requested toy feature instead of solving root operational pain | [`customer/02-requirements-to-spec.md`](../customer/02-requirements-to-spec.md) |
+| **2** | **Discovery** | Map the real-world workflows, schemas, and politics | Workflow Journey Map & Data Quality Audit | Shadow floor operators; audit uncurated database dumps | Discovering in Week 6 that the real process runs in an undocumented spreadsheet | [`skills/02-discovery-and-requirements.md`](../skills/02-discovery-and-requirements.md) |
+| **3** | **Requirements** | Formalize testable Given/When/Then acceptance criteria | Signed Engineering Spec (`requirements.md`) with Non-Goals | Force scope trade-offs into the open; secure written sign-off | Aspirational vibes ("accurate classification") that no eval can falsify | [`portfolio/reference-project/README.md`](../portfolio/reference-project/README.md) |
+| **4** | **Architecture** | Design within customer cloud and security constraints | Architectural Decision Records (ADRs) & SecOps clearance | Balance build vs buy, latency budgets, and PII fences | Importing last client's architecture into a VPC where SecOps forbids it | [`system-design/03-trade-offs-and-decision-records.md`](../system-design/03-trade-offs-and-decision-records.md) |
+| **5** | **Prototype** | Answer the riskiest technical question cheaply | Working Skeleton processing synthetic test records | Timebox development; force a concrete Go/No-Go decision | Building a demo on 10 cherry-picked rows that collapses on messy enterprise data | [`portfolio/reference-project/src/api/server.py`](../portfolio/reference-project/src/api/server.py) |
+| **6** | **Integration** | Wire prototype into customer IAM, APIs, and databases | Hardened Integration Engine with Idempotency tokens | Operate inside customer bastions; handle rate limits & replays | Treating customer staging like an internal sandbox; crashing shared services | [`interviews/code/webhook_receiver.py`](../interviews/code/webhook_receiver.py) |
+| **7** | **Deployment** | Promote software into target production infrastructure | Production Deployment Runbook & Feature Flags | Run deployment drills; verify rollback kill switches | Deploying before a holiday freeze with zero rollback plan | [`deployment/03-production-readiness-checklist.md`](../deployment/03-production-readiness-checklist.md) |
+| **8** | **Evaluation** | Measure statistical accuracy against golden benchmarks | Automated Evaluation Report (25+ test cases) | Assert hard quality gates ($\ge 88\%$ accuracy, $100\%$ citations) | Subjective evaluations where quality debates revert to political taste | [`portfolio/reference-project/evals/run_evals.py`](../portfolio/reference-project/evals/run_evals.py) |
+| **9** | **Iteration** | Close measured accuracy gaps systematically | Prioritized Defect Backlog linked to Eval runs | Context bisection; deterministic Pydantic error correction | Shipping unverified parameter tweaks that silently regress existing cases | [`interviews/code/structured_extractor.py`](../interviews/code/structured_extractor.py) |
+| **10**| **Production** | Transition from pilot to business-critical system | Production Readiness Sign-Off & Live Dashboards | Lead the formal Go/No-Go gate with sponsor and InfoSec | Celebrating the pilot demo while the live system rots without support | [`portfolio/reference-project/tests/test_server.py`](../portfolio/reference-project/tests/test_server.py) |
+| **11**| **Customer Impact**| Prove business ROI and transfer operational autonomy | Handover Package & 30-Day Reverse Shadowing Log | Train customer engineers; codify platform primitives | Handover to nobody; system decays into technical debt upon FDE exit | [`customer/01-engagement-lifecycle.md`](../customer/01-engagement-lifecycle.md) |
 
-### 3. Requirements
+---
 
-- Goal - convert discovery into requirements specific enough to build and test against
-- Key artifact - a requirements document the customer signs, with explicit non-goals
-- The FDE's job - force trade-offs into the open and pin down what is out of scope before anything is built
-- Classic failure - requirements written as aspirations ("the assistant should be intelligent") that no evaluation can falsify
+## 3. Forensic Breakdown: Where Loops Die
 
-### 4. Architecture
+Enterprise deployments rarely fail from sudden catastrophic explosions; they die quietly at three
+predictable friction boundaries:
 
-- Goal - choose a design that fits the customer's constraints, not the habits from your last engagement
-- Key artifact - architecture decision records plus a deployment sketch covering regions, environments, and data boundaries
-- The FDE's job - make trade-offs legible to both sides: latency against cost, build against buy, SaaS against VPC-embedded
-- Classic failure - importing the previous engagement's architecture into a customer whose compliance rules forbid half of it
+```
++-----------------------------------------------------------------------------------+
+|                           THE THREE FATAL LOOP KILLERS                            |
++-----------------------------------------------------------------------------------+
+|  [Stage 3 -> Stage 8: The Evaluation Gap]                                         |
+|  Unenforced criteria -> Progress cannot be proven -> Project dies in debate.      |
+|                                                                                   |
+|  [Stage 7 -> Stage 10: The Production Cliff]                                      |
+|  MIT NANDA finding: 95% of pilots stall -> Prototype never touches real workflow. |
+|                                                                                   |
+|  [Stage 10 -> Stage 11: The Handover Vacuum]                                      |
+|  No customer ownership -> First unhandled schema drift kills the deployment.      |
++-----------------------------------------------------------------------------------+
+```
 
-### 5. Prototype
+### 1. The Evaluation Gap (Stage 3 $\rightarrow$ Stage 8)
 
-- Goal - answer the riskiest question first with the cheapest thing that can answer it
-- Key artifact - a proof of concept scoped to a decision, with success criteria agreed before the build starts
-- The FDE's job - timebox it and make it produce a decision, not a demo
-- Classic failure - a demo that works on ten hand-picked rows and collapses on the customer's real data
+The loop dies when nobody defined what "good" meant before building. Without an empirical golden
+evaluation suite, every customer demo becomes an unfalsifiable debate about taste. The sponsor points
+out one edge case the model missed, the engineering lead panics, and the team spends two weeks
+overfitting prompts to fix that single anecdotal example, quietly breaking 15 other cases.
 
-### 6. Integration
+- **The Defense**: Never write a prototype before establishing the **Golden Evaluation Benchmark**
+  ([`evals/run_evals.py`](../portfolio/reference-project/evals/run_evals.py)). Agree on the 25+
+  canonical cases, the accuracy thresholds ($\ge 88.0\%$), and the citation grounding requirements
+  during Stage 3.
 
-- Goal - connect the prototype to the customer's real systems, data, and identities
-- Key artifact - an integration contract: APIs, schemas, auth flows, rate limits, and error handling, written down
-- The FDE's job - work against systems you do not own and cannot reset, through the customer's change process
-- Classic failure - treating the customer's shared staging environment like your own
+### 2. The Production Cliff (Stage 7 $\rightarrow$ Stage 10)
 
-### 7. Deployment
+The phenomenon measured by the **MIT NANDA report** (*The GenAI Divide: State of AI in Business 2025*,
+Fortune, August 2025): **~95% of enterprise GenAI pilots deliver zero measurable P&L impact**.
+Pilots die on the cliff between a working side-chat demo and a production service embedded into
+enterprise systems of record (CRM, ERP, ticketing queues).
 
-- Goal - get the system running in the environment where it will actually live
-- Key artifact - a deployment runbook: environments, promotion path, rollback, secrets, and monitoring hooks
-- The FDE's job - run go-live like a drill rather than a leap, against a production readiness checklist
-- Classic failure - going live on a Friday, with no rollback plan, during the customer's busiest week
+- **The Defense**: Reject standalone chatbot sandboxes. Build directly against the customer's live
+  event pipelines, enforce deterministic Pydantic schemas, and integrate human operator override queues
+  ([`test_exception_queue_routing_and_operator_resolution`](../portfolio/reference-project/tests/test_server.py)).
 
-### 8. Evaluation
+### 3. The Handover Vacuum (Stage 10 $\rightarrow$ Stage 11)
 
-- Goal - define what good means and measure it continuously
-- Key artifact - an evaluation report: golden datasets, scoring rubric, baseline against current, and tracked regressions
-- The FDE's job - make quality a number both you and the customer trust, before and after every change
-- Classic failure - nobody defined good, so every quality debate is unfalsifiable and lasts forever
+Engagements fail at handover more often than at go-live. Go-live is an adrenaline-filled milestone
+attended by executives; handover is the quiet transfer of operational weight to customer engineers
+who did not write the code. If customer engineers are not actively triaging alerts during a 30-day
+reverse-shadowing window, the first post-deployment schema change will crash the system, permanently
+destroying vendor credibility.
 
-### 9. Iteration
+- **The Defense**: Execute the **Handover Triad** ([The Engagement Lifecycle](../customer/01-engagement-lifecycle.md)):
+  Self-contained runbooks, automated regression test suites, and named customer PagerDuty ownership.
 
-- Goal - close the measured gap between current behavior and the requirements
-- Key artifact - a prioritized defect and improvement list tied to evaluation results
-- The FDE's job - debug in an environment you did not build, fix, re-evaluate, and repeat without regressing what already worked
-- Classic failure - shipping changes without re-running the evaluation suite, and quietly breaking last month's fix
+---
 
-### 10. Production
+## 4. The Interview & Portfolio Loop Script
 
-- Goal - cross the cliff from working pilot to a system the customer's business depends on
-- Key artifact - a production readiness sign-off covering reliability, security review, monitoring, on-call, and ownership
-- The FDE's job - drive the go/no-go honestly, including the option of no
-- Classic failure - declaring victory at the demo and letting the pilot rot instead of either dying or growing
+Forward Deployed Engineering interviewers structure candidate loops around this exact sequence
+([TryExponent, 2026](https://tryexponent.com); [Gaijineer Cohere Analysis, April 2026](https://gaijineer.co)).
+When asked to describe a past technical project, structure your response as an end-to-end traversal
+of the FDE loop:
 
-### 11. Customer impact
+```
+                      THE 5-MINUTE FDE INTERVIEW NARRATIVE
+1. The Problem & Baseline (Stages 1-2):
+   "At enterprise customer X, inbound dispute triage suffered a 34.8% error rate,
+    adding 9.4 hours to first response and threatening contractual P1 SLAs."
+2. The Specification & Boundaries (Stages 3-4):
+    "We codified an engineering spec targeting >= 88% accuracy and < 500ms latency,
+    with explicit non-goals forbidding direct database writes to core banking ledgers."
+3. The Integration & Architectural Hurdles (Stages 5-7):
+    "We integrated behind an audited SSH bastion, enforced SHA-256 idempotency to stop
+    webhook replays, and implemented regex PII tokenization for GDPR compliance."
+4. The Evaluation Gate & Iteration (Stages 8-9):
+    "We asserted quality against a 25-case golden dataset, iterating on hybrid dense/sparse
+    retrieval until citation grounding reached 100% and severity accuracy hit 100%."
+5. Production Impact & Handover (Stages 10-11):
+    "We launched behind a 10% canary flag, completed a 30-day reverse-shadowing rotation
+    with customer Tier-1 operators, and eliminated $38,500/month in triage labor."
+```
 
-- Goal - prove the system moved the business metric named back in the problem stage
-- Key artifact - a handover document plus an impact report: metric before and after, owners, and the next problems
-- The FDE's job - hand over cleanly and carry the lessons back into your own product team
-- Classic failure - handover to nobody, so the system works, decays slowly, and poisons the customer's appetite for round two
+---
 
-The loop feeds itself: a delivered system exposes the next problem, and trust from round one is what gets you round two. Most mature FDE engagements are sequels.
+## 5. Direct Codebase Defense Implementations
 
-## The loop is not linear
+Every stage of the FDE Loop is implemented as executable code within this repository:
 
-The stage order is real, but not a waterfall. Three recursions are normal:
+| Loop Stage | Repository Implementation Asset | Operational Role |
+| :--- | :--- | :--- |
+| **Stage 3 & 4 (Spec & Scope)** | [`customer/02-requirements-to-spec.md`](../customer/02-requirements-to-spec.md) | Given/When/Then acceptance criteria and ETISE specification |
+| **Stage 5 (Walking Skeleton)** | [`portfolio/reference-project/src/api/server.py`](../portfolio/reference-project/src/api/server.py) | Fast API gateway with local mock fallbacks |
+| **Stage 6 (Integration Defense)** | [`interviews/code/webhook_receiver.py`](../interviews/code/webhook_receiver.py) | Idempotent replay protection with SHA-256 hashing |
+| **Stage 8 (Golden Evaluation)** | [`portfolio/reference-project/evals/run_evals.py`](../portfolio/reference-project/evals/run_evals.py) | 25-case automated benchmark asserting $\ge 88\%$ accuracy and $100\%$ citations |
+| **Stage 9 (Defect Iteration)** | [`interviews/code/structured_extractor.py`](../interviews/code/structured_extractor.py) | Self-healing schema correction loop for dirty outputs |
+| **Stage 10 (Production Readiness)**| [`portfolio/reference-project/tests/test_server.py`](../portfolio/reference-project/tests/test_server.py) | 7 integration tests asserting RBAC, health, and operator overrides |
+| **Stage 11 (Handover & SRE)** | [`troubleshooting/01-debugging-methodology.md`](../troubleshooting/01-debugging-methodology.md) | 7-phase incident response lifecycle and Sev-0..Sev-3 SLA matrix |
 
-- Evaluation loops back to requirements - when the evaluation suite reveals that the requirement itself was wrong or unmeasurable, rewrite it before iterating on the system
-- Iteration reopens architecture - when fixes start needing design changes rather than parameter changes, stop and re-decide
-- Deployment findings reopen integration - the go-live drill regularly exposes auth, data, and environment assumptions that discovery missed
+---
 
-Teams that pretend the loop is linear are easy to spot: their requirements documents are frozen while their systems quietly stop matching them. We recommend treating the stage list as a map of what must be true at handover, not a calendar.
+## 6. Related Documents
 
-## Where loops die
+- [What Is an FDE](01-what-is-an-fde.md) - foundational definition, origins, and the startup CTO mandate
+- [Responsibilities](02-responsibilities.md) - core technical responsibilities weighted across 146 postings
+- [FDE vs Other Roles](03-fde-vs-other-roles.md) - sharp 2D positioning quadrant against adjacent titles
+- [Where FDEs Work](04-where-fdes-work.md) - how the role adapts across AI labs, platforms, and startups
+- [The Engagement Lifecycle](../customer/01-engagement-lifecycle.md) - the 10-phase delivery sequence common to all archetypes
 
-Most failed engagements die at one of two stages, and neither death is dramatic.
+## 7. Further Reading
 
-### The evaluation gap
-
-The loop dies at evaluation when nobody defined what good means. Without a trusted evaluation, iteration is opinion, the customer cannot tell progress from motion, and every stakeholder meeting re-litigates quality from scratch. The fix is unglamorous: agree on golden datasets and a scoring rubric during requirements, before the prototype exists. [Evaluation and testing](../ai/03-evaluation-and-testing.md) covers how.
-
-### The production cliff
-
-The loop dies at production when a working pilot never becomes a system the business depends on. The scale of this is measured, not anecdotal: an MIT NANDA report, The GenAI Divide: State of AI in Business 2025, found that approximately 95% of enterprise GenAI pilots deliver no measurable P&L impact (Fortune, August 2025, observed evidence). The same research found the survivors correlate with workflow integration, domain specificity, and buying external tools - in loop terms, teams that took integration, requirements, and production seriously.
-
-The production cliff is the single most important fact in this guide. It is why the role exists, why employers pay for engineers who stay past the demo, and why [prototype to production](../deployment/01-prototype-to-production.md) gets its own section.
-
-## The loop maps to this guide
-
-Every stage has a section that goes deep:
-
-- Problem - [the engagement lifecycle](../customer/01-engagement-lifecycle.md) opens with problem framing and kickoff
-- Discovery - [discovery and requirements](../skills/02-discovery-and-requirements.md) has the interview frameworks and question banks
-- Requirements - [requirements to spec](../customer/02-requirements-to-spec.md) turns conversations into documents both sides accept
-- Architecture - [architecture for customer systems](../system-design/01-architecture-for-customer-systems.md) and [decision records](../system-design/03-trade-offs-and-decision-records.md)
-- Prototype - [prototyping and PoCs](../engineering/01-prototyping-and-pocs.md) runs proofs of concept that produce decisions
-- Integration - [APIs and integrations](../engineering/02-apis-and-integrations.md) and [data pipelines](../engineering/03-data-pipelines.md) cover the systems and the data
-- Deployment - [deployment patterns](../deployment/02-deployment-patterns.md) covers VPC-embedded, SaaS-adjacent, and hybrid shapes
-- Evaluation - [evaluation and testing](../ai/03-evaluation-and-testing.md) covers golden sets, judges, and regression
-- Iteration - [debugging methodology](../troubleshooting/01-debugging-methodology.md) and [debugging customer systems](../troubleshooting/02-debugging-customer-systems.md)
-- Production - [prototype to production](../deployment/01-prototype-to-production.md) and the [production readiness checklist](../deployment/03-production-readiness-checklist.md)
-- Customer impact - [monitoring and reliability](../ai/04-monitoring-and-reliability.md) keeps the system healthy after handover
-
-## Why interviews and portfolios mirror the loop
-
-Interviewers structure FDE loops around this sequence because it is the job. Exponent's interview guides describe the ElevenLabs loop as "a compressed loop that runs from coding to conversation, testing technical range and customer instinct" (tryexponent.com, 2026), and a practitioner account of Cohere's FDE process (gaijineer.co, April 2026) expects candidates to talk through system context, scale assumptions, reliability decisions, and "what broke and how you fixed it". Customer scenario rounds are the loop compressed into forty-five minutes; see [customer scenario interviews](../interviews/04-customer-scenarios.md).
-
-The same logic applies to portfolio projects. A project that walks the loop end to end - a problem statement, a real integration with messy data, an evaluation with a rubric, a deployment someone else could run - beats a polished tutorial, because it proves you can run the loop, not just the coding stage. [What to build](../portfolio/01-what-to-build.md) turns this into project principles.
-
-We recommend rehearsing the loop before interviews: pick a system you have shipped and be ready to name the artifact and the failure at each stage. It is the shortest credible story an FDE candidate can own.
-
-## Related documents
-
-- [Prototype to production](../deployment/01-prototype-to-production.md) - the production stage and the cliff, in depth
-- [Evaluation and testing](../ai/03-evaluation-and-testing.md) - the stage where most loops silently die
-- [Customer scenario interviews](../interviews/04-customer-scenarios.md) - the loop compressed into interview rounds
-- [What to build](../portfolio/01-what-to-build.md) - portfolio projects that walk the loop end to end
-- [The engagement lifecycle](../customer/01-engagement-lifecycle.md) - the customer-facing phases from kickoff to handover
-- [Responsibilities](02-responsibilities.md) - the posting evidence that produced this model
-
-## Further reading
-
-- [Fortune: MIT report on GenAI pilots](https://fortune.com/2025/08/18/mit-report-95-percent-generative-ai-pilots-at-companies-failing-cfo) - the production cliff, measured (August 2025)
-- [The New Stack: why AI labs hire FDE teams](https://thenewstack.io/forward-deployed-engineers-ai) - integrate, launch, improve: the loop as hiring rationale (May 2026)
+- [Fortune: MIT Report on GenAI Pilots in Business](https://fortune.com/2025/08/18/mit-report-95-percent-generative-ai-pilots-at-companies-failing-cfo) - empirical research on the 95% pilot stall rate
+- [The New Stack: Forward-Deployed Engineers in AI](https://thenewstack.io/forward-deployed-engineers-ai) - the integrate-launch-improve lifecycle
+- [OpenAI Forward Deployed Engineer Specification](https://openai.com/careers) - canonical role posting covering discovery through handoff
+- [Exponent: Forward Deployed Engineer Interview Guides](https://www.tryexponent.com) - technical interview loops and candidate prep frameworks
