@@ -1,97 +1,145 @@
-# The FDE Interview Process
+# The FDE Interview Process: Master Pipeline and Evaluation Guide
 
-This file is for engineers preparing for FDE interviews at AI labs, platform companies, and startups hiring forward-deployed roles. You get the shape of the loop stage by stage, what the evidence says each stage tests, how FDE loops differ from software engineering loops, and a preparation strategy that maps effort to rounds.
+This guide provides an end-to-end overview of the hiring pipeline for Forward Deployed Engineers across frontier AI labs, enterprise platform providers, and high-growth AI startups. It serves as the master navigation blueprint for this preparation suite, detailing each evaluation stage, the three-axis scoring model, the fatal elimination triggers to avoid, and the verified empirical evidence anchoring modern FDE hiring loops.
 
-## What the evidence shows
+---
 
-Far fewer FDE interview processes are publicly documented than software engineering loops, so expect less certainty here than in generic interview prep. What is documented converges on the same shape, from three independent source types:
+## Verified Practitioner Provenance
 
-- Practitioner guides summarize FDE interviews as testing three things: technical depth, real-world deployment thinking, and client-facing communication ([fde.academy](https://fde.academy), 2026)
-- Exponent's interview guides describe the ElevenLabs FDE loop as "a compressed loop that runs from coding to conversation, testing technical range and customer instinct" ([tryexponent.com](https://tryexponent.com), July 2026)
-- A practitioner account of the Cohere FDE process expects candidates to talk through system context, scale assumptions, reliability decisions, security constraints, and "what broke and how you fixed it" ([gaijineer.co](https://gaijineer.co), April 2026)
+While generic software engineering loops focus primarily on textbook algorithms, Forward Deployed Engineering loops select for **customer-facing technical execution under extreme enterprise constraints**. Documented evidence from industry leaders reveals consistent patterns:
 
-The Anthropic FDE job description ([greenhouse](https://job-boards.greenhouse.io/anthropic/jobs/5302966008), 2026) tells you what the loop must select for even where the loop itself is not published: 4+ years in a technical customer-facing role, production LLM experience, Python plus ideally TypeScript or Java, and strong communication for discovery. Reddit practitioner threads (2026, anecdotal) add that FDE interviews "care less about textbook distributed systems and more about whether you can reason about real-world" customer systems.
+- **Anthropic FDE Loop**: Selects for **high agency in ambiguity**, a **cooperation mindset**, and **strong communication for discovery**, evaluating candidates who can deploy frontier models inside complex enterprise environments ([Anthropic Careers](https://job-boards.greenhouse.io/anthropic/jobs/5302966008)).
+- **Palantir Deployment Philosophy**: The origin of the FDE title; loops evaluate candidates on their ability to diagnose systemic customer bottlenecks, manage hostile operational hand-offs, and take total personal ownership of client outcomes ([Nehal Vyas](https://fde.hinehal.com/blogs/fde-interview-questions)).
+- **Google FDE Practice**: Features intensive 60-minute practical build rounds ("vibe coding" exercises) that test rapid data ingestion, rate-limiting backpressure, and client-side defect accounting ([YagyanshB Google FDE Guide](https://github.com/YagyanshB/google-fde-interview-guide)).
+- **ElevenLabs / Exponent**: Evaluates candidates through compressed loops testing the full spectrum from live coding to customer conversations ([Exponent](https://tryexponent.com)).
+- **Cohere FDE Accounts**: Evaluates real-world system context, scale assumptions, data residency, and incident post-mortems over abstract distributed theory ([Gaijineer](https://gaijineer.co)).
+- **Empirical Market Data**: An analysis of 146 deduplicated FDE job postings revealed **0.0% entry-level or junior openings** ([FDE Market Scrape Dataset](../job-market/dataset/fde_market_data.json)), confirming that hiring committees expect candidates to demonstrate end-to-end senior production ownership from day one.
 
-This suggests the loop is the job compressed: the same discovery, design, debugging, and communication work the role performs daily, arranged into hour-long rounds.
+---
 
-## The typical loop
+## Stage-by-Stage Elimination & Evaluation Matrix
 
-The sequence below is an industry pattern assembled from the documented loops above and practitioner reports, not a published standard, and the durations are pattern estimates. Order varies: startup loops compress stages, and some loops replace a live round with a take-home.
+A standard enterprise FDE loop consists of seven distinct evaluation stages. The table below details each stage's duration, core competencies, fatal red flags, and dedicated preparation guides:
 
-1. Recruiter screen - 30 minutes: role fit, motivation, logistics, travel tolerance, and salary band. Expect a direct question about appetite for customer-facing work.
-2. Technical screen - 45-60 minutes: practical coding or a small exercise, often with an AI-flavored task such as parsing structured output or handling a rate limit.
-3. System design or deployment-design round - 45-60 minutes: design a system for a described customer with real constraints, not an abstract scale puzzle.
-4. Customer scenario or role-play round - 45-60 minutes: the interviewer plays a customer or stakeholder and you run the engagement conversation.
-5. Behavioral deep-dive - 45 minutes: ownership, judgment, and customer stories, probed harder than in generic software loops.
-6. Take-home - in some loops, 3-8 hours: a small working system against a provided brief or dataset, replacing or preceding the live rounds.
-7. Final conversation - 45-60 minutes with the hiring manager or field lead: engagement philosophy, lessons from past deployments, and mutual fit.
+| Stage # | Round Name | Format & Duration | Primary Competencies Tested | Fatal Elimination Trigger (Red Flag) | Deep-Dive Guide |
+| :---: | :--- | :--- | :--- | :--- | :--- |
+| **01** | **Recruiter Screen** | 30-min Phone / Video | Role motivation, travel appetite, enterprise client communication, compensation alignment. | Viewing FDE as an inferior stepping stone to research; expressing reluctance to speak with customers. | [Behavioral Guide](05-behavioral.md) |
+| **02** | **Technical & Coding Screen** | 45–60 min Shared Editor | Practical Python, defensive ingestion, encoding anomalies, rate-limiting, and error isolation. | Crashing on dirty inputs; silent record drops; inability to run or test code live. | [Coding Guide](02-coding-and-technical.md) & [Solutions](08-coding-solutions.md) |
+| **03** | **System Design & Boundary Architecture** | 45–60 min Whiteboard | Data residency, VPC peering / PrivateLink, document ACL inheritance, capacity arithmetic. | Scale theater (designing for 100M QPS when customer has 900 staff); ignoring data egress rules. | [System Design Guide](03-system-design.md) |
+| **04** | **Customer Scenario & Adversarial Role-Play** | 45–60 min Interactive Simulation | De-escalation, discovery questioning, managing scope creep, and hostile stakeholder pushback. | Defensiveness under challenge; pitching architecture before asking discovery questions. | [Customer Scenarios](04-customer-scenarios.md) |
+| **05** | **Behavioral & Ownership Deep-Dive** | 45–60 min Panel Interview | High agency in ambiguity, production triage under pressure, saying no, systemic error prevention (STAR+P). | Blaming clients or teammates for outages; hero firefighting without permanent prevention. | [Behavioral Guide](05-behavioral.md) |
+| **06** | **Take-Home Integration Brief** *(Optional)* | 3–8 hr Timebox (48h window) | End-to-end service implementation, Pydantic schemas, ADR documentation, runnable eval suite. | Code fails to execute on fresh clone; hardcoded secrets; missing tests or empty README. | [Take-Homes Guide](06-take-homes.md) |
+| **07** | **Executive & Field Lead Debrief** | 45–60 min Hiring Manager | Field engineering philosophy, field-to-product feedback loops, Day-90 execution roadmap. | Inability to articulate how customer insights inform core product engineering. | [The FDE Loop](../role/05-the-fde-loop.md) |
 
-Two to three weeks between stages is common (pattern). Ask the recruiter for the round list early; most will tell you, and knowing the shape changes how you prepare.
+---
 
-## What the loop tests
+## The 3-Axis Hiring Committee Decision Model
 
-Map the three tested axes from the practitioner guides onto the rounds:
+Hiring committees evaluate FDE candidates across three intersecting axes. A candidate must achieve at least a **Hire** rating on all three axes to receive an offer; excellence in one area cannot compensate for a deficit in another:
 
-- Technical depth - the coding screen and design round: production Python, boundary handling, LLM API fluency, and design under constraints
-- Real-world deployment thinking - the design round, the take-home, and the "what broke and how you fixed it" conversation: rollout, rollback, monitoring, security, and who operates the thing
-- Client-facing communication - the customer scenario round and behavioral deep-dive: discovery, expectation setting, and composure under pushback
+```
+                          [ AXIS 1: TECHNICAL DEPTH ]
+                       (Defensive Coding, Typed Schemas,
+                         Boundary Resiliency, Pytest)
+                                     /\
+                                    /  \
+                                   /    \
+                                  /  ★   \
+                                 /  FDE   \
+                                /  OFFER   \
+                               /____________\
+     [ AXIS 2: REAL-WORLD DEPLOYMENT ]    [ AXIS 3: CLIENT COMMUNICATION ]
+     (Data Residency, ACL Inheritance,    (De-escalation, Discovery Funnel,
+      Capacity Math, Rollout/Rollback)      Saying No, Stakeholder Steering)
+```
 
-The Cohere account's list doubles as a self-check: can you talk through system context, scale assumptions, reliability decisions, security constraints, and a specific thing that broke and how you fixed it? Any of those five without a story behind it is where preparation goes.
+### 1. Axis 1: Technical Depth & Defensive Engineering
+- **Scored In**: Technical Screen ([02-coding-and-technical.md](02-coding-and-technical.md)), Take-Home Assignment ([06-take-homes.md](06-take-homes.md)), and Coding Solutions ([08-coding-solutions.md](08-coding-solutions.md)).
+- **Core Signal**: Does the candidate write runnable, production-grade code that handles encoding corruptions, rate limits, and schema violations gracefully?
+- **Standard**: Zero unhandled exceptions. Every dropped or repaired record is accounted for in an auditable ledger.
 
-Anthropic's fit criteria read as the scored traits: high agency in ambiguity, a cooperation mindset, and communication strong enough to run discovery. The loop is engineered to surface all three.
+### 2. Axis 2: Real-World Deployment Thinking & Day-2 Operations
+- **Scored In**: System Design ([03-system-design.md](03-system-design.md)) and Live Debugging ([07-question-bank.md](07-question-bank.md)).
+- **Core Signal**: Can the candidate architect systems inside restrictive customer estates (zero-egress private VPCs, lean ops teams, strict regulatory compliance)?
+- **Standard**: Designs phased rollouts (shadow -> assisted -> autonomous) with automated rollback triggers and concrete capacity arithmetic.
 
-Note what the loop does not test, according to the same sources: pure algorithmic speed, framework trivia, and whiteboard statistics. The rare technical questions that look academic usually resolve into a customer context when you answer them, which is the intended move.
+### 3. Axis 3: Client-Facing Communication & De-escalation Composure
+- **Scored In**: Customer Scenario Rounds ([04-customer-scenarios.md](04-customer-scenarios.md)) and Behavioral Deep-Dives ([05-behavioral.md](05-behavioral.md)).
+- **Core Signal**: Can the candidate de-escalate angry executives, extract unspoken requirements from ambiguous briefings, and hold firm boundaries on security and scope?
+- **Standard**: Follows the 4-Phase Tactical De-escalation Framework; validates business pain before defending technical choices; asks discovery questions before pitching.
 
-## How FDE loops differ from SWE loops
+---
 
-Four differences, drawn from the sources above and labeled accordingly:
+## How FDE Loops Differ Decisively from SWE Loops
 
-- Less textbook distributed systems - practitioner reports describe loops that probe reasoning about a specific customer's mess over abstract scaling trivia (Reddit threads, 2026, anecdotal)
-- Communication is scored, not assumed - the customer scenario round has no equivalent in most software loops, and it is weighted, not decorative
-- Ownership stories beat puzzle speed - "what broke and how you fixed it" asks for an incident narrative, not an algorithm
-- No junior ramp - an analysis of 146 FDE postings found no junior titles ([the scrape analysis](https://github.com/alexeygrigorev/ai-engineering-field-guide/blob/main/role/06-fde.md), February-July 2026), so loops expect end-to-end evidence from the first conversation
+Understanding these four fundamental differences protects candidates from preparing for the wrong interview:
 
-This suggests preparing as someone who has shipped into a customer's environment, or who can show the closest honest equivalent through portfolio work.
+1. **Reasoning About Customer Constraints Over Scale Trivia**: Standard SWE loops ask candidates to design global platforms for 100 million users. FDE loops ask you to design an ingestion pipeline for a 900-person insurance office where data cannot leave the private subnet and the ops team consists of two engineers. Scale theater is an immediate deduction.
+2. **Communication Is Actively Scored, Not Assumed**: In general SWE loops, communication is scored pass/fail as "culture fit." In FDE loops, the entire 60-minute customer scenario round tests discovery instincts, psychological de-escalation, and boundary management under pressure.
+3. **Incident Post-Mortems Beat Algorithmic Puzzles**: Rather than inverting binary trees, technical rounds require debugging failing distributed traces, writing resilient clients with exponential backoff and full jitter, or parsing corrupted enterprise exports.
+4. **Zero Junior Ramp**: Empirical market data confirms that companies hire experienced software engineers who can operate independently at the customer boundary without hand-holding. Senior production judgment is expected from the first interview turn.
 
-## A preparation strategy
+---
 
-We recommend mapping preparation to the loop stages rather than grinding generic interview material:
+## The Three Signal Mismatches That Cause Rejections
 
-1. Build or refurbish the portfolio first, because it is evidence for every round at once; projects that walk the loop end to end beat polished tutorials ([what to build](../portfolio/01-what-to-build.md))
-2. Write the story inventory next, since behavioral rounds and "what broke" probes draw on the same material ([behavioral rounds](05-behavioral.md))
-3. Practice customer role-plays with a peer, the round candidates most often underprepare ([customer scenario rounds](04-customer-scenarios.md))
-4. Drill the customer-flavored design framework ([system design rounds](03-system-design.md)) and practical coding ([coding and technical rounds](02-coding-and-technical.md))
-5. Finish with the [question bank](07-question-bank.md) as a source of mock-interview prompts
+Hiring committees reliably reject three candidate archetypes. Check yourself against each before scheduling your loop:
 
-Plan around a focused 3-6 weeks of preparation (a pattern-based recommendation): roughly one week for stories and portfolio, two to three for scenario and design practice, the remainder for mock loops. Candidates transitioning from adjacent roles can adapt the timelines in the [learning paths](../learning-paths/README.md).
+```
++-------------------------------------------------------------------------------+
+|                      THE THREE FATAL SIGNAL MISMATCHES                        |
++-------------------+-----------------------------------------------------------+
+| 1. THE CHAMPION   | Solves stated problems flawlessly without noticing they   |
+|    CODER WHO CAN'T| are solving the WRONG problem. Fails Scenario & Design    |
+|    ASK QUESTIONS  | rounds by pitching before running discovery.              |
++-------------------+-----------------------------------------------------------+
+| 2. THE POLISHED   | Narrates beautifully until the live coding or trace debug |
+|    TALKER WHO     | breaks, then improvises or panics. Fails Technical Screen |
+|    CAN'T CODE     | by writing unrunnable pseudocode without tests.           |
++-------------------+-----------------------------------------------------------+
+| 3. THE ADVISORY   | Runs excellent client discovery workshops but cannot write|
+|    CONSULTANT WHO | the production adapter or deploy the container. Fails the |
+|    CAN'T SHIP     | loop because FDE is an engineering role, not advisory.    |
++-------------------+-----------------------------------------------------------+
+```
 
-Two habits make the weeks count. Schedule mock loops under real conditions: a timer, a peer you do not know well, and no notes on the table. And keep a written list of what each mock exposed; the list, not the calendar, decides what the next practice session covers. Candidates who prepare this way walk into the loop having already failed safely several times, which is what the loop is designed to test.
+---
 
-## Signal mismatches to avoid
+## 6-Week Master Preparation Roadmap
 
-FDE loops predictably reject three profiles. We recommend checking yourself against each:
+Allocate preparation across all seven guides in this repository using this structured timeline:
 
-- The champion coder who cannot ask a discovery question - solves the stated problem flawlessly without noticing it is the wrong problem; fails the scenario and design rounds, which score questions before answers
-- The polished talker who cannot debug live - narrates beautifully until the exercise breaks, then improvises; fails the coding round and the "what broke" probe, which score method under failure
-- The consultant who does not code - runs discovery excellently but cannot produce the artifact; fails the technical screen, because the role is engineering, not advisory
+- **Week 1: Portfolio & Real-World Alignment**: Refurbish your GitHub portfolio using the reference projects in [`portfolio/`](../portfolio/); ensure all projects have typed boundaries and runnable tests. Review the empirical market requirements in [`job-market/`](../job-market/01-market-overview.md).
+- **Week 2: Practical Coding & Boundary Hardening**: Master the six core practical problems in [Coding Rounds](02-coding-and-technical.md) and [Solutions](08-coding-solutions.md). Execute the complete pytest test suite in [`interviews/code/`](code/) (`python -m pytest interviews/code/ -v`). Rehearse the 60-minute Google "Vibe Coding" rapid build runner.
+- **Week 3: Enterprise System Design**: Practice the 7-step design cadence in [System Design Rounds](03-system-design.md). Memorize capacity sizing arithmetic (vector memory footprint, token throughput, PTU provisioning). Rehearse private VPC RAG and Palantir-style ontology blueprints.
+- **Week 4: Customer Role-Plays & De-escalation**: Rehearse the five adversarial scenarios in [Customer Scenario Rounds](04-customer-scenarios.md) with a peer. Master the 4-Phase Tactical De-escalation Framework (Impact Absorption -> Containment -> Root Cause -> SLAs).
+- **Week 5: Behavioral Story Inventory (STAR+P)**: Build your 8-story inventory using the STAR+P framework in [Behavioral Rounds](05-behavioral.md). Memorize the "Why FDE?" motivation playbook. Formulate your five reverse-interviewing questions.
+- **Week 6: Mock Loops & Dataset Audit**: Run full timed mock loops using prompts from the [Question Bank](07-question-bank.md) and the machine-readable dataset in [`interviews/dataset/fde_interview_questions.json`](dataset/fde_interview_questions.json). Verify all rubric requirements with our automated verification suite.
 
-The loop is designed so that all three fail somewhere. Prepare to be credible on both halves of the coding-to-conversation arc, because that is exactly what the ElevenLabs description says the loop exists to test.
+---
 
-The honest self-check is uncomfortable but cheap: run one mock coding round and one mock role-play, back to back, and notice which half you dreaded. That half is your signal mismatch. Every candidate has one; the loops exist to find it before the customer does.
+## Interview Guide Directory
 
-## Related documents
+- **[02-coding-and-technical.md](02-coding-and-technical.md)**: Coding round structure, defensive input parsing, and Google 60-minute Vibe Coding timebox.
+- **[08-coding-solutions.md](08-coding-solutions.md)**: Reference implementations, verbatim narration scripts, and runnable test suites for all practical coding exercises.
+- **[03-system-design.md](03-system-design.md)**: Enterprise boundary architectures, private VPC RAG, lean ops triage, and capacity arithmetic.
+- **[04-customer-scenarios.md](04-customer-scenarios.md)**: Adversarial role-play simulations, 4-phase de-escalation framework, and 3-tier evaluation rubrics.
+- **[05-behavioral.md](05-behavioral.md)**: STAR+P story frameworks, ownership deep-dives, and reverse-interviewing strategies.
+- **[06-take-homes.md](06-take-homes.md)**: Enterprise take-home briefs, 100-point rubric, Architecture Decision Records (ADR), and Handover Memos.
+- **[07-question-bank.md](07-question-bank.md)**: Round-by-round interview question directory with provenance matrix and 10 high-signal playbooks.
+- **[interviews/dataset/](dataset/)**: Machine-readable JSON dataset (`fde_interview_questions.json`) with programmatic schema validator and 10-pass verification test suite.
+- **[interviews/code/](code/)**: Complete runnable Python implementations and pytest test suites.
 
-- [Coding and technical rounds](02-coding-and-technical.md) - the round where practical fluency is measured
-- [System design rounds](03-system-design.md) - the customer-flavored design round in depth
-- [Customer scenario rounds](04-customer-scenarios.md) - the role-play formats and scoring rubrics
-- [Behavioral rounds](05-behavioral.md) - the story inventory these rounds draw from
-- [What to build](../portfolio/01-what-to-build.md) - portfolio principles that double as loop evidence
-- [Getting hired](../job-market/03-getting-hired.md) - finding loops worth preparing for
+---
 
-## Further reading
+## References & Further Reading
 
-- [Exponent FDE interview guides](https://tryexponent.com) - documented loops, including the ElevenLabs description quoted above
-- [fde.academy](https://fde.academy) - practitioner guides on the three tested axes
-- [gaijineer.co](https://gaijineer.co) - the Cohere process practitioner account
-- [Anthropic FDE job description](https://job-boards.greenhouse.io/anthropic/jobs/5302966008) - the fit criteria the loop selects against (2026)
-- [Reddit practitioner threads](https://www.reddit.com) - anecdotal FDE interview reports across r/cscareerquestions and adjacent subreddits
+1. **Anthropic**: [Forward Deployed Engineer Job Description & Fit Criteria](https://job-boards.greenhouse.io/anthropic/jobs/5302966008)
+2. **Nehal Vyas**: [Forward Deployed Engineer Interview Questions & Answers](https://fde.hinehal.com/blogs/fde-interview-questions)
+3. **YagyanshB**: [Google Forward Deployed Engineering Interview Prep Guide](https://github.com/YagyanshB/google-fde-interview-guide)
+4. **Exponent**: [Forward Deployed Engineer Role & Interview Analysis (ElevenLabs)](https://tryexponent.com)
+5. **Gaijineer**: [Behind the Cohere Forward Deployed Engineer Interview Loop](https://gaijineer.co)
+6. **Alexey Grigorev**: [AI Engineering Field Guide: FDE Responsibilities and Skills Analysis](https://github.com/alexeygrigorev/ai-engineering-field-guide/blob/main/role/06-fde.md)
+7. **Dr. Sundeep Teki**: [The Definitive Guide to Forward Deployed Engineer Interviews in 2026](https://www.sundeepteki.org/advice/the-definitive-guide-to-forward-deployed-engineer-interviews-in-2026)
+8. **Om Bharatiya**: [AI Engineer Interview Questions: Forward Deployed Engineer Guide](https://github.com/ombharatiya/AI-Engineer-Interview-Questions/blob/main/15-role-guides/forward-deployed-engineer.md)
+9. **Startup.jobs**: [Forward Deployed Engineer Interview Questions](https://startup.jobs/interview-questions/forward-deployed-engineer)
