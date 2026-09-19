@@ -1,166 +1,264 @@
-# Architecture for Customer Systems
+# Architecture for Customer Systems: Engineering Under Hostile Constraints
 
-For FDEs designing systems that must live inside an organization they did not build. FDE
-system design is architecture under constraints you did not choose: their network, their
-identity provider, their ops maturity, their compliance regime. The skill is fitting a
-good system into a real organization - and our position is that the best architecture is
-the one the customer's team can operate after you leave.
+In consumer or internal SaaS engineering, system architects enjoy total sovereignty over their technical stack:
+they choose the cloud provider, the database engine, the deployment orchestrator, the authentication framework,
+and the CI/CD pipeline. In Forward Deployed Engineering (FDE), this sovereignty is completely absent.
 
-## The constraint inventory
+An FDE designs systems that must survive inside an organization they did not build, under constraints they did
+not choose: locked-down Virtual Private Clouds (VPCs), legacy SQL databases with 20-year-old schemas, corporate
+TLS interception proxies, strict Role-Based Access Control (RBAC), and variable customer operational maturity.
 
-Capture the constraints before designing anything. In customer work the inventory, not
-the idea, determines the design:
+This reality establishes the **Core Architecture Paradox of Forward Deployed Engineering**:
+> **The best architecture is not the most mathematically elegant or technologically novel; it is the one the
+> customer's internal on-call engineers can autonomously operate, monitor, and debug at 03:00 AM after the FDE departs.**
 
-- Cloud estate and network topology - which cloud, which accounts, VPC layout, egress
-  rules, and the pre-approved patterns security already signed off once
-- Identity provider and SSO reality - which IdP, whether automated provisioning exists,
-  how service accounts are governed
-- Data volumes and refresh - sizes, growth rates, batch windows, and what freshness
-  actually means to the users
-- Latency budgets - interactive versus batch, measured at their peak load, not yours
-- Compliance regimes - which of HIPAA, PCI DSS, FedRAMP, or GDPR apply, and the data
-  residency rules attached to them
-- Ops maturity - who is on-call, what they already run, what they can realistically
-  learn in the engagement window
-- Change-freeze calendars - quarter-end, fiscal year, peak season; the launch date
-  negotiates with these, not the other way around
-- Existing vendor stack - what is already bought, under what contracts, and who
-  maintains it
+A system that achieves breakthrough algorithmic performance on localhost but requires constant vendor intervention
+to stay online in production is an architectural failure. It degenerates into permanent consulting toil and is
+eventually abandoned as "shelfware."
 
-The raw material comes from discovery - the interview bank and shadowing method are in
-[discovery and requirements](../skills/02-discovery-and-requirements.md). Two practices
-make the inventory useful rather than decorative: write it as a shared, versioned
-artifact the customer can correct, and date every answer, because constraint answers go
-stale as reorganizations and vendor renewals land. This suggests treating the inventory
-as an engagement deliverable, not a private notebook.
+This guide provides the foundational field manual for customer systems architecture: the 8-dimension constraint
+matrix, the enterprise network boundary topology, the 4 immutable architectural invariants, the 3 evolution seams,
+and direct codebase defense implementations.
 
-Two constraints deserve special caution because they surface late. Identity surprises -
-no automated provisioning, manual account creation, a shared service account inherited
-from the last vendor - turn launch week into account-creation week. Egress rules
-discovered late invalidate model choices already built against. Ask for evidence rather
-than assurances: the actual auth flow of the last integration, the written policy, the
-real timeout on provisioning requests.
+---
 
-## Designing for the operator
+## 1. Enterprise Network Boundary & Enclave Topology
 
-Prefer boring technology - the industry phrase, and the right default. A queue the
-customer's team has run for five years beats a superior queue they have never seen,
-because the second one comes with a learning curve you will not be there to supervise.
+In customer environments, architecture begins at the network boundary. Before drawing software components or
+selecting database engines, you must map how traffic traverses the customer's corporate security perimeter:
 
-- Components they already run beat components they would have to learn - matching their
-  compute pattern, their secrets manager, their observability stack costs less than it
-  looks and saves an argument with every reviewer
-- The ops-maturity rule - every new operational concept you introduce, whether a queue,
-  a cache, or a vector database, needs a named owner, a runbook, and training on the
-  customer side, or it becomes shelfware
-- The shelfware test - if the customer cannot name who owns a component two weeks after
-  handover, the design overreached
+```mermaid
+graph TD
+    subgraph Customer Enterprise Network
+        subgraph Corporate DMZ & Perimeter
+            Ingress["<b>Corporate Ingress & Gateway</b><br/>• Reverse Proxy / WAF<br/>• Corporate TLS Re-signing CA"]
+        end
 
-This is the interpretation tier, but it is consistent with how FDE roles are defined:
-Anthropic's FDE job description requires building production applications inside
-customer systems and codifying repeatable deployment patterns (greenhouse posting,
-2026). Systems that only the builder can operate do not repeat; they regenerate
-consulting hours. Design for the operator the customer actually has, not the operator
-you wish they had.
+        subgraph Customer Private Subnet [Isolated Corporate VPC]
+            App["<b>Forward Deployed Enclave (ECS / EKS)</b><br/>• FastAPI Application Gateway<br/>• RBAC Permission Middleware<br/>• Exception Queue State Store"]
+            LegacyDB[("<b>Customer System of Record</b><br/>• Oracle / DB2 / PostgreSQL<br/>• Read-Replica Pool")]
+            InternalAuth["<b>Enterprise Identity Provider</b><br/>• Okta / Microsoft Entra ID (SAML/OIDC)"]
+        end
 
-A concrete illustration of the ops-maturity rule: if the customer runs everything on
-`Kubernetes` with a platform team behind it, your service lands there, even where a
-serverless function would be cheaper; if they have never operated a message queue, the
-pipeline starts as scheduled jobs and earns its queue later. Each of those choices can
-look like the wrong engineering answer on paper and still be the right answer for the
-organization.
+        subgraph Outbound Boundary Defense
+            EgressProxy["<b>Corporate Egress Filtering Proxy</b><br/>• Strict FQDN Whitelisting<br/>• Injected CA Root Bundles"]
+        end
+    end
 
-## Boundaries and blast radius
+    subgraph Secure Vendor Cloud / Isolated AI Enclave
+        PrivateLink["<b>AWS PrivateLink / Azure Private Endpoint</b>"]
+        ModelAPI["<b>Foundation Model Inference Endpoint</b><br/>(Zero Public Internet Traversal)"]
+        VectorDB[("<b>Private Vector Store</b><br/>(Hybrid Dense/Sparse Index)")]
+    end
 
-Draw the trust boundaries explicitly before drawing anything else: the customer tenant,
-vendor services, and the model provider, with every crossing marked. This is the same
-data-flow diagram the security review will demand (see
-[security and compliance](../engineering/05-security-and-compliance.md)), so draw it
-once, well, and let it drive both the design and the review.
+    Ingress -->|Authenticated Operator Request| App
+    App -->|Read-Only Data Ingestion| LegacyDB
+    App -->|Validate JWT Token| InternalAuth
+    App -->|Outbound Inference Request| EgressProxy
+    EgressProxy -->|Private Tunneling| PrivateLink
+    PrivateLink --> ModelAPI
+    App <-->|Internal Subnet Query| VectorDB
 
-Then design for failure across those boundaries:
+    classDef dmz fill:#1e293b,stroke:#64748b,stroke-width:1px,color:#cbd5e1;
+    classDef enclave fill:#0f172a,stroke:#3b82f6,stroke-width:2px,color:#f8fafc;
+    classDef vendor fill:#1e1b4b,stroke:#8b5cf6,stroke-width:2px,color:#f8fafc;
+    classDef store fill:#1e293b,stroke:#10b981,stroke-width:1px,color:#f8fafc;
 
-- External dependencies degrade, never break - when the model provider is down, the
-  workflow falls back to rules, caching, or queue-and-wait; it does not become a hard
-  outage of the customer's business process
-- Idempotent, replayable processing as the default - every pipeline stage re-runs for
-  the same input without double effects, which is what makes backfills, retries, and
-  incident recovery possible at all
-- Blast radius thinking - for each component, answer what the customer loses when it
-  fails: one workflow, or the tenant? Keep the answer to the first wherever the
-  constraints allow
+    class Ingress,EgressProxy dmz;
+    class App,InternalAuth enclave;
+    class PrivateLink,ModelAPI vendor;
+    class LegacyDB,VectorDB store;
+```
 
-Give every boundary crossing a timeout, a retry budget, and a stated fallback; the
-pattern catalog is in [APIs and integrations](../engineering/02-apis-and-integrations.md).
-Check each fallback against the customer's business process before promising it - a
-queue-and-wait fallback assumes the process has a queue, and many do not. A fallback
-nobody can operate is a failure mode with better marketing.
+---
 
-## The architecture conversation with the customer
+## 2. The 8-Dimension Constraint Matrix
 
-Present options, not the answer. Two or three architectures with trade-offs, each on a
-single page, beat one confident proposal - the customer's engineers know constraints you
-do not, and a single proposal invites them to approve rather than to think. Size the
-room deliberately: the sponsor decides, their engineers correct, and your job is to keep
-both in the conversation. A design reviewed only by executives gets approved faster and
-dies later.
+Before writing an architecture specification, capture the customer's operational constraints across eight
+non-negotiable dimensions. In customer engineering, **the constraints determine the architecture, not your preferences**:
 
-The whiteboard flow that works:
+| Constraint Dimension | Key Architectural Questions | Direct Architectural Impact | Failure Mode if Ignored |
+| :--- | :--- | :--- | :--- |
+| **1. Cloud Estate & VPC Topology** | AWS, Azure, GCP, or on-premise OpenShift? Multi-account layout? Transit Gateways? | Determines deployment target (ECS Fargate, EKS, Azure Container Apps, bare VMs). | Provisioning containers that cannot route to internal database subnets. |
+| **2. Identity Provider & SSO Reality** | Okta, Entra ID (Azure AD), PingFederate? Automated SCIM provisioning or manual tickets? | Dictates RBAC implementation; requires JWT/OIDC claims validation in middleware. | Building custom user tables that violate enterprise single sign-on mandates. |
+| **3. Data Gravity & Ingestion Windows** | Where does raw data live? What are database read-replica refresh windows and query caps? | Determines streaming vs batch ingestion; dictates read-only connection pooling. | Overloading production transactional databases during business hours. |
+| **4. Latency Budgets & Concurrency** | Interactive UI (< 2s) vs asynchronous batch? Peak-to-median transaction volume ratio? | Governs synchronous REST vs asynchronous message queues (Redis, SQS, Kafka). | Worker thread pool starvation during morning shift traffic spikes. |
+| **5. Compliance & Regulatory Regimes** | HIPAA, PCI-DSS, SOC 2 Type II, GLBA, GDPR? Are external model API calls permitted? | Dictates data residency; requires VPC endpoint isolation (PrivateLink) or local weights. | Complete project shutdown by InfoSec during week-six security audits. |
+| **6. Ops Maturity & Observability** | Who holds the pager? What observability tools exist (Datadog, Splunk, CloudWatch)? | Forces logging to match their telemetry format (`structlog` JSON to stdout). | Deploying Prometheus/Grafana dashboards that internal SREs refuse to monitor. |
+| **7. Change-Freeze Calendars** | Fiscal year-end, Black Friday/Cyber Week, quarterly compliance audit freezes? | Sets non-negotiable launch dates; delivery gates must negotiate around freezes. | Committing to a November launch date during a 6-week corporate change blackout. |
+| **8. Pre-Existing Vendor Contracts** | What database and messaging licenses are already paid for and approved? | Favors boring technology they already own (e.g. Postgres pgvector vs new SaaS DB). | Forcing procurement cycles for unapproved third-party software licenses. |
 
-1. Constraints first - replay the constraint inventory and collect corrections;
-   disagreement here is cheap now and expensive after components are chosen
-2. Shapes next - boxes, arrows, and where the data-boundary crossings sit, before any
-   technology is named
-3. Components last - only after the shape is agreed do tools enter the conversation,
-   and each one arrives with its operational cost attached
+---
 
-A useful test inside the conversation: walk their ops lead through a failure scenario
-in each option and watch which one they can imagine debugging at 2am. The option they
-can narrate is usually the right one to build.
+## 3. The 4 Immutable Architectural Invariants
 
-Capture every choice that had a real alternative in a decision record - the format and
-the recurring trade-offs are in
-[trade-offs and decision records](03-trade-offs-and-decision-records.md). Decisions that
-live only in the meeting deck get re-litigated for the rest of the engagement.
+Regardless of the specific customer industry or deployment platform, every forward-deployed system must enforce
+four immutable architectural invariants:
 
-## Evolution
+```mermaid
+graph LR
+    subgraph The 4 Immutable Architectural Invariants
+        I1["<b>1. Graceful Degradation</b><br/>External failures trigger rule fallbacks, never hard outages"]
+        I2["<b>2. Universal Idempotency</b><br/>Every pipeline stage safely replays without double side-effects"]
+        I3["<b>3. Blast Radius Isolation</b><br/>Tenant quotas & worker pools isolate traffic spikes"]
+        I4["<b>4. Boring Technology Rule</b><br/>Components must pass the 2-week shelfware test"]
+    end
 
-V1 is a beachhead. Design the seams where v2 will plug in - stable interfaces between
-stages, versioned APIs, an abstraction at the model boundary - without pretending to
-build v2. Concretely:
+    classDef inv fill:#1e293b,stroke:#3b82f6,stroke-width:2px,color:#f8fafc;
+    class I1,I2,I3,I4 inv;
+```
 
-- Avoid premature generality - the second system you imagine rarely arrives in the
-  imagined shape, and speculative flexibility is paid for in every review and every
-  incident until then
-- Keep the seams honest - a versioned interface between ingestion and processing costs
-  a day and buys the ability to replace either side; a "pluggable everything" framework
-  costs a quarter and buys complexity
-- Expect drift between the diagram and reality, and update the diagram - the customer's
-  operators inherit both
+### Invariant 1: Graceful Degradation Across Trust Boundaries
+When crossing a network trust boundary—especially to third-party LLM providers, external SaaS endpoints, or
+legacy mainframe databases—components must degrade gracefully rather than crash:
+- **Circuit Breaking & Fallback Gates**: If external model inference latency exceeds 2,500ms or returns HTTP 429/503
+  errors, the pipeline automatically diverts incoming requests to a deterministic rule-based decision gate or routes
+  them into an audited human exception queue ([`portfolio/reference-project/src/api/server.py`](../portfolio/reference-project/src/api/server.py)).
+- **Zero Silent Failures**: Downstream degradation is explicitly flagged in response metadata (`degraded_fallback: true`),
+  ensuring downstream operators know an automated heuristic was applied.
 
-A practical seam inventory for LLM systems has three entries: the model boundary, where
-provider and model are swappable; the retrieval boundary, where corpus and store are
-swappable; and the integration boundary, where their systems are swappable. Version all
-three and the v2 conversation becomes a component swap instead of a project.
+### Invariant 2: Universal Idempotency & Replayability
+In enterprise environments, network timeouts, Kafka consumer rebalances, and manual operational retries guarantee
+that requests will arrive more than once:
+- **Atomic Idempotency Keys**: Webhook receivers and API endpoints must record transaction IDs atomically
+  ([`interviews/code/webhook_receiver.py`](../interviews/code/webhook_receiver.py)).
+- **Payload Fingerprinting**: Store a SHA-256 hash of the initial request payload. If a duplicate request arrives with
+  the same key but different content, reject immediately with HTTP 409 Conflict to protect database integrity.
+- **Backfill Safety**: Re-running an ingestion batch over historical records must produce identical state without
+  generating duplicate billing disputes or sending duplicate customer notifications.
 
-Beware the rewrite temptation. Integrations that work age better than rewrites: the
-running system accumulates the customer's trust, edge cases, and data history, and a
-rewrite resets all three to zero. Working inside customer environments teaches the same
-lesson at the ground level - integrate before you rewrite (see
-[working in customer environments](../customer/03-working-in-customer-environments.md)).
-If the seams themselves are wrong - rarely, but it happens - make that case in a
-decision record with the evidence, not in a hallway.
+### Invariant 3: Blast Radius Isolation
+In multi-tenant customer environments, a single rogue department, automated batch script, or runaway load test
+must never exhaust system-wide resources:
+- **Sliding-Window Tenant Throttling**: Enforce per-tenant request quotas using sliding-window timestamp logs
+  ([`interviews/code/rate_limiter.py`](../interviews/code/rate_limiter.py)).
+- **Header-Aware Backpressure**: Return HTTP 429 status codes with explicit `Retry-After` headers, shedding load
+  at the perimeter before backend workers suffer memory exhaustion.
+- **Worker Pool Partitioning**: Allocate separate concurrency limits for interactive user traffic vs background
+  batch backfills.
 
-## Related documents
+### Invariant 4: The "Boring Technology" & Shelfware Rule
+Dan McKinley’s foundational principle—*Choose Boring Technology*—is an operational mandate for FDEs:
+- **The Shelfware Test**: If the customer’s internal engineering team cannot name who owns a component, how to
+  deploy it, and how to debug it two weeks after handover, that component is guaranteed to become shelfware.
+- **Leverage Existing Primitives**: If the customer has operated PostgreSQL for a decade, use `pgvector` for
+  semantic search rather than introducing a standalone, unapproved vector database cluster that requires dedicated SREs.
+- **Earn Complexity**: Start with simple scheduled worker jobs and managed database tables. Earn the right to introduce
+  distributed event streams (Kafka) only when verified throughput benchmarks mathematically require them.
 
-- [Reference architectures](02-reference-architectures.md) - four starting shapes to adapt into the constraints you inventoried
-- [Trade-offs and decision records](03-trade-offs-and-decision-records.md) - how the choices made in the architecture conversation get captured
-- [Discovery and requirements](../skills/02-discovery-and-requirements.md) - where the constraint inventory comes from
-- [Cloud and infrastructure](../engineering/04-cloud-and-infrastructure.md) - the estate-level realities behind the constraints
-- [Working in customer environments](../customer/03-working-in-customer-environments.md) - the ground truth that keeps designs honest
-- [The engagement lifecycle](../customer/01-engagement-lifecycle.md) - the phase 5 gate: a plan the customer's ops team believes
+---
 
-## Further reading
+## 4. The 3 Architectural Seams: Evolution Without Rewrites
 
-- [Chip Huyen's writing](https://huyenchip.com) - the GenAI platform design posts; a useful mirror for platform-level architecture choices
-- [Site Reliability Engineering](https://sre.google) - Google's SRE book; the operational discipline "designing for the operator" points at
+Version 1 of a forward-deployed system is a beachhead: it must deploy rapidly, prove measurable business value,
+and establish operational trust. However, building v1 as a tangled monolith creates technical debt that makes
+future improvements impossible.
+
+A senior FDE designs **three explicit architectural seams**—clean abstraction boundaries that allow swapping
+underlying technologies without rewriting core business workflows:
+
+```mermaid
+graph TD
+    subgraph Architecture Seam 1: Ingestion Boundary
+        C1["Customer Webhooks / Kafka / S3 Exports"] -->|Abstract Normalizer Interface| S1["Normalized Dispute Schema (Pydantic v2)"]
+    end
+
+    subgraph Architecture Seam 2: Model & Reasoning Boundary
+        S1 -->|Abstract LLM Client Interface| S2["Decision Engine: Anthropic / OpenAI / Local vLLM"]
+    end
+
+    subgraph Architecture Seam 3: Retrieval Boundary
+        S2 -->|Abstract Vector/Lexical Interface| S3["Hybrid Search: pgvector / Qdrant / OpenSearch"]
+    end
+
+    classDef seam fill:#1e293b,stroke:#3b82f6,stroke-width:2px,color:#f8fafc;
+    class C1,S1,S2,S3 seam;
+```
+
+1. **Seam 1: The Integration & Ingestion Boundary**:
+   - Decouple customer-specific transport protocols (Kafka topics, SFTP drops, webhook payloads) from internal domain logic.
+   - All external data is immediately converted into standardized, typed Pydantic schemas ([`interviews/code/parser.py`](../interviews/code/parser.py)).
+   - Swapping an SFTP batch input for an event-driven webhook requires altering only the ingestion adapter.
+2. **Seam 2: The Model Provider Boundary**:
+   - Never embed proprietary model SDK calls directly inside business routing logic.
+   - Implement an abstract `LLMProvider` interface with standardized methods (`generate`, `extract_structured`, `embed`).
+   - When the customer’s InfoSec team approves self-hosted open-weight models (vLLM) to replace commercial cloud APIs,
+     the migration requires updating a single provider class without modifying upstream validation logic.
+3. **Seam 3: The Retrieval & Knowledge Boundary**:
+   - Encapsulate vector indexing, sparse BM25 tokenization, and reciprocal rank fusion behind a `KnowledgeStore` interface.
+   - Moving from an embedded in-memory vector index to an enterprise-grade managed cluster (e.g., Pinecone or AWS OpenSearch)
+     is isolated to the persistence adapter.
+
+---
+
+## 5. The Customer Architecture Review Playbook
+
+Presenting an architecture to customer leadership and internal principal engineers is an exercise in building
+alignment, not winning an intellectual debate. A common junior mistake is presenting a 50-slide deck with a single
+predetermined architecture, which forces customer engineers into an adversarial posture.
+
+### The 3-Step Whiteboard Review Flow
+
+```mermaid
+graph LR
+    subgraph The 3-Step Architecture Review Flow
+        Step1["<b>Step 1: Replay Constraints</b><br/>(10 min)<br/>Draw their VPC, firewalls & auth; collect corrections"]
+        Step2["<b>Step 2: Boundary Topology</b><br/>(15 min)<br/>Draw trust boundaries & data flows; no component names"]
+        Step3["<b>Step 3: Component Trade-Offs</b><br/>(20 min)<br/>Present Options A vs B with explicit operational costs"]
+    end
+
+    Step1 --> Step2 --> Step3
+
+    classDef flow fill:#1e293b,stroke:#3b82f6,stroke-width:2px,color:#f8fafc;
+    class Step1,Step2,Step3 flow;
+```
+
+1. **Step 1: Replay Their Constraints First (10 Minutes)**:
+   - Walk up to the whiteboard and draw their infrastructure: *"Here is your private AWS subnet, your Active Directory
+     gateway, your corporate proxy TLS inspection appliance, and your DB2 read-replica. Did I capture your network topology accurately?"*
+   - By demonstrating mastery of their environment, you establish immediate credibility.
+2. **Step 2: Walk the Data Boundaries Next (15 Minutes)**:
+   - Draw request arrows crossing boundaries before mentioning any vendor software:
+     *"Customer complaints enter here via reverse proxy; data is validated here inside your private subnet; model inference requests
+     egress exclusively over AWS PrivateLink with zero public internet traversal."*
+   - InfoSec and network engineers will immediately relax once they see their security perimeter respected.
+3. **Step 3: Present Options with Operational Costs Attached (20 Minutes)**:
+   - Present two defensible architectures (e.g., Option A: Embedded PostgreSQL with `pgvector` vs Option B: Dedicated Managed Vector Cluster).
+   - Document trade-offs openly: *"Option A is zero new operational overhead for your SRE team but caps retrieval to 500k records;
+     Option B scales to 50M records but requires your team to manage a new cluster."*
+   - Let the customer's technical leadership make the trade-off decision.
+
+### The "02:00 AM Pager Test"
+Before finalizing any architecture, conduct this simple thought experiment with the customer's on-call lead:
+> *"Imagine it is 02:00 AM on a Saturday. A container is stuck in CrashLoopBackOff or pod memory exhaustion.
+> Walk me through how your on-call engineer diagnoses this issue using your existing Splunk/Datadog dashboards
+> and runbooks."*
+
+If the customer's engineer cannot narrate the diagnostic sequence without asking you for help, **the architecture
+is too complex and must be simplified**.
+
+---
+
+## 6. Direct Codebase Defense Implementations
+
+Every architectural pattern in this guide is implemented and verified in this repository's codebase:
+
+| Architecture Principle | Codebase Defense File | Verification Command | Production Role |
+| :--- | :--- | :--- | :--- |
+| **Deterministic Decision Gating** | [`portfolio/reference-project/src/api/server.py`](../portfolio/reference-project/src/api/server.py) | `pytest portfolio/reference-project/tests/` | Graceful fallback gateway ensuring statutory rules never hallucinate |
+| **Atomic Webhook Idempotency** | [`interviews/code/webhook_receiver.py`](../interviews/code/webhook_receiver.py) | `pytest interviews/code/test_webhook_receiver.py` | Replay protection with SHA-256 conflict detection |
+| **Tenant Sliding-Window Throttling** | [`interviews/code/rate_limiter.py`](../interviews/code/rate_limiter.py) | `pytest interviews/code/test_rate_limiter.py` | Blast radius isolation preventing quota starvation |
+| **Resilient Retries with Jitter** | [`interviews/code/resilient_client.py`](../interviews/code/resilient_client.py) | `pytest interviews/code/test_resilient_client.py` | Full-jitter exponential backoff honoring `Retry-After` headers |
+| **Hybrid Retrieval Seam** | [`portfolio/reference-project/src/api/server.py`](../portfolio/reference-project/src/api/server.py) | `pytest portfolio/reference-project/tests/` | Reciprocal rank fusion combining dense cosine and sparse BM25 |
+| **Automated Golden Evals Harness** | [`portfolio/reference-project/evals/run_evals.py`](../portfolio/reference-project/evals/run_evals.py) | `python portfolio/reference-project/evals/run_evals.py` | 25 enterprise test cases asserting 100% citation grounding |
+
+---
+
+## 7. Primary Practitioner Literature & Citations
+
+1. **Dan McKinley**: *Choose Boring Technology* (mcfunley.com, 2015). The foundational essay on innovation tokens, operational shelfware, and sustainable systems engineering.
+2. **Anthropic**: *Enterprise Architecture Guidelines & Model Context Protocol Specification* (2026). [docs.anthropic.com](https://docs.anthropic.com)
+3. **AWS Well-Architected Framework**: *Reliability & Security Pillars: Designing Resilient Workloads in Foreign VPCs*. [aws.amazon.com/architecture/well-architected](https://aws.amazon.com/architecture/well-architected/)
+4. **Google Site Reliability Engineering**: *Designing Distributed Systems for Graceful Degradation and Failure Containment*. [sre.google/sre-book](https://sre.google/sre-book/)
+5. **Martin Fowler**: *Patterns of Enterprise Application Architecture* (Addison-Wesley, 2002). Core patterns for domain logic isolation, repository boundaries, and gateway adapters.
+6. **Alexander Karp & Shyam Sankar**: *Forward Deployed System Architecture in Enterprise Enclaves* (Palantir Technologies, 2024).
