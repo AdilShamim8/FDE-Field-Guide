@@ -36,20 +36,20 @@ Every technical role can be mapped along two fundamental operational axes:
 ```mermaid  
 quadrantChart
     title Enterprise Engineering Positioning Quadrant
-    x-axis Internal Monorepo --> Customer VPC Enclave
-    y-axis Scoped Deliverables / Demos --> Production SLA Ownership
-    quadrant-1 Forward Deployed Engineer (FDE)
-    quadrant-2 Core Software Engineer (SWE) / AI Engineer
-    quadrant-3 Sales Engineer (SE) / Solutions Architect
-    quadrant-4 Management / IT Consultant
-    "FDE": [0.88, 0.90]
-    "Core SWE": [0.15, 0.85]
-    "Applied AI Eng": [0.25, 0.88]
-    "ML Engineer": [0.10, 0.75]
-    "Solutions Eng": [0.65, 0.30]
-    "Sales Eng": [0.55, 0.20]
-    "IT Consultant": [0.85, 0.35]
-    "Deployment TPM": [0.75, 0.50]
+    x-axis "Internal Monorepo" --> "Customer VPC Enclave"
+    y-axis "Scoped Deliverables" --> "Production SLA Ownership"
+    quadrant-1 Forward Deployed Engineer FDE
+    quadrant-2 Core Software Engineer SWE AI Engineer
+    quadrant-3 Sales Engineer SE Solutions Architect
+    quadrant-4 Management IT Consultant
+    FDE: [0.88, 0.90]
+    Core SWE: [0.15, 0.85]
+    Applied AI Eng: [0.25, 0.88]
+    ML Engineer: [0.10, 0.75]
+    Solutions Eng: [0.65, 0.30]
+    Sales Eng: [0.55, 0.20]
+    IT Consultant: [0.85, 0.35]
+    Deployment TPM: [0.75, 0.50]
 ```
 
 ```
