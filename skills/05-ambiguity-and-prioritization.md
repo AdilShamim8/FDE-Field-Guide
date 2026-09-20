@@ -187,7 +187,8 @@ Your team consists of you (the FDE) and one internal data engineer allocated at 
 
 ### What High-Agency Execution Looks Like: Week 1 Move-by-Move
 
-```marmaid
+
+```mermaid
 sequenceDiagram
     FDE->>DE: Tier 1 Triage
     DE-->>FDE: Raw tables identified
