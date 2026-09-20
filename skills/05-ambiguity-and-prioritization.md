@@ -187,7 +187,6 @@ Your team consists of you (the FDE) and one internal data engineer allocated at 
 
 ### What High-Agency Execution Looks Like: Week 1 Move-by-Move
 
-
 ```mermaid
 sequenceDiagram
     FDE->>DE: Tier 1 Triage
@@ -203,6 +202,39 @@ sequenceDiagram
     participant VP as Executive VP
 ```
 
+
+
+```mermaid
+sequenceDiagram
+    FDE->>DE: "Tier 1 Triage: Show me the raw tables you actually trust."
+    DE-->>FDE: "disputes_text_raw has real complaints; everything else is derived."
+    FDE->>Lead: "Shadowing: What is the most painful 45 minutes of your morning?"
+    Lead-->>FDE: "Manually checking transaction amounts against Regulation E 10-day deadlines."
+    FDE->>FDE: Tier 2 Decision: Build Walking Skeleton on local Docker container using de-identified data.
+    FDE->>VP: Publishes Open-Questions Log & delivers 1-page spec: 20-minute demo booked for Week 3.
+
+    participant FDE as Forward Deployed Engineer
+    participant DE as Data Engineer
+    participant Lead as Dispute Operator
+    participant VP as Executive VP
+```
+
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor FDE as Forward Deployed Engineer
+    actor DE as Customer Data Engineer (25% time)
+    actor Lead as Senior Dispute Operator
+    actor VP as Executive VP (Sponsor)
+
+    FDE->>DE: "Tier 1 Triage: Show me the raw tables you actually trust."
+    DE-->>FDE: "disputes_text_raw has real complaints; everything else is derived."
+    FDE->>Lead: "Shadowing: What is the most painful 45 minutes of your morning?"
+    Lead-->>FDE: "Manually checking transaction amounts against Regulation E 10-day deadlines."
+    FDE->>FDE: Tier 2 Decision: Build Walking Skeleton on local Docker container using de-identified data.
+    FDE->>VP: Publishes Open-Questions Log & delivers 1-page spec: 20-minute demo booked for Week 3.
+```
 1. **Move 1: Execute Tier 1 Triage on Day 2**:
    - Meet the data engineer: discover which tables are actively refreshed vs abandoned. Table `disputes_text_raw`
      contains 45,000 historical records with real complaints.
