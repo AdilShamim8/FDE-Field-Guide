@@ -33,7 +33,7 @@ Every technical role can be mapped along two fundamental operational axes:
 2. **Ownership Horizon & Artifact**: Do you ship slide decks, proof-of-concept demos, and billable
    hours, or do you own production systems, SLA uptime, and long-term business metrics?
 
-```mermaid
+```mermaid  
 quadrantChart
     title Enterprise Engineering Positioning Quadrant
     x-axis Internal Monorepo --> Customer VPC Enclave
