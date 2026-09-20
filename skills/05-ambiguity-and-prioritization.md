@@ -203,6 +203,21 @@ sequenceDiagram
     FDE->>VP: Publishes Open-Questions Log & delivers 1-page spec: 20-minute demo booked for Week 3.
 ```
 
+```marmaid
+sequenceDiagram
+    FDE->>DE: Tier 1 Triage
+    DE-->>FDE: Raw tables identified
+    FDE->>Lead: Shadowing
+    Lead-->>FDE: Painful morning task identified
+    FDE->>FDE: Tier 2 Decision
+    FDE->>VP: One-page spec and demo booked
+
+    participant FDE as Forward Deployed Engineer
+    participant DE as Data Engineer
+    participant Lead as Dispute Operator
+    participant VP as Executive VP
+```
+
 1. **Move 1: Execute Tier 1 Triage on Day 2**:
    - Meet the data engineer: discover which tables are actively refreshed vs abandoned. Table `disputes_text_raw`
      contains 45,000 historical records with real complaints.
