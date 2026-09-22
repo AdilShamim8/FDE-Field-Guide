@@ -51,6 +51,30 @@ Community presence is a portfolio multiplier: the work is the same, but doing it
 
 One caution from the market data: with zero junior titles across 146 scraped postings, hiring managers are buying evidence of experience. Public signal is how you show the experience you have and the judgment you are building, without waiting for permission from a title. It is also how the adjacent communities above get to know your name before a posting does - which, in a referral-heavy corner of the market, is worth more than another application.
 
+## Verified FDE practitioners (September 2026)
+
+These practitioners are directly named as sources in the Codebasics FDE Roadmap 2026 (September 2026) and the five verified YouTube masterclasses. Each entry includes the verified LinkedIn or YouTube URL and the context in which they are cited.
+
+Kevin Bai — founding Forward Deployed Engineer at Anthropic, previously Palantir and Rippling. Published "Forward Deployed Engineering 101" ([youtube.com/watch?v=KwhgfwOSToQ](https://www.youtube.com/watch?v=KwhgfwOSToQ)). Source of the FDE Flywheel concept (customer deployments generating platform primitives for core SWE) and the Auditing-Evals-Deployment loop documented in [the FDE loop](../role/05-the-fde-loop.md).
+
+Aishwarya Srinivasan — published "Forward Deployed Engineer: The Hottest AI Job of 2026" ([youtube.com/watch?v=w-Z4QYK1QL4](https://www.youtube.com/watch?v=w-Z4QYK1QL4)). Covers market positioning of the FDE role in 2026, dual skill stack (applied AI engineering plus domain translation), and enterprise adoption dynamics.
+
+Piyush Garg — published "What is Forward Deployed Engineer (FDE) Role?" ([youtube.com/watch?v=7JlEs6zyB_U](https://www.youtube.com/watch?v=7JlEs6zyB_U)). Covers granular operational boundaries between FDE, Solutions Architect, and Core SWE in rapid enterprise delivery cycles.
+
+AI LABS — published "This Is How Forward Deployed Engineering Is Actually Done" ([youtube.com/watch?v=AD-EmZ3v6-g](https://www.youtube.com/watch?v=AD-EmZ3v6-g)). Source of the 5-step operational methodology: Observation and AS-IS auditing, Strategic Automation Triage, Failure-oriented building, Rigorous ground-truth evals, and Quantifiable business ROI metrics.
+
+Dhaval Patel — co-founder of Codebasics and AtliQ Technologies, published the FDE Roadmap video ([youtube.com/watch?v=uE4HTkDtp48](https://www.youtube.com/watch?v=uE4HTkDtp48)) and the Codebasics FDE Roadmap 2026 PDF. Follow at [codebasics.io](https://codebasics.io). Listed in the Codebasics roadmap as LinkedIn contact to follow: Colin Jarvis (OpenAI), Joe Schmidt (a16z), Andrej Karpathy.
+
+Hemanand Vadivel — co-creator of the Codebasics FDE Roadmap 2026, AtliQ Technologies. Co-presenter of the FDE Roadmap video.
+
+Pankaj Jaiswal — FDE working in SAP-heavy manufacturing and field service environments. Source of the Bonus SAP Integration section in the Codebasics FDE Roadmap 2026. LinkedIn: [linkedin.com/in/pankaj29](https://www.linkedin.com/in/pankaj29/).
+
+Rushi Gandhi — FDE practitioner interviewed for the Codebasics FDE Roadmap 2026. LinkedIn: [linkedin.com/in/rushi0508](https://www.linkedin.com/in/rushi0508/).
+
+Pranav Modh — FDE practitioner interviewed for the Codebasics FDE Roadmap 2026. LinkedIn: [linkedin.com/in/modhpranav](https://www.linkedin.com/in/modhpranav/).
+
+Daksh Trehan — FDE practitioner interviewed for the Codebasics FDE Roadmap 2026. LinkedIn: [linkedin.com/in/dakshtrehan](https://www.linkedin.com/in/dakshtrehan/).
+
 ## Related documents
 
 - [Reading](02-reading.md) - the sources worth your reading time, with the same verification caveats
@@ -63,3 +87,4 @@ One caution from the market data: with zero junior titles across 146 scraped pos
 - [The AI Engineering Field Guide](https://github.com/alexeygrigorev/ai-engineering-field-guide) - the reference repository and its evolving analyses
 - [fde.academy](https://fde.academy) - practitioner analyses and courses for the title
 - [joinplank.com](https://joinplank.com) - the FDE market tracker and its hiring collection
+

@@ -64,7 +64,24 @@ Prefer what the customer's team can operate after you leave. A stack of fashiona
 
 Concretely: `pgvector` on the customer's existing Postgres usually beats a new dedicated vector database, because their team already backs up, monitors, and patches Postgres. The same test applies to every row above.
 
-## A starter stack
+## Enterprise specification and diagramming tools
+
+These tools are used on real enterprise FDE engagements for producing architecture diagrams, specification documents, and client deliverables, not only for prototyping. Sourced from the Codebasics FDE Roadmap 2026 (September 2026) and the Vaayu Pumps SDD v1.0 (September 2026):
+
+- `eraser.io` - AI-native diagram-as-code tool; generates C4 context diagrams, swimlane flows, and sequence diagrams from plain-English descriptions; keeps the DSL source under version control alongside code ([eraser.io](https://eraser.io))
+- `draw.io` (now diagrams.net) - free, open-source diagramming tool used by enterprise IT teams globally; integrates with Confluence, Jira, and SharePoint; the format the customer's architecture board already reads ([draw.io](https://app.diagrams.net))
+- `miro` - collaborative whiteboarding tool for running AS-IS process mapping workshops with client teams; swim-lane diagram templates available free tier ([miro.com](https://miro.com))
+- SAP CPI (Cloud Platform Integration) - middleware for building integration flows between SAP S/4HANA and external AI services; mandatory for FDEs targeting SAP-heavy manufacturing or field service clients (SAP integration options: BAPI, OData, RFC, IDocs, CPI — source: FDE Roadmap 2026 SAP Integration Patterns)
+
+## LLMOps and evaluation tools
+
+Enterprise AI deployments require an observability and evaluation layer from day one:
+
+- `langsmith` - LLM tracing and evaluation platform by LangChain; captures inputs, outputs, latency, and token usage per request; used in the Vaayu Pumps Case Study 02 deployment ([smith.langchain.com](https://smith.langchain.com))
+- `langfuse` - open-source LLMOps platform for production tracing and dataset management; self-hostable, making it viable for on-premise or air-gapped enterprise environments ([langfuse.com](https://langfuse.com))
+- `ragas` - automated RAG evaluation library measuring context precision, answer faithfulness, and answer relevance against a ground-truth set; used in Case Study 03 Contract Lifecycle Management ([ragas.io](https://ragas.io))
+
+
 
 For a first portfolio project, this is enough to demonstrate every phase of [the FDE loop](../role/05-the-fde-loop.md) end to end (recommendation):
 

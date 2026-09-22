@@ -56,7 +56,29 @@ A small rotation covers what the job demands: hiring-market context, deployment 
 - [Systems Design and Technical Skills for FDEs](https://youtu.be/9CmIPfIYPws) - customer-flavored distributed architecture and Python fluency
 - [From Software Engineer to FDE](https://youtu.be/vLlIBT0HSSc) - transition guidance for traditional engineers
 
+### Five verified FDE practitioner masterclasses (September 2026)
+
+These five videos are verified practitioner sources cited in the Codebasics FDE Roadmap 2026 (September 2026):
+
+- [Forward Deployed Engineering 101 — Kevin Bai (Anthropic)](https://www.youtube.com/watch?v=KwhgfwOSToQ) - founding FDE perspective from Anthropic, ex-Palantir and Rippling; covers the FDE Flywheel (how customer deployments generate platform primitives for core SWE), the canonical FDE loop (Auditing to Evals to Deployment), and the strategic thesis that model intelligence is commoditized while custom deployment is the competitive moat
+- [This Is How Forward Deployed Engineering Is Actually Done — AI LABS](https://www.youtube.com/watch?v=AD-EmZ3v6-g) - the pragmatic 5-step operational methodology: (1) Observation and AS-IS auditing, (2) Strategic Automation Triage (AI for messy judgment, code for fixed rules, humans for high-stakes decisions), (3) Failure-oriented building, (4) Rigorous ground-truth evals, (5) Quantifiable business ROI metrics
+- [Forward Deployed Engineer: The Hottest AI Job of 2026 — Aishwarya Srinivasan](https://www.youtube.com/watch?v=w-Z4QYK1QL4) - market positioning of the FDE role in 2026, dual skill stack (applied AI engineering plus domain translation), and enterprise adoption dynamics
+- [What is Forward Deployed Engineer (FDE) Role? — Piyush Garg](https://www.youtube.com/watch?v=7JlEs6zyB_U) - granular operational boundaries between FDE, Solutions Architect, and Core SWE in rapid enterprise delivery cycles
+- [Forward Deployed Engineer (FDE) Roadmap — codebasics (Dhaval Patel and Hemanand Vadivel)](https://www.youtube.com/watch?v=uE4HTkDtp48) - complete 24-week transition syllabus, SAP PM integration mechanics, and the end-to-end Vaayu Pumps project execution
+
 A caveat on practitioner video sources: treat them as direct engineering blueprints and experience reports, cross-referencing all architectural claims against the working code in this guide.
+
+### Enterprise document pack (Vaayu Pumps Field Service AI)
+
+Three enterprise production documents (83 pages total) produced during the Codebasics FDE Roadmap 2026 capstone project, demonstrating the BRD-to-TDD-to-SDD specification chain:
+
+- Business Requirements Document (BRD v1.1, September 2026) — 25 pages covering business problem statements (P-1 to P-4), quantifiable success metrics (triage latency, first-time fix rate), MoSCoW functional requirements, integration requirements, and testable acceptance criteria for Vaayu Pumps and Systems Ltd (INR 840 Cr manufacturing firm, 11,000 pumps, 1,400 customer sites, 42 field technicians, 180 complaints per week)
+- Technical Design Document (TDD v1.0, September 2026) — 25 pages covering supervised multi-agent pipeline (Ingestion, Diagnosis, Dispatch, Memory and Routing agents), Pydantic v2 schemas, REST API contracts (`POST /v1/complaints`), severity decision tables, SLA windows, technician ranking algorithm, parts shortfall logic, and Annex B Spec Clarity Test
+- Solution Design Document (SDD v1.0, September 2026) — 33 pages covering C4 context diagram, hybrid deployment topology (on-premise depot edge vs cloud VPC), SAP CPI integration, bottom-up model routing (Gemini 2.5 Flash and Claude 3.5 Haiku vs frontier models), DPDP Act data residency, and evaluation and observability telemetry
+
+See [Vaayu Pumps case study](../case-studies/05-enterprise-manufacturing-vaayu-pumps.md) for the synthesized field guide document derived from this document pack.
+
+
 
 ## How to read for FDE work
 
