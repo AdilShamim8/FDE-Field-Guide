@@ -20,7 +20,7 @@ graph TD
     end
     P3 --> Defenses[Hardened Defenses in interviews/code/]
     P4 --> Golden[Golden Evals in portfolio/reference-project/]
-    P5 --> RoadmapDocs[Specification Chain in forward-deployed-engineer-fde-roadmap/]
+    P5 --> ProductionSpecs[Production Enterprise Specifications]
 ```
 
 ### 1. [Deployment Patterns in the Wild](01-deployment-patterns-in-the-wild.md)

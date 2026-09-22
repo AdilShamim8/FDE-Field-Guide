@@ -93,7 +93,6 @@ The Field Service Command Centre was evaluated across a 90-day post-go-live obse
 
 ## Related documents
 
-- [The Enterprise Roadmap Package](../forward-deployed-engineer-fde-roadmap/README.md) - complete BRD, TDD, and SDD reference files for Vaayu Pumps
 - [Deployment Patterns in the Wild](01-deployment-patterns-in-the-wild.md) - organizational shapes of customer engineering engagements
 - [From Requirements to Spec](../customer/02-requirements-to-spec.md) - writing testable functional and non-functional specifications
 - [APIs and Integrations](../engineering/02-apis-and-integrations.md) - enterprise ERP and SAP integration architecture
