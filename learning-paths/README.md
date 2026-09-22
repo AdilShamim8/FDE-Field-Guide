@@ -51,23 +51,20 @@ flowchart TD
 
 ## 2. Pillar Guide Syntheses & Transition Blueprints
 
-### 1. [The 90-Day FDE Transition Roadmap](90-day-fde-roadmap.md)
-*An intensive, week-by-week curriculum synthesizing FDE Academy masterclasses and enterprise hiring rubrics.*
-- **Month 1: Enterprise Engineering & Data Plumbing (Weeks 1 to 4)**:
-  - Week 1: Production Python, Pydantic V2 schema validation, and defect-accounting CSV/JSON parsers ([interviews/code/parser.py](../interviews/code/parser.py)).
-  - Week 2: Resilient API integrations, HTTP idempotency keys, exponential backoff with full jitter, and sliding-window rate limiters ([interviews/code/resilient_client.py](../interviews/code/resilient_client.py)).
-  - Week 3: Relational schemas, schema drift alarms, and zero-downtime expand-contract database migrations.
-  - Week 4: Containerization, Docker multi-stage builds, and AWS/Azure zero-egress VPC networking.
-- **Month 2: Production AI Systems & Deterministic Evaluation (Weeks 5 to 8)**:
-  - Week 5: Advanced Hybrid RAG fusing dense embeddings with BM25 lexical search via Reciprocal Rank Fusion ($k = 60$).
-  - Week 6: Quantitative offline evaluation harnesses, RAG triad metrics, and Cohen's Kappa agreement ($\kappa \ge 0.85$).
-  - Week 7: Bounded ReAct state machines, Model Context Protocol (MCP), and PII de-identification vaults.
-  - Week 8: OpenTelemetry GenAI dual-plane telemetry, token cost attribution, and drift monitoring (PSI $< 0.10$).
-- **Month 3: System Design, Discovery & Interview Execution (Weeks 9 to 12)**:
-  - Week 9: In-VPC customer system design, AWS PrivateLink interface endpoints, and vLLM GPU memory sizing equations.
-  - Week 10: Live customer discovery role-plays, executive pushback defense, and 30-point PRR readiness gates.
-  - Week 11: 4-hour take-home assignment drill and production code hardening.
-  - Week 12: Behavioral ownership stories (STAR format) and offer negotiation benchmarking.
+### 1. [The 24-Week Enterprise FDE Roadmap](24-week-enterprise-fde-roadmap.md)
+The complete week-by-week enterprise transition curriculum sourced directly from the Codebasics FDE Roadmap 2026 (Dhaval Patel and Hemanand Vadivel, AtliQ Technologies), built from practitioner interviews with Pankaj Jaiswal, Rushi Gandhi, Pranav Modh, and Daksh Trehan. Covers Phase 1 technical skills (Weeks 1 to 16) and Phase 2 product management and soft skills (Weeks 17 to 24).
+
+- Phase 1 Technical Skills (Weeks 1 to 16): Python and FastAPI, Vibe Coding with AI tools, LLM Fundamentals and RAG, Agentic AI and Multi-Agent MCP, ERP and Enterprise Data Integration, DevOps for AI (Docker, Kubernetes, CI/CD), LLMOps (Observability, Evaluation, Security), System Design for Enterprise AI (HLD and LLD)
+- Phase 2 Product Management and Soft Skills (Weeks 17 to 24): Problem Discovery and User Research, AS-IS Process Mapping with Swim-Lane Diagrams, Business Requirement Document mastery, Technical Design Document, Stakeholder Management and Communication, UAT and Go-Live, Change Management, Handover, and Proving ROI
+- Bonus: Deep SAP Integration and Field Service Domain (SAP PM, CS, BAPI, OData, CPI, Datasphere)
+- Includes the 3 real-world case studies from the Vaayu Pumps document pack
+
+### 2. [The 90-Day FDE Transition Roadmap](90-day-fde-roadmap.md)
+An intensive, week-by-week curriculum synthesizing FDE Academy masterclasses and enterprise hiring rubrics.
+
+- Month 1: Enterprise Engineering and Data Plumbing (Weeks 1 to 4): Production Python, Pydantic V2 schema validation, resilient API integrations with idempotency keys, relational schemas and schema drift alarms, containerization and AWS/Azure VPC networking
+- Month 2: Production AI Systems and Deterministic Evaluation (Weeks 5 to 8): Advanced Hybrid RAG with BM25 and RRF, quantitative offline evaluation harnesses, bounded ReAct state machines and MCP, OpenTelemetry GenAI telemetry and drift monitoring
+- Month 3: System Design, Discovery, and Interview Execution (Weeks 9 to 12): In-VPC customer system design, live customer discovery role-plays, 4-hour take-home assignment drill, behavioral ownership stories (STAR format) and offer negotiation benchmarking
 
 ---
 
