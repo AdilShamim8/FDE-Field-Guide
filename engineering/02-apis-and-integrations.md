@@ -520,9 +520,43 @@ Prevent upstream drift from causing production outages by running **Contract Tes
 - Assert that all required vendor fields are present, response types have not changed, and status codes match the documented specification.
 - If upstream releases an unannounced breaking change, the CI contract test fails and notifies the FDE before customer users encounter a production exception.
 
+## 7. Enterprise ERP and SAP Integration Architecture
+
+In enterprise deployments, forward deployed engineers rarely integrate with modern GraphQL or clean REST microservices. Over 70% of Fortune 500 manufacturing, logistics, and retail firms run their core business operations on enterprise resource planning (ERP) platforms, predominantly SAP S/4HANA, SAP ECC, Oracle NetSuite, and Microsoft Dynamics 365.
+
+### The four SAP integration protocols
+
+When connecting an AI application or agent pipeline to an enterprise SAP environment, choose the protocol matching the interaction pattern:
+
+1. BAPI (Business Application Programming Interface) and RFC (Remote Function Call) - Synchronous, transactional function modules executed over SAP proprietary binary protocol or HTTPS via SAP NetWeaver RFC SDK. Essential for transactional mutations:
+   - `BAPI_ALM_ORDER_MAINTAIN` - Creating and updating Plant Maintenance (PM) and Customer Service (CS) work orders.
+   - `BAPI_MATERIAL_AVAILABILITY` - Real-time stock checks across plant storage locations.
+   - `BAPI_EQUIPMENT_GETDETAIL` - Retrieving technical equipment specifications and functional locations.
+2. OData (Open Data Protocol) - RESTful HTTP/JSON interfaces exposing SAP Core Data Services (CDS) views. Recommended for real-time reads, customer portal integrations, and lightweight writes:
+   - `API_EQUIPMENT` - Standard entity set for equipment master data lookup.
+   - `API_MAINTENANCENOTIFICATION` - Ingesting service complaints and customer notifications.
+3. IDocs (Intermediate Documents) - Asynchronous message containers transmitted over RFC or HTTPS. Used for asynchronous event replication, high-latency batch integration, and EDI document exchange.
+4. SAP CPI (Cloud Platform Integration / SAP Integration Suite) - Enterprise middleware proxy sitting between customer network perimeters and the SAP core. Handles message transformation, authentication token mediation, routing, and rate limiting.
+
+### Core SAP modules for forward deployed engineers
+
+FDEs do not need full SAP functional consultant certification, but must understand module data ownership:
+
+- SAP PM (Plant Maintenance) - Manages physical asset maintenance. Master data includes Equipment (`IE01`/`IE03`) and Functional Locations (`IL01`). Operational transactions include Maintenance Notifications (`IW51`) and Maintenance Orders (`IW31`/`IW32`/`IW33`).
+- SAP CS (Customer Service) - Manages after-sales service for external customer equipment, warranty contracts, service level agreements, and billing.
+- SAP MM (Materials Management) - Manages spare parts inventory. Core transactions include Material Reservations (`MB21`), Goods Issue (`MB1A`), and Stock Overview (`MMBE`).
+
+### Architectural invariants for ERP safety
+
+To protect customer core financial and operational systems of record:
+
+- Never execute direct SQL queries against underlying SAP database tables (`AFKO`, `EQUI`, `MARA`, `VBAK`). Direct writes corrupt transactional integrity and void vendor enterprise support contracts.
+- Isolate ERP mutations behind a durable retry queue. If SAP CPI or RFC gateways experience lock contention, the integration layer must queue the work order in Redis with exponential backoff rather than failing the customer request.
+- Enforce business validation before ERP submission. Verify customer credit status, spare parts reservation flags, and equipment functional location compatibility in the application layer before executing the BAPI call.
+
 ---
 
-## 7. Pre-Launch Integration Checklist
+## 8. Pre-Launch Integration Checklist
 
 Before declaring any customer integration production-ready, verify every item on this audit:
 
@@ -539,7 +573,7 @@ Before declaring any customer integration production-ready, verify every item on
 
 ---
 
-## 8. Failure Scenarios & Chaos Runbooks
+## 9. Failure Scenarios & Chaos Runbooks
 
 | Incident Scenario | Root Cause | Immediate Mitigation Protocol |
 | :--- | :--- | :--- |
@@ -550,17 +584,18 @@ Before declaring any customer integration production-ready, verify every item on
 
 ---
 
-## 9. Related System Documents
+## 10. Related System Documents
 
 - [Reference Architectures](../system-design/02-reference-architectures.md) - Architectural topologies for customer deployment boundaries.
 - [Security and Compliance](05-security-and-compliance.md) - Enterprise secret storage, KMS policies, and InfoSec reviews.
 - [Data Pipelines](03-data-pipelines.md) - Batch ETL and streaming synchronization patterns across legacy schemas.
 - [Debugging Customer Systems](../troubleshooting/02-debugging-customer-systems.md) - Triaging failures when logs span external network boundaries.
 - [Production Readiness Checklist](../deployment/03-production-readiness-checklist.md) - The final operational gate before customer sign-off.
+- [Enterprise Manufacturing Field Study](../case-studies/05-enterprise-manufacturing-vaayu-pumps.md) - Real-world SAP S/4HANA PM/CS integration in production.
 
 ---
 
-## 10. Primary Engineering Literature
+## 11. Primary Engineering Literature
 
 1. **Marc Brooker (AWS Architecture)**: *"Exponential Backoff And Jitter"*. Empirical proof and analysis of Full Jitter vs Decorrelated Jitter algorithms in distributed systems.
 2. **Stripe Engineering**: *"Designing Robust APIs with Idempotency"*. The reference standard for `Idempotency-Key` headers, distributed locking, and replay semantics.
@@ -569,3 +604,4 @@ Before declaring any customer integration production-ready, verify every item on
 5. **IETF RFC 6749**: *"The OAuth 2.0 Authorization Framework"*. Section 4.4: Client Credentials Grant specification.
 6. **Dan McKinley**: *"Choose Boring Technology"*. Architectural conservatism in external integration layers.
 7. **Empirical Job Market Analysis (2026)**: Independent audit of 146 deduplicated FDE job postings showing **64.0% demand for API and integration engineering**.
+8. **SAP SE**: *SAP Plant Maintenance Function Modules and BAPI Reference* (help.sap.com). Transactional interfaces for maintenance notifications and work order execution.

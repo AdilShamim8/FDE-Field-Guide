@@ -237,9 +237,38 @@ flowchart LR
    - In enterprise estates, prefer native database vector extensions like **`pgvector`** over separate standalone vector databases whenever PostgreSQL is already operated by the customer team.
    - Use HNSW (Hierarchical Navigable Small World) indexes for low-latency similarity search with cosine distance (`vector_cosine_ops`).
 
+## 7. ERP Change Data Capture and Equipment Telemetry Synchronization
+
+In enterprise industrial and supply-chain deployments, AI models require continuous synchronization with enterprise resource planning (ERP) databases and physical asset telemetry streams.
+
+### Enterprise ERP change data capture
+
+Querying transactional ERP databases directly for analytics or retrieval augmentation risks table locking and degrading core business operations. FDEs implement two non-disruptive synchronization patterns:
+
+- Analytical read layer via SAP Datasphere - Configure replicated read views that extract equipment master records (`EQUI`), maintenance history (`VIQMEL`), and spare parts inventory (`MARD`) without executing queries against active OLTP application servers.
+- Database replication via log-based CDC - In PostgreSQL, Oracle, and SQL Server estates, deploy Debezium or cloud native replication (AWS DMS, Azure Data Factory) to capture row-level deltas from write-ahead logs (`WAL`). Changes stream into Kafka topics or staging object storage in sub-second intervals.
+- Monotonic timestamp watermarking - When direct CDC access is restricted by enterprise database administrators, execute high-watermark polling using SAP standard change timestamp fields (`AEDAT` for modification date, `CPUTM` for creation time), maintaining an overlap buffer of 120 seconds to prevent data loss from uncommitted concurrent transactions.
+
+### Industrial equipment telemetry ingestion
+
+For predictive maintenance and real-time operational diagnosis, telemetry streams from industrial programmable logic controllers (PLCs) and supervisory control and data acquisition (SCADA) systems must be normalized:
+
+```mermaid
+graph LR
+    A[PLC Sensors: Vibration / Pressure / Heat] -->|MQTT / Modbus| B[Depot Edge Gateway]
+    B -->|Kafka / Azure IoT Hub| C[TimescaleDB / InfluxDB]
+    C -->|Anomaly Scoring Service| D{Threshold Breach?}
+    D -->|Yes: Statistical Outlier| E[Auto-Generate Work Order Draft]
+    D -->|No: Nominal Run| F[Downsampled Rolling Window]
+```
+
+- Sensor protocol normalization - Edge gateways ingest proprietary PLC signals (Modbus TCP, OPC UA) and transform them into normalized JSON or Protocol Buffer payloads containing sensor identifier, equipment serial number, timestamp, and scalar metric values (such as vibration velocity in mm/s, discharge pressure in bar, and winding temperature in degrees Celsius).
+- Sliding-window anomaly detection - Time-series metrics pass through a rolling statistical aggregator (Z-score or Exponential Moving Average over a 15-minute sliding window). When sensor telemetry breaches three standard deviations from nominal operating baselines, the event triggers an automated maintenance triage draft.
+- Vectorized telemetry context - When an equipment failure is flagged, the system summarizes the 60-minute pre-fault telemetry trend into a structured context block. This telemetry profile is embedded alongside the equipment master history, enabling the Diagnosis Agent to identify identical physical failure signatures observed across other enterprise customer plants.
+
 ---
 
-## 7. Pipeline Failure Modes & Self-Healing Runbooks
+## 8. Pipeline Failure Modes & Self-Healing Runbooks
 
 | Pipeline Incident | Root Cause | Engineering Mitigation Protocol |
 | :--- | :--- | :--- |
@@ -250,7 +279,7 @@ flowchart LR
 
 ---
 
-## 8. Pre-Flight Data Pipeline Checklist
+## 9. Pre-Flight Data Pipeline Checklist
 
 Before declaring any customer data pipeline production-ready, verify every item on this audit:
 
@@ -267,9 +296,10 @@ Before declaring any customer data pipeline production-ready, verify every item 
 
 ---
 
-## 9. Related System Documents
+## 10. Related System Documents
 
 - [APIs and Integrations](02-apis-and-integrations.md) - Handling third-party API rate limits, pagination, and resilience.
+- [Enterprise Manufacturing Field Study](../case-studies/05-enterprise-manufacturing-vaayu-pumps.md) - Real-world industrial data pipelines and ERP synchronization.
 - [Security and Compliance](05-security-and-compliance.md) - PII governance, SOC 2 / HIPAA boundaries, and InfoSec approval workflows.
 - [LLM Application Patterns](../ai/01-llm-application-patterns.md) - Utilizing ingested and vectorized data in production RAG systems.
 - [Evaluation and Testing](../ai/03-evaluation-and-testing.md) - Benchmarking grounding, retrieval precision, and data quality.
@@ -277,7 +307,7 @@ Before declaring any customer data pipeline production-ready, verify every item 
 
 ---
 
-## 10. Primary Engineering Literature
+## 11. Primary Engineering Literature
 
 1. **Paul Farnsworth (President, Dice)**: Analysis on enterprise AI integration roadblocks and the Forward Deployed Engineering role (*Fortune*, September 2026).
 2. **Martin Kleppmann**: *"Designing Data-Intensive Applications"*. Foundational reference for batch ETL, change data capture, and event-driven stream processing.
