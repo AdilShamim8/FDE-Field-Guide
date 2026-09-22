@@ -320,7 +320,52 @@ Capture anonymized production agent traces (user input, model reasoning, tool in
 
 ---
 
-## 7. Pre-Flight Agent Readiness Checklist
+## 7. Supervised Multi-Agent Pipelines and Persistent Memory Layers
+
+When a single agent loop cannot handle the full complexity of an enterprise workflow, the standard production pattern is a supervised multi-agent pipeline: a coordinator (supervisor) agent decomposes the user request and delegates to specialized sub-agents, each with a bounded tool scope.
+
+The Vaayu Pumps Field Service Command Centre (TDD v1.0, September 2026) implements the following four-agent pipeline, representative of real enterprise manufacturing AI:
+
+```mermaid
+flowchart TD
+    Complaint["Incoming Customer Complaint\n(free text via web/phone)"] --> Supervisor["Supervisor Agent\nLangGraph Coordinator\nRoute by intent class"]
+
+    Supervisor --> Ingestion["Agent 1: Ingestion & Triage\nClassify severity P1-P4\nExtract structured complaint schema\nPydantic v2 boundary model"]
+    Ingestion --> Diagnosis["Agent 2: Diagnosis\nHybrid RAG over equipment manuals\nRoot-cause candidate list\nSAP PM equipment history lookup"]
+    Diagnosis --> Dispatch["Agent 3: Dispatch\nSkill-based technician ranking\nParts availability check (MMBE)\nSLA window calculation"]
+    Dispatch --> Memory["Agent 4: Memory & Routing\nWrite outcome to persistent store\nUpdate technician utilization\nFeed back to evals"]
+
+    Dispatch -->|"P1 Emergency"| HumanGate["Human-in-the-Loop Gate\nOperator approval required\nAlert via webhook"]
+    HumanGate --> Memory
+```
+
+### Design Principles for Enterprise Multi-Agent Pipelines
+
+1. Each agent has exactly one bounded responsibility and one well-typed output schema. An agent that both diagnoses and dispatches produces double the failure modes at no benefit.
+
+2. The supervisor routes between sub-agents deterministically where possible. Reserve probabilistic routing to the model only when the sub-agent boundary is genuinely ambiguous from the input text.
+
+3. Tool scopes are non-overlapping. Agent 1 can read equipment data; only Agent 3 can write to the dispatch queue. Cross-agent tool sharing violates the audit trail and produces conflicting state.
+
+4. Every sub-agent output is validated by a Pydantic V2 model before it enters the next agent's context. Garbage between agents propagates and amplifies.
+
+5. Human-in-the-loop interrupts are defined upfront at design time, not discovered at runtime. The conditions triggering human review (P1 severity, confidence < 0.72, new unknown equipment model) are code-level constants, not model decisions.
+
+### Persistent Memory Layer
+
+Enterprise AI applications require a memory layer so the agent auto-learns from corrections and user feedback over time, without requiring developer intervention for every accuracy issue. This is Principle 8 of the 12 Core Principles of Enterprise Forward Deployed Engineering (Codebasics FDE Roadmap 2026).
+
+Three memory types serve different purposes:
+
+| Memory Type | Storage | Purpose | Lifetime |
+| :--- | :--- | :--- | :--- |
+| Episodic - session context | In-memory / Redis | Current conversation and tool history | Session |
+| Semantic - retrieval index | Vector database (pgvector, Qdrant) | Equipment manuals, SOPs, company policies | Until superseded |
+| Procedural - correction log | Relational DB | Technician feedback, outcome corrections, model fine-tune signals | Indefinite |
+
+The correction loop: when a human operator overrides an agent decision (e.g., reassigns a technician the model routed incorrectly), that override is written to the procedural store with its context. The next retrieval pass for similar inputs includes the correction, improving routing without a model retraining cycle. In the Vaayu Pumps deployment, this correction feedback cycle reduced first-time-fix-rate errors by 23% over 90 days (observed from SDD v1.0, September 2026).
+
+## 8. Pre-Flight Agent Readiness Checklist
 
 Before deploying an agentic workflow into customer production, verify every control on this audit:
 
@@ -347,20 +392,20 @@ Before deploying an agentic workflow into customer production, verify every cont
 
 ---
 
-## 9. Related System Documents
+## Related documents
 
-- [LLM Application Patterns](01-llm-application-patterns.md) - Selecting the right pattern before defaulting to agents.
-- [Evaluation and Testing](03-evaluation-and-testing.md) - Trajectory benchmarking, golden datasets, and LLM-as-a-judge harnesses.
-- [Production Monitoring & Reliability](04-monitoring-and-reliability.md) - Distributed tracing for multi-step agent executions.
-- [Security and Compliance](../engineering/05-security-and-compliance.md) - OWASP LLM06 Excessive Agency defenses and execution barriers.
-- [Reference Project Agent Architecture](../portfolio/reference-project/README.md) - Working production implementation of decision gating and RBAC.
+- [LLM Application Patterns](01-llm-application-patterns.md) - Strategic Automation Triage and bottom-up model routing that precedes the agent decision
+- [Evaluation and Testing](03-evaluation-and-testing.md) - Trajectory benchmarking, golden datasets, and LLM-as-a-judge harnesses
+- [Production Monitoring and Reliability](04-monitoring-and-reliability.md) - Distributed tracing for multi-step agent executions
+- [Security and Compliance](../engineering/05-security-and-compliance.md) - OWASP LLM06 Excessive Agency defenses and execution barriers
+- [Reference Project Agent Architecture](../portfolio/reference-project/README.md) - Working production implementation of decision gating and RBAC
+- [Vaayu Pumps Case Study](../case-studies/05-enterprise-manufacturing-vaayu-pumps.md) - Four-agent supervised pipeline, persistent memory layer, and human-in-the-loop dispatch
 
----
+## Further reading
 
-## 10. Primary Agent Engineering Literature
-
-1. **Shunyu Yao et al.**: *"ReAct: Synergizing Reasoning and Acting in Language Models"*. International Conference on Learning Representations (ICLR), 2023.
-2. **Anthropic Engineering**: *"Model Context Protocol (MCP) Specification"*. Official specification for tools, resources, and client-server architecture, 2024/2026.
-3. **Harrison Chase et al. (LangChain)**: *"State of AI Agents: Architecture, Tool Design, and Trajectory Evaluation"*, 2025/2026.
-4. **OWASP Foundation**: *"Top 10 for LLM Applications: LLM06 - Excessive Agency"*. Architectural mitigations for autonomous tool execution risks.
-5. **Empirical Job Market Analysis (2026)**: Independent audit of 146 deduplicated FDE job postings showing **AI Agents (42.0%) and Tool-Use Architecture** as core hiring criteria.
+- Shunyu Yao et al., "ReAct: Synergizing Reasoning and Acting in Language Models", ICLR 2023
+- [Anthropic Model Context Protocol specification](https://docs.anthropic.com) - tools, resources, and client-server architecture
+- Harrison Chase et al. (LangChain), "State of AI Agents: Architecture, Tool Design, and Trajectory Evaluation", 2025/2026
+- [OWASP Top 10 for LLM Applications: LLM06 Excessive Agency](https://owasp.org/www-project-top-10-for-large-language-model-applications/) - architectural mitigations for autonomous tool execution
+- Codebasics FDE Roadmap 2026, Principle 7 (Build Agentic, Not Hardcoded) and Principle 8 (Always Include a Memory Layer) - source: FDE_Roadmap_2026.pdf, September 2026
+- Vaayu Pumps TDD v1.0 and SDD v1.0, September 2026 - four-agent supervised pipeline architecture and persistent memory layer reference implementation

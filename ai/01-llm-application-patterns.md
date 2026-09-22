@@ -245,7 +245,44 @@ class SelfHealingExtractor:
 
 ---
 
-## 5. Pattern Selection Decision Framework
+## 5. Strategic Automation Triage
+
+Before selecting a pattern, FDEs must answer a prior question: which category of work is this, and what execution mechanism is right for it? AI LABS' operational framework, validated across enterprise deployments (2026), identifies three mutually exclusive categories:
+
+```mermaid
+flowchart TD
+    Input["Enterprise Business Problem"] --> Q1{"Is the decision logic fixed,\nrule-based, and exhaustively enumerable?"}
+    Q1 -- Yes --> Det["Deterministic Code\nSQL, regex, AST parsers, business rule engines\nCost: $0.00 | Latency: <10ms | Risk: none"]
+    Q1 -- No --> Q2{"Does the decision require\nmessy judgment, ambiguous text,\nor probabilistic synthesis?"}
+    Q2 -- Yes --> Q3{"Is an error in this decision\nirreversible, safety-critical,\nor above $X threshold?"}
+    Q3 -- No --> AI["AI Reasoning Layer\nLLM with schema validation + evals\nCost: $0.05-$5.00 | Latency: 200ms-15s"]
+    Q3 -- Yes --> Human["Human-in-the-Loop\nQueue for operator review\nCost: staff time | Latency: minutes-hours"]
+    Q2 -- No --> Det
+```
+
+### The Three Execution Zones
+
+1. Deterministic code - fixed sequential steps where all states are known in advance. Examples: VAT calculation, date arithmetic, status field updates, routing rules with complete enumeration. Cost per call: $0.00. An LLM renting to execute this logic adds non-deterministic failure modes and multiplies your monthly invoice.
+
+2. AI reasoning - tasks where the input is ambiguous, unstructured, or requires synthesis across heterogeneous context: triage from free-text complaints, clause extraction from non-standard contracts, anomaly detection in sensor streams. Uses LLMs only here, with strict Pydantic V2 boundary validation and automated evals.
+
+3. Human-in-the-loop - decisions that are irreversible, high-stakes, or safety-critical regardless of AI confidence score. Examples: P0 emergency dispatch affecting patient safety, financial transfers above defined ceiling, legal commitments. The agent queues the action for a named operator with a signed approval token before execution proceeds.
+
+The most common FDE mistake in customer engagements is applying AI reasoning to zone-1 problems because the task sounds intelligent. The most costly mistake is applying AI reasoning to zone-3 problems because the confidence score looks high.
+
+### Bottom-Up Cost-Efficient Model Routing
+
+For tasks confirmed to belong in zone 2, apply a bottom-up selection protocol: start with the cheapest model that meets the accuracy bar, escalate only when it fails. This is Principle 6 of the 12 Core Principles of Enterprise FDE (Codebasics FDE Roadmap 2026).
+
+| Tier | Model Examples | Use When | Cost per 1k Calls |
+| :--- | :--- | :--- | :--- |
+| 1 - Lightweight | Gemini 2.5 Flash, Claude 3.5 Haiku, Mistral 7B | Classification, routing, simple extraction, intent detection | $0.05 - $0.40 |
+| 2 - Mid-Tier | Claude 3.5 Sonnet, GPT-4o, Gemini 1.5 Pro | Document extraction, summarization, hybrid RAG synthesis | $0.50 - $4.00 |
+| 3 - Frontier | Claude 3.5 Sonnet (reasoning), GPT-4o with CoT | Complex multi-document analysis, code generation, novel synthesis | $5.00 - $40.00 |
+
+Routing rule: run the lightweight model first. If confidence < 0.85 or output fails Pydantic validation after two repair iterations, escalate to mid-tier. Reserve frontier models for the genuine tail of tasks that mid-tier cannot handle. In the Vaayu Pumps Field Service Command Centre, this routing policy reduced LLM inference costs by approximately 60% versus routing all complaints directly to frontier models (observed from SDD v1.0, September 2026).
+
+## 6. Pattern Selection Decision Framework
 
 When evaluating an enterprise customer problem, use this decision tree to select the most cost-effective and reliable pattern:
 
@@ -301,21 +338,20 @@ Before launching any LLM-powered application in customer production, verify ever
 
 ---
 
-## 7. Related System Documents
+## Related documents
 
-- [Agents and Tools](02-agents-and-tools.md) - ReAct execution loops, MCP tools, and autonomous safety boundaries.
-- [Evaluation and Testing](03-evaluation-and-testing.md) - Constructing golden benchmark datasets and LLM-as-a-judge harnesses.
-- [Production Monitoring & Reliability](04-monitoring-and-reliability.md) - Real-time token telemetry, drift alerts, and fallback routing.
-- [Data Pipelines](../engineering/03-data-pipelines.md) - Preparing document chunks, deduplicating embeddings, and vector indexing.
-- [Security and Compliance](../engineering/05-security-and-compliance.md) - Zero Data Retention agreements and OWASP LLM defenses.
+- [Agents and Tools](02-agents-and-tools.md) - ReAct execution loops, MCP tools, and autonomous safety boundaries
+- [Evaluation and Testing](03-evaluation-and-testing.md) - Constructing golden benchmark datasets and LLM-as-a-judge harnesses
+- [Production Monitoring and Reliability](04-monitoring-and-reliability.md) - Real-time token telemetry, drift alerts, and fallback routing
+- [Data Pipelines](../engineering/03-data-pipelines.md) - Preparing document chunks, deduplicating embeddings, and vector indexing
+- [Security and Compliance](../engineering/05-security-and-compliance.md) - Zero Data Retention agreements and OWASP LLM defenses
+- [Vaayu Pumps Case Study](../case-studies/05-enterprise-manufacturing-vaayu-pumps.md) - Live application of bottom-up model routing and strategic automation triage
 
----
+## Further reading
 
-## 8. Primary AI Engineering Literature
-
-1. **Nelson F. Liu et al.**: *"Lost in the Middle: How Language Models Use Long Contexts"*. Transactions of the Association for Computational Linguistics (TACL), 2023.
-2. **Gordon V. Cormack, Charles L. A. Clarke, and Stefan Büttcher**: *"Reciprocal Rank Fusion Outperforms Condorcet and Individual Rank Learning Methods"*. ACM SIGIR, 2009.
-3. **Anthropic Engineering**: *"Prompt Caching: Accelerating LLM Applications and Lowering Costs"*. Anthropic Technical Documentation, 2024.
-4. **OpenAI Architecture**: *"Structured Outputs: Guaranteeing Strict JSON Schema Adherence"*. OpenAI Developer Guides, 2024.
-5. **Harrison Chase et al. (LangChain/LangSmith)**: *"State of AI Agents in Production"*. Empirical analysis of agent failure modes and evaluation benchmarks, 2025/2026.
-6. **Empirical Job Market Analysis (2026)**: Independent audit of 146 deduplicated FDE job postings showing **Prompt Engineering (55.0%), RAG (52.0%), and LLM Architecture (43.0%) demand**.
+- Nelson F. Liu et al., "Lost in the Middle: How Language Models Use Long Contexts", Transactions of the Association for Computational Linguistics (TACL), 2023
+- Gordon V. Cormack, Charles L. A. Clarke, and Stefan Büttcher, "Reciprocal Rank Fusion Outperforms Condorcet and Individual Rank Learning Methods", ACM SIGIR, 2009
+- [Anthropic prompt caching documentation](https://docs.anthropic.com) - provider-authoritative caching and cost guidance
+- [OpenAI structured outputs documentation](https://platform.openai.com/docs) - JSON schema adherence mechanics
+- Codebasics FDE Roadmap 2026, Principle 6: Cost-Efficient AI selection protocol (source: FDE_Roadmap_2026.pdf, September 2026)
+- AI LABS, "This Is How Forward Deployed Engineering Is Actually Done", YouTube (AD-EmZ3v6-g), 2026 - 5-step operational methodology including strategic automation triage
