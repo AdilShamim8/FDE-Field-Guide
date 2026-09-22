@@ -76,6 +76,23 @@ The responsibilities stay constant; the scope you hold them over changes (indust
 
 This suggests a simple self-check: ask which stages of [the FDE loop](05-the-fde-loop.md) you could run alone today, and which you could teach. Ladders commonly run about five levels from FDE to Director, and both Amazon (Principal FDE) and Anthropic (Head of Forward Deployed Engineering) hire at the top of that range (observed evidence, 2026 postings and practitioner guides).
 
+## The twelve principles of enterprise forward deployed engineering
+
+Derived from the 2026 enterprise roadmap research and practitioner interviews with active FDEs across manufacturing, SaaS, and financial infrastructure:
+
+1. Communication across native contexts - Effective communication is not about polished corporate English. Enterprise operators in manufacturing, logistics, and supply chain often communicate in regional languages. If an FDE cannot follow operational conversations in the team's native language, they miss the true business constraint.
+2. Adaptability to hostile environments - Every enterprise client possesses an idiosyncratic architecture, culture, and governance cadence. What worked in an agile AWS startup will fail inside an air-gapped on-premise cluster. An FDE adapts to the customer's constraints rather than fighting them.
+3. AI-native engineering discipline - Leverage modern AI development environments (such as Cursor, Claude, and Eraser.io) to compress the prototyping loop. The standard is shipping verified production code faster, not debating manual coding purity.
+4. Confidence under uncertainty - In ambiguous requirements sessions, never fake comprehension. Ask clarifying questions with authority: "Help me understand this operational boundary: are we optimizing for technician driving time or first-visit parts availability?"
+5. 48-hour velocity - Enterprise deadlines are driven by quarterly board reviews and seasonal audit cycles. Delivering a rough working vertical slice in 48 hours builds more customer trust than weeks of abstract architecture slides.
+6. Cost-efficient model routing over generic functional AI - Implement bottom-up model routing. Use low-latency, cost-effective models (such as Gemini 2.5 Flash and Claude 3.5 Haiku) for high-volume classification and extraction, reserving frontier reasoning models only for high-ambiguity synthesis. Cost efficiency is a primary enterprise retention moat.
+7. Declarative agentic systems over brittle hardcoding - Enterprise policies change weekly. If routing rules are hardcoded in source code, every business tweak requires an engineering deployment ticket. Expose declarative rules and dynamic agent configurations that customer operations leads can adjust safely.
+8. Persistent dynamic memory layers - When the FDE disengages, the system cannot require ongoing developer triage. Capturing human supervisor corrections into a vectorized memory store enables the system to learn from customer edits automatically.
+9. On-premise and air-gapped deployment fluency - Regulated clients will not route proprietary IP or customer PII through public multi-tenant APIs. FDEs must master private container registries, on-premise Kubernetes (such as Rancher and kubeadm), and local model execution (vLLM and Ollama).
+10. Proactive AI governance and regulatory compliance - Legal and compliance gatekeepers can halt production launches on the day of deployment. FDEs must design for data residency laws (such as the Indian DPDP Act 2023, EU AI Act, and GDPR), immutable audit logging, and automated PII redaction by default.
+11. Literacy in enterprise ERP systems of record - Enterprise AI applications exist to orchestrate core systems of record: SAP S/4HANA, Oracle NetSuite, and Microsoft Dynamics. FDEs must understand ERP schemas, transaction codes, and integration connectors (BAPI, OData, RFC) to build reliable mutations.
+12. Non-technical user enablement and training - Systems fail when line operators refuse to use them. FDEs must conduct role-based training workshops and produce visual, jargon-free runbooks for depot dispatchers, procurement clerks, and field staff.
+
 ## If your job description does not include these, it is not an FDE role
 
 Hiring managers: a posting can carry the FDE title and still be one of the adjacent roles described in [FDE vs other roles](03-fde-vs-other-roles.md). Run this checklist against your own description; call the role what it is:

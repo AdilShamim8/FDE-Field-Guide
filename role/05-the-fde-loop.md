@@ -71,9 +71,35 @@ by a concrete, verifiable engineering artifact:
 | **10**| **Production** | Transition from pilot to business-critical system | Production Readiness Sign-Off & Live Dashboards | Lead the formal Go/No-Go gate with sponsor and InfoSec | Celebrating the pilot demo while the live system rots without support | [`portfolio/reference-project/tests/test_server.py`](../portfolio/reference-project/tests/test_server.py) |
 | **11**| **Customer Impact**| Prove business ROI and transfer operational autonomy | Handover Package & 30-Day Reverse Shadowing Log | Train customer engineers; codify platform primitives | Handover to nobody; system decays into technical debt upon FDE exit | [`customer/01-engagement-lifecycle.md`](../customer/01-engagement-lifecycle.md) |
 
----
+## 3. The Kevin Bai FDE Flywheel and Deployment Moat Framework
 
-## 3. Forensic Breakdown: Where Loops Die
+Derived from foundational work by Kevin Bai (Anthropic founding Forward Deployed Engineer, ex-Palantir and Rippling):
+
+In the modern AI landscape, frontier foundation models are rapidly commoditizing. The long-term competitive moat of an AI company is not raw model weights, but how, where, and why intelligence is deployed inside customer operational reality.
+
+### The three-stage macro execution loop
+
+While day-to-day work spans multiple technical milestones, Kevin Bai articulates the macro FDE loop across three core operational phases:
+
+1. Auditing - Investigating the operational reality on the ground. FDEs do not rely on customer management slides or clean documentation; they shadow human operators, examine uncurated data dumps, and identify unwritten legacy workarounds.
+2. Evals - Constructing objective evaluation suites. Because non-deterministic language models cannot be verified with standard boolean unit tests, FDEs curate labeled golden datasets and establish deterministic eval harnesses before customer users interact with the system.
+3. Deployment - Driving organizational adoption and monitoring production reliability. An FDE shepherds the system into production, measures SLA performance, instruments telemetry, and ensures the customer team operates the application autonomously.
+
+### The product flywheel mechanism
+
+The highest-leverage output of an FDE is not the custom code written for a single client, but the feedback loop connecting customer deployments to core product engineering:
+
+```mermaid
+graph LR
+    A[Customer Site Deployment] -->|Exposes Latent Friction| B[Custom Glue Code & Adapters]
+    B -->|FDE Pattern Extraction| C[Core Platform Primitives]
+    C -->|HQ Engineering Hardens| D[Next 10 Customer Deployments]
+    D -->|Days Instead of Months| A
+```
+
+Without an FDE flywheel, AI companies devolve into bespoke consulting shops where every customer deployment is built from scratch. With the flywheel, an FDE abstracts customer-specific integrations into reusable platform primitives (such as standardized Model Context Protocol servers, tenant-partitioned vector indexers, and evaluation harnesses), making every subsequent customer deployment progressively faster and more reliable.
+
+## 4. Forensic Breakdown: Where Loops Die
 
 Enterprise deployments rarely fail from sudden catastrophic explosions; they die quietly at three
 predictable friction boundaries:
@@ -129,7 +155,7 @@ destroying vendor credibility.
 
 ---
 
-## 4. The Interview & Portfolio Loop Script
+## 5. The Interview & Portfolio Loop Script
 
 Forward Deployed Engineering interviewers structure candidate loops around this exact sequence
 ([TryExponent, 2026](https://tryexponent.com); [Gaijineer Cohere Analysis, April 2026](https://gaijineer.co)).
@@ -157,7 +183,7 @@ of the FDE loop:
 
 ---
 
-## 5. Direct Codebase Defense Implementations
+## 6. Direct Codebase Defense Implementations
 
 Every stage of the FDE Loop is implemented as executable code within this repository:
 
@@ -173,7 +199,7 @@ Every stage of the FDE Loop is implemented as executable code within this reposi
 
 ---
 
-## 6. Related Documents
+## 7. Related Documents
 
 - [What Is an FDE](01-what-is-an-fde.md) - foundational definition, origins, and the startup CTO mandate
 - [Responsibilities](02-responsibilities.md) - core technical responsibilities weighted across 146 postings
@@ -181,8 +207,9 @@ Every stage of the FDE Loop is implemented as executable code within this reposi
 - [Where FDEs Work](04-where-fdes-work.md) - how the role adapts across AI labs, platforms, and startups
 - [The Engagement Lifecycle](../customer/01-engagement-lifecycle.md) - the 10-phase delivery sequence common to all archetypes
 
-## 7. Further Reading
+## 8. Further Reading
 
+- [Kevin Bai: Forward Deployed Engineering 101](https://youtu.be/KwhgfwOSToQ) - founding FDE at Anthropic, ex-Palantir and Rippling, on the FDE loop and flywheel
 - [Fortune: MIT Report on GenAI Pilots in Business](https://fortune.com/2025/08/18/mit-report-95-percent-generative-ai-pilots-at-companies-failing-cfo) - empirical research on the 95% pilot stall rate
 - [The New Stack: Forward-Deployed Engineers in AI](https://thenewstack.io/forward-deployed-engineers-ai) - the integrate-launch-improve lifecycle
 - [OpenAI Forward Deployed Engineer Specification](https://openai.com/careers) - canonical role posting covering discovery through handoff
