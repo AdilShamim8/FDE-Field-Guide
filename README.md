@@ -138,8 +138,8 @@ Explore the 14 comprehensive, rigorously verified knowledge pillars of Forward D
 
 ### 5. [AI & LLM Engineering](ai/README.md)
 *Grounded, empirical AI systems engineering for high-stakes enterprise applications.*
-- [01. LLM Application Patterns](ai/01-llm-application-patterns.md) - RAG architectures, structured JSON output validation, context window caching, and rerankers.
-- [02. Agents & Tools](ai/02-agents-and-tools.md) - State machines, Model Context Protocol (MCP), tool-use loops, and preventing runaway tool calls.
+- [01. LLM Application Patterns](ai/01-llm-application-patterns.md) - RAG architectures, structured JSON output validation, context window caching, rerankers, and Strategic Automation Triage (AI reasoning vs deterministic code vs human-in-the-loop).
+- [02. Agents & Tools](ai/02-agents-and-tools.md) - State machines, Model Context Protocol (MCP), tool-use loops, supervised multi-agent pipelines, persistent memory layers, and preventing runaway tool calls.
 - [03. Evaluation & Testing](ai/03-evaluation-and-testing.md) - Automated golden evaluation harnesses, LLM-as-judge with Cohen's Kappa, and synthetic data auditing.
 - [04. Monitoring & Reliability](ai/04-monitoring-and-reliability.md) - OpenTelemetry GenAI semantic conventions, token usage telemetry, and drift detection.
 
@@ -167,6 +167,7 @@ Explore the 14 comprehensive, rigorously verified knowledge pillars of Forward D
 - [02. LLM Deployment Cases](case-studies/02-llm-deployment-cases.md) - Large-scale production deployments across healthcare, finance, and legal operations.
 - [03. Failure Stories](case-studies/03-failure-stories.md) - Frank post-mortems of real enterprise pilots that collapsed, with root-cause post-mortems.
 - [04. Regulated Industries Playbook](case-studies/04-regulated-industries-playbook.md) - Comprehensive compliance playbooks for Healthcare (HIPAA/BAA), Financial Services (SOC 2/MRM), and Defense/Gov (FedRAMP/IL4).
+- [05. Enterprise Manufacturing: Vaayu Pumps](case-studies/05-enterprise-manufacturing-vaayu-pumps.md) - Complete enterprise case study synthesized from 83 pages of BRD v1.1, TDD v1.0, and SDD v1.0 for Vaayu Pumps and Systems Ltd (INR 840 Cr manufacturing firm, 11,000 pumps, 42 field technicians). Covers 4-agent supervised pipeline, SAP S/4HANA integration, severity decision matrices, technician routing algorithm, and SLA impact metrics (source: Codebasics FDE Roadmap 2026, September 2026).
 
 ### 10. [Job Market & Career Telemetry](job-market/README.md)
 *Empirical compensation benchmarks, role variants, and career positioning strategies.*
@@ -177,6 +178,7 @@ Explore the 14 comprehensive, rigorously verified knowledge pillars of Forward D
 
 ### 11. [Learning Paths & Transition Curricula](learning-paths/README.md)
 *Customized transition roadmaps and structured self-study curricula for every technical background.*
+- [The 24-Week Enterprise FDE Roadmap](learning-paths/24-week-enterprise-fde-roadmap.md) - The complete week-by-week enterprise transition curriculum sourced directly from Codebasics FDE Roadmap 2026 (Dhaval Patel and Hemanand Vadivel, AtliQ Technologies). Phase 1: Python and FastAPI, RAG, Agentic AI and MCP, ERP Integration, DevOps, LLMOps, System Design. Phase 2: Problem Discovery, BRD, TDD, Stakeholder Management, UAT, Change Management.
 - [The 90-Day FDE Transition Roadmap](learning-paths/90-day-fde-roadmap.md) - A week-by-week 12-week curriculum synthesizing FDE Academy masterclasses.
 - [From Software Engineer](learning-paths/from-software-engineer.md) - Bridging the gap from internal microservices to customer-facing discovery and ambiguity.
 - [From AI/ML Engineer](learning-paths/from-ai-ml-engineer.md) - Transitioning from offline evaluation and model weights to production infrastructure and VPC security.
@@ -207,9 +209,9 @@ Explore the 14 comprehensive, rigorously verified knowledge pillars of Forward D
 
 ### 14. [Resources & Ecosystem Directory](resources/README.md)
 *The curated toolbox, primary literature, seminal research papers, and practitioner communities.*
-- [01. Tools](resources/01-tools.md) - The enterprise FDE toolbox: development, deployment, evaluation, and observability.
-- [02. Reading](resources/02-reading.md) - Foundational textbooks, seminal papers (vLLM, Lost in the Middle, ReAct), and industry reports.
-- [03. Communities & People](resources/03-communities-and-people.md) - Where forward deployed engineers talk shop, share war stories, and discuss tooling.
+- [01. Tools](resources/01-tools.md) - The enterprise FDE toolbox: development, deployment, evaluation, observability, and enterprise specification and diagramming tools (Eraser.io, LangSmith, LangFuse, SAP CPI).
+- [02. Reading](resources/02-reading.md) - Foundational textbooks, seminal papers (vLLM, Lost in the Middle, ReAct), industry reports, 5 verified practitioner masterclasses (Kevin Bai, Aishwarya Srinivasan, Piyush Garg, AI LABS, Codebasics), and the Vaayu Pumps 83-page enterprise document pack.
+- [03. Communities & People](resources/03-communities-and-people.md) - Where forward deployed engineers talk shop, including 10 verified FDE practitioners sourced from the Codebasics FDE Roadmap 2026.
 
 ---
 
