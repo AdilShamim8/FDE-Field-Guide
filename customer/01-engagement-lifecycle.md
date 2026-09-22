@@ -262,6 +262,40 @@ Enforce the **Handover Triad**—all three legs are mandatory:
    customer individuals in PagerDuty/Opsgenie. During the final 30 days, the customer handles all
    tier-1 and tier-2 operational alerts while the FDE observes in silence.
 
+## User acceptance testing and failure injection scripting
+
+Standard enterprise User Acceptance Testing (UAT) is notoriously superficial: customer users verify three nominal examples, assume the system works, and sign off. In production, unhandled edge cases cause operational failures.
+
+Forward deployed engineers author and execute a scripted 15-scenario failure injection matrix before go-live sign-off:
+
+1. Emergency dispatch with missing telemetry - Priority 1 plant shutdown received without pump serial number; asserts system routes to emergency manual phone triage within 60 seconds.
+2. Imminent SLA breach countdown - Work order at 85% of contractual resolution window; asserts automated visual escalation and SMS alerts to regional depot manager.
+3. Total depot parts stockout - Mechanical seal out of stock locally (SAP `MMBE` returns zero); asserts automated query to neighboring regional depots and emergency inter-depot courier generation.
+4. Technician certification mismatch - High-voltage compressor motor trip; asserts assignment algorithm excludes uncertified technicians even if they are physically closest.
+5. Multilingual and slang input - Customer WhatsApp audio note in mixed Hindi/English; asserts whisper transcription and symptom entity extraction without schema failure.
+6. Malicious duplicate replay - Customer network drops and resends complaint payload three times in 10 seconds; asserts SHA-256 deduplication and single SAP order creation.
+7. Downstream ERP brownout - SAP CPI returns HTTP 503 during work order commitment; asserts durable Redis queue retention with exponential backoff and zero dropped tickets.
+8. Ambiguous asset resolution - Serial number maps to three deactivated equipment records; asserts low-confidence exception routing with customer account disambiguation prompts.
+9. Low-confidence triage score - Diagnostic confidence scores 0.72 (< 0.85 threshold); asserts automated bypass of auto-dispatch and placement in supervisor review queue.
+10. Supervisor override delta capture - Depot lead overrides recommended spare part SKU; asserts immutable logging to PostgreSQL and vectorization into dynamic memory.
+11. Shift changeover boundary - Complaint arrives at 17:58 during technician handoff; asserts routing engine evaluates incoming night-shift roster rather than departing day crew.
+12. Warranty dispute flag - Equipment flagged for active legal dispute; asserts automated dispatch freeze pending finance review.
+13. Network partition during commit - TCP connection resets mid-BAPI execution; asserts idempotent transaction token prevents duplicate work order generation in SAP S/4HANA.
+14. Malformed PII in complaint body - Complaint includes customer tax ID and personal credit card details; asserts regex redaction proxy scrubs tokens prior to model inference.
+15. Flash traffic volume surge - 3x normal hourly ticket volume simulated; asserts client-side rate limiters pace LLM tokens smoothly without provider 429 quota exhaustion.
+
+## The ADKAR change management and adoption framework
+
+An enterprise AI application is not finished when the code passes automated tests; it is finished when line operators use it willingly and effectively without vendor intervention.
+
+Forward deployed engineering teams apply the ADKAR framework across Phase 9 and Phase 10:
+
+- Awareness - Explain the operational reason for the system to frontline operators. Share the measured baseline (such as the 47-minute triage delay and frequent parts mismatches) to demonstrate that the system solves their daily frustration, not an executive vanity goal.
+- Desire - Address employee replacement anxiety proactively. Position the AI command centre as an assistant that eliminates tedious ERP lookups, paperwork logging, and phone tag, freeing technicians and depot leads to focus on complex mechanical repairs.
+- Knowledge - Deliver role-based training workshops rather than generic slide decks. Run interactive simulations where depot dispatchers review, approve, and override AI recommendations in the staging interface.
+- Ability - Provide desktop quick-reference cheat sheets, video runbooks, and a designated internal champion within each regional depot to resolve workflow questions immediately.
+- Reinforcement - Surface daily and weekly business impact metrics on depot monitors: average dispatch latency, first-time fix rate improvements, and contractual SLA penalty reductions. Recognize operators whose overrides helped improve the system's dynamic memory layer.
+
 ---
 
 ## Weekly engagement health audit

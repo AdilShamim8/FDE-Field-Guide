@@ -25,6 +25,15 @@ surface during build, when they are expensive.
   without explicit exclusions expands to fill the calendar; the non-goals list is the
   only sentence in the spec that buys you time.
 
+## The four-tier enterprise specification chain
+
+In mature enterprise engagements, a single informal document is insufficient to govern engineering delivery across business sponsors, enterprise architects, and implementation engineers. Forward deployed engineering teams structure specifications across four discrete tiers:
+
+1. Business Requirement Document (BRD) - Defines the commercial and operational context. Answers what the business needs, why, what problems (P-1, P-2) are being solved, and what measurable criteria determine commercial acceptance. Signed off by the client executive sponsor (such as the Chief Operating Officer or VP of Operations).
+2. Solution Design Document (SDD) - Defines the system boundaries, runtime component models, and cross-cutting architectural concerns. Answers what the system is made of, where components run (cloud VPC versus on-premise depot edge), why specific technologies were selected over rejected alternatives, and how security and data residency regulations are met. Signed off by enterprise architecture and InfoSec leadership.
+3. Technical Design Document (TDD) - Defines the low-level implementation contracts. Answers how the software behaves at the API and schema level, detailing input validation rules, state machines, severity decision tables, technician ranking algorithms, error handling, and traceability matrices mapping every code function back to BRD requirement IDs. Signed off by the lead forward deployed engineer.
+4. Production Code and Automated Test Suite - Implements the verified contracts and proves mathematical conformance against the traceability matrix.
+
 ## The one-page spec skeleton
 
 Use this skeleton when there is nothing heavier to justify:
@@ -333,9 +342,23 @@ personnel, so that Tier-1 support agents cannot access restricted legal data.
 ### Why this conversion succeeds where informal specs fail
 
 Notice what the engineering conversion achieved:
-1. **Replaced informal vibes with empirical metrics**: Instead of "AI to help with support tickets", the spec commits to a measured baseline (34.8% error rate, 9.4-hour penalty) and enforceable targets (>= 88% accuracy, < 500ms latency).
-2. **Grounded directly in executable code**: Every acceptance criterion in Section 5 maps 1-to-1 to an integration test in [`tests/test_server.py`](../portfolio/reference-project/tests/test_server.py) and an evaluation run in [`evals/run_evals.py`](../portfolio/reference-project/evals/run_evals.py).
-3. **Defended against security and operational risk**: Defined PII boundaries, idempotency replays, RBAC permissions, and circuit breakers *before* writing a line of customer integration code.
+1. Replaced informal vibes with empirical metrics: Instead of "AI to help with support tickets", the spec commits to a measured baseline (34.8% error rate, 9.4-hour penalty) and enforceable targets (>= 88% accuracy, < 500ms latency).
+2. Grounded directly in executable code: Every acceptance criterion in Section 5 maps 1-to-1 to an integration test in [`tests/test_server.py`](../portfolio/reference-project/tests/test_server.py) and an evaluation run in [`evals/run_evals.py`](../portfolio/reference-project/evals/run_evals.py).
+3. Defended against security and operational risk: Defined PII boundaries, idempotency replays, RBAC permissions, and circuit breakers *before* writing a line of customer integration code.
+
+## The Spec Clarity Test (Annex B Framework)
+
+A test for specification quality used by experienced forward deployed engineers is the Spec Clarity Test, adapted from the Vaayu Pumps engineering delivery methodology:
+
+The exercise: Take the API specification, field validation rules, and business logic tables from your technical design document, and provide them to an autonomous AI coding agent (such as Claude Code or Cursor) with zero surrounding conversation or human coaching. Instruct the agent: "Implement the endpoint handler, validation models, and routing logic that satisfies this specification."
+
+What you are looking for:
+
+1. Did the agent invent any schema attributes, HTTP error codes, or state machine transitions? If it had to invent default values or status strings, your specification has an unstated assumption.
+2. Did the agent implement the exact business decision tables without ambiguity? If the agent produces contradictory routing logic on boundary conditions (for example, whether an emergency Priority 1 issue with high confidence bypasses supervisor review), your rule precedence is not fully specified.
+3. Can the agent generate a 100% passing test suite purely from the Given/When/Then acceptance criteria? If the test cases require guessing input fixtures or mock shapes, the contract is incomplete.
+
+If an AI coding agent cannot implement the component deterministically from your specification without hallucinating missing details, human enterprise developers on the customer team will not be able to either. Rewrite the specification before writing implementation code.
 
 ---
 
