@@ -16,9 +16,11 @@ graph TD
         P1[01: Deployment Patterns in the Wild] --> P2[02: Documented LLM Deployment Cases]
         P2 --> P3[03: Production Failure Post-Mortems]
         P3 --> P4[04: Regulated Industries Playbook]
+        P4 --> P5[05: Enterprise Manufacturing Field Study]
     end
     P3 --> Defenses[Hardened Defenses in interviews/code/]
     P4 --> Golden[Golden Evals in portfolio/reference-project/]
+    P5 --> RoadmapDocs[Specification Chain in forward-deployed-engineer-fde-roadmap/]
 ```
 
 ### 1. [Deployment Patterns in the Wild](01-deployment-patterns-in-the-wild.md)
@@ -47,6 +49,14 @@ Authoritative compliance and architectural frameworks across regulated sectors:
 - **Healthcare & Life Sciences**: HIPAA Safe Harbor de-identification (18 PHI identifiers), Business Associate Agreements (BAA) with mandatory Zero Data Retention (ZDR), and Microsoft Presidio redaction proxies.
 - **Financial Services & Banking**: Model Risk Management (SR 11-7 / OCC 2011-12) conceptual soundness, SEC Rule 17a-4 WORM storage, AWS PrivateLink transit, and Customer-Managed Encryption Keys (CMEK).
 - **Defense & National Security**: FedRAMP High, DoD Impact Levels (IL4, IL5, IL6), and air-gapped SCIF operations (offline container registries, local vLLM weight inference, and zero-egress policies).
+
+### 5. [Enterprise Manufacturing Field Study: Vaayu Pumps](05-enterprise-manufacturing-vaayu-pumps.md)
+Production deployment of a supervised multi-agent Field Service Command Centre for an industrial pump manufacturer:
+- **Operational Reality**: Managing 11,000 industrial pumps, 1,400 customer sites, and 42 field technicians across six regional depots handling 180 multi-channel service complaints weekly.
+- **The Supervised Four-Agent Pipeline**: Ingestion, Diagnosis, Dispatch, and Memory/Routing agents bounded by deterministic 0.85 confidence gates and supervisor review queues.
+- **SAP S/4HANA Middleware Integration**: Real-time asset lookups (`IE03`), depot stock verification (`MMBE`), and work order generation via RFC/BAPI (`BAPI_ALM_ORDER_MAINTAIN`) through SAP CPI without modifying the SAP core.
+- **Dynamic Supervisor Memory Layer**: Vectorized capture of supervisor corrections to adapt to regional and plant modifications without code redeployments.
+- **Commercial Impact**: 96.2% triage latency reduction (47 min to 1.8 min), 89.4% first-time fix rate, and 71.5% reduction in contractual SLA liquidated damages.
 
 ---
 
