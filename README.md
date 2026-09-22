@@ -8,6 +8,11 @@
 [![Dataset: 10-Pass Verified](https://img.shields.io/badge/interviews%20audit-10%2F10%20clean-success.svg)](interviews/dataset/)
 [![Market Data: 146 Postings](https://img.shields.io/badge/market%20telemetry-146%20postings%20validated-blue.svg)](job-market/dataset/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-purple.svg)](LICENSE)
+[![Awesome Resources](https://img.shields.io/badge/awesome-resources-orange.svg)](AWESOME.md)
+
+> New here? Start with [AWESOME.md](AWESOME.md) — the curated, verified index of every learning resource in this repository, organized by what you need to close next.
+
+
 
 ---
 
