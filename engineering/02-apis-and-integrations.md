@@ -464,8 +464,8 @@ Never execute heavy data processing, LLM calls, or third-party downstream writes
 ```mermaid
 flowchart LR
     Vendor[External Vendor / Webhook Producer] -->|HTTPS POST| Ingest[API Gateway / Fast Ingest]
-    Ingest -->|1. HMAC Check\n2. Push to Queue| Queue[(Durable Queue\nAmazon SQS / RabbitMQ)]
-    Ingest -->>|Return 202 Accepted < 50ms| Vendor
+    Ingest -->|1. HMAC Check<br/>2. Push to Queue| Queue[(Durable Queue<br/>Amazon SQS / RabbitMQ)]
+    Ingest -->|Return 202 Accepted under 50ms| Vendor
     Queue -->|Consume| Worker[Worker Service]
     Worker -->|Process & Classify| DB[(System Database)]
     Worker -.->|Retries Failed 5x| DLQ[(Dead-Letter Queue)]
