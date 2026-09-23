@@ -85,31 +85,38 @@ Profile representative data immediately upon access. Written quality thresholds 
 ### The 7 Classic Enterprise Data Defects
 
 ```mermaid
-mindmap
-  Enterprise Data Defects
-    Overloaded Nulls
-      null in discount_code means "0% discount"
-      null in phone_number means "customer refused"
-    Cross-System Identity Collisions
-      CRM assigns ID 1042
-      Billing assigns ID C-9821
-      Disparate keys for identical entity
-    Character Encoding Artifacts
-      UTF-8 vs Latin-1 vs Windows-1252
-      Mojibake and Byte-Order Marks
-      Trailing whitespace in foreign keys
-    Unannounced Upstream Drift
-      Column renamed without deprecation notice
-      Numeric column converted to formatted string
-    Semantic Discrepancies
-      closed_date means "ticket resolved" in Zendesk
-      closed_date means "account churned" in Salesforce
-    Timezone Naivety
-      Mixed UTC and local timestamps without offset
-      Daylight Saving Time 1-hour jump seams
-    Deprecated Yet Load-Bearing Fields
-      Official documentation flags field as legacy
-      Production workflows entirely depend on it
+flowchart TD
+    Root["Enterprise Data Defects"]
+
+    Root --> Nulls["Overloaded Nulls"]
+    Nulls --> N1["null in discount_code means 0% discount"]
+    Nulls --> N2["null in phone_number means customer refused"]
+
+    Root --> Identity["Cross-System Identity Collisions"]
+    Identity --> I1["CRM assigns ID 1042"]
+    Identity --> I2["Billing assigns ID C-9821"]
+    Identity --> I3["Disparate keys for identical entity"]
+
+    Root --> Encoding["Character Encoding Artifacts"]
+    Encoding --> E1["UTF-8 vs Latin-1 vs Windows-1252"]
+    Encoding --> E2["Mojibake and Byte-Order Marks"]
+    Encoding --> E3["Trailing whitespace in foreign keys"]
+
+    Root --> Drift["Unannounced Upstream Drift"]
+    Drift --> D1["Column renamed without deprecation notice"]
+    Drift --> D2["Numeric column converted to formatted string"]
+
+    Root --> Semantic["Semantic Discrepancies"]
+    Semantic --> S1["closed_date means ticket resolved in Zendesk"]
+    Semantic --> S2["closed_date means account churned in Salesforce"]
+
+    Root --> Timezone["Timezone Naivety"]
+    Timezone --> T1["Mixed UTC and local timestamps without offset"]
+    Timezone --> T2["Daylight Saving Time 1-hour jump seams"]
+
+    Root --> Deprecated["Deprecated Yet Load-Bearing Fields"]
+    Deprecated --> P1["Official documentation flags field as legacy"]
+    Deprecated --> P2["Production workflows entirely depend on it"]
 ```
 
 ### Automated Validation & Dead-Letter Quarantine Engine
