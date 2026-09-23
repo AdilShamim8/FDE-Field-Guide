@@ -86,7 +86,7 @@ Profile representative data immediately upon access. Written quality thresholds 
 
 ```mermaid
 mindmap
-  root((Enterprise Data Defects))
+  Enterprise Data Defects
     Overloaded Nulls
       null in discount_code means "0% discount"
       null in phone_number means "customer refused"
