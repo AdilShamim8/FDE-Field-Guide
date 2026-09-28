@@ -12,8 +12,6 @@
 
 > New here? Start with [AWESOME.md](AWESOME.md) — the curated, verified index of every learning resource in this repository, organized by what you need to close next.
 
-
-
 ---
 
 ## Executive Overview: The GenAI Divide & The Rise of the FDE
