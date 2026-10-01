@@ -87,7 +87,7 @@ flowchart TD
 *Enterprise architectures under customer constraints: in-VPC boundaries, PrivateLink, and GPU sizing.*
 - **The In-VPC Constraint**: Designing inside customer AWS/Azure/GCP environments with zero internet egress (`IGW-less` VPCs) and AWS PrivateLink interface endpoints.
 - **The vLLM Hardware Sizing Engine**: Mathematical GPU memory allocation:
-  $$VRAM_{\text{req}} = M_{\text{weights}} + M_{\text{kv\_cache}} + M_{\text{activation\_overhead}}$$
+  $VRAM_{\text{req}} = M_{\text{weights}} + M_{\text{kv-cache}} + M_{\text{activation-overhead}}$
 - **Hybrid Control/Data Planes**: Architecting reverse-tunnel worker agents dialing out over HTTPS/WSS (port 443) with deterministic local token-level PII pseudonymization.
 
 ---
