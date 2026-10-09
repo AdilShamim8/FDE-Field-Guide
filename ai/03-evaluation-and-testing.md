@@ -123,118 +123,18 @@ $$\kappa = \frac{P_o - P_e}{1 - P_e}$$
 
 ---
 
-## 4. Production Python Evaluation Harness
+## 4. Executable local regression evaluation
 
-The following evaluation script represents the enterprise standard deployed within this repository. It executes the golden dataset, validates classification, checks 100% citation grounding, calculates latency distributions (p50, p90, p95, p99), and halts CI/CD builds upon SLA breaches.
+Use the current [evaluation runner](../portfolio/reference-project/evals/run_evals.py), rather than a copied implementation. The earlier embedded script granted 100% grounding to zero citations and omitted routing from acceptance; it is withdrawn. Reviewed 2026-10-09.
 
-See the complete, verified implementation in [`portfolio/reference-project/evals/run_evals.py`](../portfolio/reference-project/evals/run_evals.py):
-
-```python
-"""
-Automated Golden Evaluation Harness.
-Executes test cases, calculates precision, recall, citation grounding rate,
-and latency percentiles, outputting an executive engineering scorecard.
-"""
-
-import json
-import time
-from pathlib import Path
-from typing import Any, Dict, List
-
-
-def run_evaluation_suite(
-    golden_dataset_path: Path,
-    system_under_test: Any,
-    sla_category_target: float = 88.0,
-    sla_severity_target: float = 90.0,
-    sla_p95_latency_ms: float = 200.0,
-) -> bool:
-    with open(golden_dataset_path, "r", encoding="utf-8") as f:
-        cases: List[Dict[str, Any]] = json.load(f)
-
-    total_cases = len(cases)
-    category_correct = 0
-    severity_correct = 0
-    routing_correct = 0
-    total_citations = 0
-    verified_citations = 0
-    latencies_ms: List[float] = []
-
-    print("=" * 70)
-    print(f"EXECUTING {total_cases} ENTERPRISE GOLDEN EVALUATION CASES")
-    print("=" * 70)
-
-    for case in cases:
-        t_start = time.perf_counter()
-        result = system_under_test.process(
-            ticket_id=case["ticket_id"],
-            raw_text=case["raw_text"],
-        )
-        elapsed_ms = (time.perf_counter() - t_start) * 1000.0
-        latencies_ms.append(elapsed_ms)
-
-        # 1. Classification Accuracy
-        if result.category == case["expected_category"]:
-            category_correct += 1
-        if result.severity == case["expected_severity"]:
-            severity_correct += 1
-        if result.routing_decision == case["expected_routing"]:
-            routing_correct += 1
-
-        # 2. Citation Grounding Verification
-        for cit in result.citations:
-            total_citations += 1
-            if cit.is_verified:
-                verified_citations += 1
-
-    # Calculate metrics
-    cat_acc = (category_correct / total_cases) * 100.0
-    sev_acc = (severity_correct / total_cases) * 100.0
-    routing_acc = (routing_correct / total_cases) * 100.0
-    grounding_rate = (
-        (verified_citations / total_citations) * 100.0 if total_citations > 0 else 100.0
-    )
-
-    # Latency Percentiles
-    latencies_ms.sort()
-    p50 = latencies_ms[int(total_cases * 0.50)]
-    p90 = latencies_ms[int(total_cases * 0.90)]
-    p95 = latencies_ms[int(total_cases * 0.95)]
-    p99 = latencies_ms[min(total_cases - 1, int(total_cases * 0.99))]
-
-    # Executive Scorecard Output
-    print("\nSCORECARD SUMMARY")
-    print("-" * 70)
-    print(f"Total Test Cases:            {total_cases}")
-    print(f"Category Classification:     {category_correct}/{total_cases} ({cat_acc:.1f}%) [SLA Target: >= {sla_category_target}%]")
-    print(f"Severity Classification:     {severity_correct}/{total_cases} ({sev_acc:.1f}%) [SLA Target: >= {sla_severity_target}%]")
-    print(f"Decision Gating Accuracy:    {routing_correct}/{total_cases} ({routing_acc:.1f}%)")
-    print(f"Citation Grounding Rate:     {verified_citations}/{total_citations} ({grounding_rate:.1f}%) [Target: 100.0%]")
-    print("-" * 70)
-    print(f"LATENCY DISTRIBUTION (p50 / p90 / p95 / p99)")
-    print(f"p50:  {p50:.2f} ms")
-    print(f"p90:  {p90:.2f} ms")
-    print(f"p95:  {p95:.2f} ms")
-    print(f"p99:  {p99:.2f} ms")
-    print("=" * 70)
-
-    # Automated SLA Assertion
-    passed = (
-        cat_acc >= sla_category_target
-        and sev_acc >= sla_severity_target
-        and grounding_rate == 100.0
-        and p95 <= sla_p95_latency_ms
-    )
-
-    if passed:
-        print("RESULT: ALL ENTERPRISE SLA ACCEPTANCE CRITERIA PASSED.")
-    else:
-        print("RESULT: SLA BREACH DETECTED - BUILD HALTED.")
-
-    return passed
+```bash
+.venv/bin/python portfolio/reference-project/evals/run_evals.py --report /tmp/etise-regression.json
+.venv/bin/python -m pytest portfolio/reference-project/tests/test_regression_gates.py -q
 ```
 
----
+The runner rejects empty or duplicate-ID input, checks routing and required citation documents, rechecks exact document/section quotes, and refuses a perfect grounding score when no citations are emitted. It reports per-class precision/recall/F1, latency for local CPU processing, evidence status, and failure reasons. It exits nonzero when the declared regression gates fail.
+
+The 25 known legacy examples are regression fixtures with unverified origins. Their labels are not an independent customer holdout. The application is deterministic and uses sample policy text; no LLM or calibrated model judge is exercised. Exact quotation is narrower than factual entailment or legal correctness. The current thresholds are local development gates, not agreed customer SLAs or production quality guarantees.
 
 ## 5. Proving Quality to a Skeptical Customer
 
