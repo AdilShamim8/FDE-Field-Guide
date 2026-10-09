@@ -7,7 +7,7 @@ ETISE is a local teaching application for ticket classification, sample-policy r
 - FastAPI intake with bounded ticket fields and Pydantic validation.
 - Keyword classification with feature-hashed cosine similarity for fallback scoring. Confidence values are uncalibrated heuristics.
 - Retrieval using token overlap and feature-hash vectors over locally authored Apex policies. This is not BM25, a trained embedding model, or a vector database.
-- Exact quotation membership checks against the cited sample section. Strict mode routes missing evidence to review; P0 incidents escalate even without evidence.
+- Exact quotation membership checks against the cited sample section, restricted to the category's applicable sample-policy document. Strict mode routes inaccessible, missing, or unmapped policy evidence to review; P0 incidents escalate even without evidence. This is a local applicability rule, not semantic or legal entailment.
 - In-process replay handling scoped to account, key, and simulated role, with payload conflict detection, TTL, a bounded cache, and serialized state changes.
 - In-memory exception review, operator resolutions, feedback records, and counters.
 
