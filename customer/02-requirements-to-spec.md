@@ -161,206 +161,29 @@ acceptance. If you build it, write it into the spec first.
 
 ---
 
-## Empirical worked example: Enterprise Ticket Intelligence & SLA Escalation Engine (ETISE)
+## Worked specification using current repository evidence
 
-The following worked example is drawn directly from the working implementation in
-[`portfolio/reference-project/`](../portfolio/reference-project/README.md), evaluated
-against 26,872 interactions from the Hugging Face Bitext Customer Support Dataset, real-world
-commercial disputes from the Consumer Financial Protection Bureau (CFPB) database, and
-cloud vendor SLA terms (AWS, Stripe, Datadog).
+This is a specification exercise, not a customer kickoff transcript or a deployed financial system. Reviewed 2026-10-09 against the current reference. The earlier customer volumes, misclassification rates, financial losses, approvals, and privacy incidents had no artifacts in this repository and are withdrawn as observed evidence.
 
-### The raw customer discovery ask (verbatim from kickoff)
+### Available inputs
 
-> *"Our Tier-1 operations team is drowning in 4,500 monthly inbound tickets. Misclassifications
-> between technical operations, billing, and compliance add a median 9.4 hours to initial response
-> times, frequently breaching our contractual enterprise SLAs (target < 1 hour for P1, < 15 min for P0).
-> Even worse, ticket text frequently contains customer credit card numbers, tax IDs, and GDPR-restricted
-> EU personal data that cannot leave our tenant unredacted. We need an intelligent system to route
-> tickets accurately, quote the exact SLA clauses, protect customer privacy, and allow our human
-> operators to override bad predictions."*
+The [CFPB snapshot](../portfolio/reference-project/evals/real_data/cfpb_metadata_2026-10-09.json) contains five actual categorical complaint records received today. It supplies stable IDs and source category fields, not complaint narratives or ETISE severity/routing labels. Bitext's publisher describes its dataset as hybrid synthetic; it is excluded from the real-world-only evidence set.
 
-### Discovery baseline metrics
+The [reference application](../portfolio/reference-project/README.md) supplies local typed intake, sample retrieval, exact quote checks, replay behavior, and operator review. It does not supply authenticated service tokens, customer SLA terms, automatic credits, Prometheus integration, PII sanitization, durable audit logs, a shadow-mode switch, or measured 50-RPS performance.
 
-- **Inbound volume**: 4,500 tickets/month across webhook and customer portal channels.
-- **Initial misclassification rate**: 34.8% on first touch (based on historical CRM export across Q4).
-- **Resolution delay**: Re-routing a misclassified ticket adds a median 9.4 hours (p90: 11.2 hours) to resolution time.
-- **Financial impact**: $24.60 average labor cost per misrouted ticket in redundant multi-tier triage.
-- **Privacy risk**: 14 audit flags logged in the previous quarter due to customer PII inadvertently sent to downstream SaaS ticketing webhooks.
+### Reviewable requirements and current evidence
 
----
+- Given an unchanged ticket and the same declared account, role, and key, a replay returns the cached result. Changing the payload returns 409. Existing API tests exercise both behaviors.
+- Given concurrent identical deliveries to one local process, classification executes once and subsequent requests replay. This is not a claim about multiple workers or durable effects.
+- Given absent verified evidence in strict mode, dispatch is withheld and the ticket routes to review. P0 escalation remains separate.
+- Given a caller omits roles, the default filter is `support_tier1`. Caller-supplied `admin` remains possible, so production authentication and tenant authorization are required work.
+- Given a field exceeds the schema limit or an operator action is invalid, validation rejects it. An ingress byte limit and queue retention are still missing.
 
-### The agreed engineering specification
+### Open acceptance decisions
 
-```markdown
-# Enterprise Ticket Intelligence & SLA Escalation Engine (ETISE)
-# Phase 1 Production Integration Specification
-Document ID: ETISE-SPEC-2026-v2.1
-Status: APPROVED | Last Updated: 2026-03-15
-Sign-off Owners: Lead FDE (Vendor), Head of Support Operations (Customer), Dir of InfoSec (Customer)
+A real customer must supply the baseline workflow, approved policies, representative labeled holdout, loss function, operator capacity, identity mapping, retention requirements, and workload measurements. Numeric quality and latency targets are proposals until agreed with those inputs. A local fixture score is not a customer acceptance signature.
 
-## 1. Problem statement
-Inbound enterprise support volume (4,500 tickets/month) experiences a 34.8% initial misclassification
-rate between Technical Operations, Billing, and Compliance. Re-routing adds a median 9.4 hours to
-first response, causing frequent breaches of contractual Tier-1 SLAs (< 1 hr for P1, < 15 min for P0).
-Unredacted customer account numbers and tax IDs present regulatory exposure under GDPR Article 11.3.
-
-## 2. Goals and measurable metrics
-- Category Classification Accuracy >= 88.0% on the golden evaluation suite (Target achieved: 100.0%).
-- Severity Classification Accuracy >= 90.0% on the golden evaluation suite (Target achieved: 100.0%).
-- 100% Citation Grounding: Every automated dispatch must cite a verified clause from indexed SLA policies.
-- Automated Dispatch Threshold: Only tickets with classification confidence >= 0.80 and citation grounding
-  may be dispatched automatically.
-- Human-in-the-loop Exception Queue: All borderline or ambiguous tickets (confidence < 0.80) must be routed
-  to `/api/v1/queue/exceptions` for human operator triage.
-- Latency Budget: p95 processing latency < 500ms under 50 RPS load (Local benchmark achieved: < 1ms).
-
-## 3. Non-goals (Phase 1)
-- No direct database mutation of customer enterprise billing ledgers or banking accounts.
-- No automated disbursement of customer credits exceeding $500 without manual finance VP approval.
-- No model re-training or weight fine-tuning on live production traffic within the synchronous request path.
-- No unauthenticated public endpoints: all administrative and resolution APIs require valid service tokens.
-
-## 4. Scope and system boundaries
-- **In-Scope**:
-  - FastAPI service endpoints: `/health`, `/api/v1/tickets/process`, `/api/v1/queue/exceptions`,
-    `/api/v1/queue/resolve`, `/api/v1/knowledge/search`, and `/metrics`.
-  - Ingestion and hybrid vector/keyword retrieval over public enterprise SLAs (AWS, Stripe, Datadog).
-  - RBAC policy filtering enforcing role boundaries via `X-User-Roles` HTTP headers.
-  - Idempotency protection with SHA-256 tokens to prevent double-processing on network replays.
-- **Out-of-Scope**:
-  - Customer CRM UI redesign (we consume and produce REST JSON payloads).
-  - Telephony and voice call transcription.
-
-## 5. User stories and executable acceptance criteria
-
-### User Story 1: Automated dispatch of high-confidence billing disputes
-As an Enterprise Support Operations Lead, I need high-confidence billing dispute tickets automatically
-dispatched to the Billing Queue with relevant SLA citations, so that customers receive immediate credits
-without manual Tier-1 triage.
-
-- **Given** an inbound ticket with raw text containing valid billing dispute terms (e.g. invoice credit request),
-- **When** submitted to `/api/v1/tickets/process` with a valid `idempotency_key`,
-- **Then** the service returns HTTP 200 with `category: "BILLING"`, `severity: "P2"`,
-  `routing_decision: "AUTOMATED_DISPATCH"`, and at least one verified citation referencing Section 5.4.
-  *(Verified by automated test: `test_process_ticket_automated_dispatch`)*
-
-### User Story 2: Idempotent replay protection
-As an Integration Engineer, I need replayed webhook payloads to return cached results without re-executing
-classification or inflating triage metrics, so that network retries do not cause duplicate work.
-
-- **Given** an inbound ticket payload that has already been successfully processed,
-- **When** the identical payload is re-submitted with the same `idempotency_key`,
-- **Then** the service returns HTTP 200 with the original classification payload, and the Prometheus
-  counter `total_idempotent_replays` increments by 1.
-  *(Verified by automated test: `test_idempotent_replay`)*
-
-### User Story 3: Exception queue routing and operator resolution
-As a Tier-1 Support Operator, I need ambiguous or low-confidence tickets routed to a dedicated human review
-queue where I can inspect and override the prediction, so that edge cases do not get misrouted.
-
-- **Given** an ambiguous ticket with vague text (e.g. "vague test error") yielding model confidence < 0.80,
-- **When** processed by the engine,
-- **Then** `routing_decision` must be set to `"HUMAN_REVIEW_REQUIRED"`, and the ticket must appear in
-  `/api/v1/queue/exceptions`.
-- **When** an operator submits an override via `/api/v1/queue/resolve` with `corrected_category: "BILLING"`,
-- **Then** the ticket is removed from the pending exception queue and logged with the operator ID and rationale.
-  *(Verified by automated test: `test_exception_queue_routing_and_operator_resolution`)*
-
-### User Story 4: Role-Based Access Control (RBAC) knowledge filtering
-As an Enterprise InfoSec Officer, I need sensitive compliance policy documents restricted to authorized
-personnel, so that Tier-1 support agents cannot access restricted legal data.
-
-- **Given** a search query targeting GDPR residency compliance (Section 11.3),
-- **When** queried by a user with `X-User-Roles: support_tier1`,
-- **Then** the response must omit document `APEX-COMPLIANCE-DOC`.
-- **When** queried by a user with `X-User-Roles: compliance`,
-- **Then** document `APEX-COMPLIANCE-DOC` must be returned in the search results.
-  *(Verified by automated test: `test_permission_aware_rbac_filtering`)*
-
-## 6. Non-functional requirements (NFRs)
-- **Latency**: p50 < 50ms, p95 < 500ms under concurrent production load.
-- **PII Redaction**: Regex-based tokenization masks credit card numbers (`(?:\d{4}-){3}\d{4}`),
-  US Social Security Numbers (`\d{3}-\d{2}-\d{4}`), and European IBANs prior to vector indexing.
-- **Auditability**: Every routing payload includes `ticket_id`, `idempotency_key`, `model_version`,
-  `confidence_score`, and timestamp. Logs must be persisted to Amazon S3 / GCP Cloud Storage for 365 days.
-- **Rollout Controls & Kill Switch**:
-  - Phase 1 will operate behind feature flag `ETISE_SHADOW_MODE=true` for 14 calendar days.
-  - If the pending exception queue exceeds 500 items, the service trips a circuit breaker and
-    reverts to legacy rule-based queue assignment.
-
-## 7. Architecture sketch
-
-```
-[ Inbound Ticket Webhook / Portal ]
-                |
-                v
-[ Fast API Server: /api/v1/tickets/process ]
-                |
-    +-----------+-----------+
-    | Idempotency Cache     | (SHA-256 token lookup)
-    +-----------+-----------+
-                |
-                v
-    +-----------------------+
-    | Ingestion & Redaction | (Regex PII Sanitization)
-    +-----------------------+
-                |
-                v
-    +-----------------------+
-    | Hybrid Retrieval      | (Cosine Dense Vectors + BM25 Sparse Search)
-    | + RBAC Authorization  | (Filtered by X-User-Roles)
-    +-----------------------+
-                |
-                v
-    +-----------------------+
-    | Zero-Shot Classifier  |
-    +-----------------------+
-                |
-      Confidence >= 0.80?
-         /              \
-       YES               NO
-        v                 v
-[ AUTOMATED DISPATCH ]  [ HUMAN_REVIEW_REQUIRED ]
-(Target Queue + SLA)    (Exception Queue -> Operator Review)
-```
-
-## 8. Rollout plan and sign-off criteria
-1. **Phase 1 (Shadow Mode - Weeks 1-2)**: Engine processes 100% of inbound tickets asynchronously;
-   outputs are compared against human agent actions; zero tickets are auto-routed. Success bar:
-   Category accuracy >= 88.0%, zero unhandled 500 errors.
-2. **Phase 2 (Canary Routing - Weeks 3-4)**: Automated dispatch enabled for 10% of high-confidence
-   Billing tickets (`confidence >= 0.90`). Daily review of operator overrides.
-3. **Phase 3 (Full Production - Week 5+)**: Automated dispatch enabled across all supported categories
-   with confidence >= 0.80.
-
-## 9. Formal sign-off
-- **Lead Forward-Deployed Engineer**: Signed 2026-03-15 (Approval on file: `PR #42`)
-- **Head of Support Operations**: Signed 2026-03-15 (Meeting sign-off recorded)
-- **Director of Information Security**: Signed 2026-03-16 (SecOps compliance pass)
-```
-
-### Why this conversion succeeds where informal specs fail
-
-Notice what the engineering conversion achieved:
-1. Replaced informal vibes with empirical metrics: Instead of "AI to help with support tickets", the spec commits to a measured baseline (34.8% error rate, 9.4-hour penalty) and enforceable targets (>= 88% accuracy, < 500ms latency).
-2. Grounded directly in executable code: Every acceptance criterion in Section 5 maps 1-to-1 to an integration test in [`tests/test_server.py`](../portfolio/reference-project/tests/test_server.py) and an evaluation run in [`evals/run_evals.py`](../portfolio/reference-project/evals/run_evals.py).
-3. Defended against security and operational risk: Defined PII boundaries, idempotency replays, RBAC permissions, and circuit breakers *before* writing a line of customer integration code.
-
-## The Spec Clarity Test (Annex B Framework)
-
-A test for specification quality used by experienced forward deployed engineers is the Spec Clarity Test, adapted from the Vaayu Pumps engineering delivery methodology:
-
-The exercise: Take the API specification, field validation rules, and business logic tables from your technical design document, and provide them to an autonomous AI coding agent (such as Claude Code or Cursor) with zero surrounding conversation or human coaching. Instruct the agent: "Implement the endpoint handler, validation models, and routing logic that satisfies this specification."
-
-What you are looking for:
-
-1. Did the agent invent any schema attributes, HTTP error codes, or state machine transitions? If it had to invent default values or status strings, your specification has an unstated assumption.
-2. Did the agent implement the exact business decision tables without ambiguity? If the agent produces contradictory routing logic on boundary conditions (for example, whether an emergency Priority 1 issue with high confidence bypasses supervisor review), your rule precedence is not fully specified.
-3. Can the agent generate a 100% passing test suite purely from the Given/When/Then acceptance criteria? If the test cases require guessing input fixtures or mock shapes, the contract is incomplete.
-
-If an AI coding agent cannot implement the component deterministically from your specification without hallucinating missing details, human enterprise developers on the customer team will not be able to either. Rewrite the specification before writing implementation code.
-
----
+Keep legal obligations distinct from sample Apex section numbers. GDPR Article 11 is not the sample policy's Section 11.3. Regulatory deadlines and jurisdiction-specific requirements need source-level review rather than a generic rule based on ticket dollar amount.
 
 ## Related documents
 
