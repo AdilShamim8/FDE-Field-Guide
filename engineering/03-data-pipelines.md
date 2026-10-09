@@ -235,7 +235,7 @@ flowchart LR
 2. **Deterministic Semantic Chunking**:
    - Respect natural paragraph and sentence boundaries rather than cutting arbitrarily at character offsets.
    - Maintain sliding token overlap to preserve semantic context across chunk seams.
-   - See the verified reference implementation in [`interviews/code/chunker.py`](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/interviews/code/chunker.py).
+   - See the verified reference implementation in [`interviews/code/chunker.py`](../interviews/code/chunker.py).
 3. **Content Hashing for Incremental Re-Indexing**:
    - Embedding API calls (OpenAI `text-embedding-3-large`, Cohere Embed) incur latency and direct dollar costs.
    - Compute `SHA-256(chunk_text + chunk_metadata)` for each chunk. If the checksum already exists in the vector database, skip re-embedding.
