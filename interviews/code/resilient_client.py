@@ -5,6 +5,7 @@ Follows AWS architecture recommendations (Marc Brooker, Full Jitter).
 """
 
 import random
+import time
 from typing import Any, Callable, List, Optional, Tuple
 
 
@@ -29,10 +30,12 @@ class ResilientCaller:
         sleep_func: Optional[Callable[[float], None]] = None,
         random_func: Optional[Callable[[float, float], float]] = None,
     ):
+        if base_delay_sec < 0 or max_delay_sec < 0 or max_retries < 0:
+            raise ValueError("Delay values and retry count must be nonnegative")
         self.base_delay_sec = base_delay_sec
         self.max_delay_sec = max_delay_sec
         self.max_retries = max_retries
-        self.sleep_func = sleep_func or (lambda d: None)
+        self.sleep_func = sleep_func if sleep_func is not None else time.sleep
         self.random_func = random_func or random.uniform
         self.sleep_history: List[float] = []
 
