@@ -1,0 +1,240 @@
+{
+  "schema_version": 1,
+  "checked_on": "2026-10-09",
+  "scope": "Selected primary and publisher sources relevant to confirmed repository findings; not an exhaustive world survey.",
+  "checks": [
+    {
+      "id": "owasp_current",
+      "url": "https://raw.githubusercontent.com/GenAI-Security-Project/GenAI-LLM-Top10/9253e38ade58e959b531c0c5c9a4842272c9cd0e/README.md",
+      "status": 200,
+      "sha256": "cb48dd93c37a2ba54e323edaa7eb030167464af532a664e1ad01b76f78bcba92",
+      "bytes": 5525,
+      "checked_on": "2026-10-09",
+      "verification_scope": "HTTP response and cited source text inspected; reachability alone is not claim validation",
+      "observations": [
+        "Pinned official README identifies the 2026 release as published August 4, 2026.",
+        "Security awareness guidance is not evidence that this repository implements its mitigations."
+      ]
+    },
+    {
+      "id": "cfpb_retry",
+      "url": "https://www.consumerfinance.gov/data-research/consumer-complaints/",
+      "status": 200,
+      "sha256": "ed1a446e7ab3a96b69d3721d79a3434279de3475f77c4bacb88867ef8776e82b",
+      "bytes": 155128,
+      "checked_on": "2026-10-09",
+      "verification_scope": "HTTP response and cited source text inspected; reachability alone is not claim validation",
+      "observations": [
+        "Official catalog documents public complaint data, API access, and interpretation limitations.",
+        "The existence of the catalog does not authenticate the legacy fixture complaint IDs or text transformations."
+      ]
+    },
+    {
+      "id": "upstream_eval",
+      "url": "https://raw.githubusercontent.com/alexeygrigorev/ai-engineering-field-guide/ed590319553252e2b8275486597b144ac55a4f3c/job-market/_internal/eval/README.md",
+      "status": 200,
+      "sha256": "ad078bec91b1c3ed74a6ab220c43e84885dfd83bca192ef805a40142b6f754ea",
+      "bytes": 9709,
+      "checked_on": "2026-10-09",
+      "verification_scope": "HTTP response and cited source text inspected; reachability alone is not claim validation",
+      "observations": [
+        "Upstream warns that some inferred company-stage and management fields are unsupported.",
+        "Known evaluation seed has been inspected and must be treated as regression data."
+      ]
+    },
+    {
+      "id": "openai_pinned",
+      "url": "https://raw.githubusercontent.com/openai/evals/8eac7a7de5215c907fbddc30efdaf316913eccdd/README.md",
+      "status": 200,
+      "sha256": "f0b50bd53e2fbc81be774a6bfb0cf20997aa7509bd22925ae779a87d57c7c914",
+      "bytes": 6463,
+      "checked_on": "2026-10-09",
+      "verification_scope": "HTTP response and cited source text inspected; reachability alone is not claim validation",
+      "observations": [
+        "Source retrieved; legacy quantitative claims are not independently confirmed by this check."
+      ]
+    },
+    {
+      "id": "bitext_card",
+      "requested_url": "https://huggingface.co/datasets/bitext/Bitext-customer-support-llm-chatbot-training-dataset/raw/main/README.md",
+      "final_url": "https://huggingface.co/datasets/bitext/Bitext-customer-support-llm-chatbot-training-dataset/raw/main/README.md",
+      "status": 200,
+      "bytes": 11949,
+      "sha256": "f9d490db6059f9749f443d47d3a38618dad168f61f439281738e29b396e451c2",
+      "date": "Fri, 09 Oct 2026 11:32:03 GMT",
+      "last_modified": null,
+      "checked_on": "2026-10-09",
+      "verification_scope": "HTTP response and cited source text inspected; reachability alone is not claim validation",
+      "observations": [
+        "Publisher describes the dataset as hybrid synthetic and generated using NLP/NLG technology.",
+        "Dataset card license field is cdla-sharing-1.0, not CC BY 4.0.",
+        "The card lists 26,872 question/answer pairs; these are not independently observed enterprise tickets."
+      ]
+    },
+    {
+      "id": "aws_sla",
+      "requested_url": "https://aws.amazon.com/legal/service-level-agreements/",
+      "final_url": "https://aws.amazon.com/legal/service-level-agreements/",
+      "status": 200,
+      "bytes": 349186,
+      "sha256": "5666658b8ebbeafa91edff3632ce702718e860ac24a264a10b0d2abcb916d2a6",
+      "date": "Fri, 09 Oct 2026 11:32:03 GMT",
+      "last_modified": "Thu, 08 Oct 2026 21:28:29 GMT",
+      "checked_on": "2026-10-09",
+      "verification_scope": "HTTP response and cited source text inspected; reachability alone is not claim validation",
+      "observations": [
+        "Source retrieved; legacy quantitative claims are not independently confirmed by this check."
+      ]
+    },
+    {
+      "id": "stripe",
+      "requested_url": "https://stripe.com/legal/ssa",
+      "final_url": "https://stripe.com/legal/ssa",
+      "status": 200,
+      "bytes": 300457,
+      "sha256": "baaffd45d3ed998aa603d71ac110df38c76b79914dc1e4e259c5ad172e48f99c",
+      "date": "Fri, 09 Oct 2026 11:32:03 GMT",
+      "last_modified": null,
+      "checked_on": "2026-10-09",
+      "verification_scope": "HTTP response and cited source text inspected; reachability alone is not claim validation",
+      "observations": [
+        "The retrieved agreement page identifies its last modification as September 28, 2026.",
+        "No Apex sample-policy wording is authenticated by merely citing this agreement."
+      ]
+    },
+    {
+      "id": "datadog",
+      "requested_url": "https://docs.datadoghq.com/monitors/service_level_objectives/",
+      "final_url": "https://docs.datadoghq.com/service_level_objectives/",
+      "status": 200,
+      "bytes": 101331,
+      "sha256": "4ef786b093cd2b005bada087bb74bc63ceb473c03ab81e5ff54613eb562e5aa0",
+      "date": "Fri, 09 Oct 2026 11:32:05 GMT",
+      "last_modified": "Thu, 08 Oct 2026 13:41:06 GMT",
+      "checked_on": "2026-10-09",
+      "verification_scope": "HTTP response and cited source text inspected; reachability alone is not claim validation",
+      "observations": [
+        "Source retrieved; legacy quantitative claims are not independently confirmed by this check."
+      ]
+    },
+    {
+      "id": "nist",
+      "requested_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "final_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "status": 200,
+      "bytes": 92854,
+      "sha256": "58ea24f00749e1fb9a5e655484b7e25531454fd2725a4265ffe21a663f1e94c8",
+      "date": "Fri, 09 Oct 2026 11:32:03 GMT",
+      "last_modified": "Fri, 09 Oct 2026 10:54:02 GMT",
+      "checked_on": "2026-10-09",
+      "verification_scope": "HTTP response and cited source text inspected; reachability alone is not claim validation",
+      "observations": [
+        "The framework page distinguishes the original 2023 AI RMF from subsequent profiles and initiatives.",
+        "A current page check does not turn the original framework into a 2026 publication."
+      ]
+    },
+    {
+      "id": "sre",
+      "requested_url": "https://sre.google/sre-book/service-level-objectives/",
+      "final_url": "https://sre.google/sre-book/service-level-objectives/",
+      "status": 200,
+      "bytes": 67930,
+      "sha256": "60851ff3487eef695bb59143b5123a79af081091ce8bf2909ad83ad924438365",
+      "date": "Fri, 09 Oct 2026 11:32:03 GMT",
+      "last_modified": "Thu, 08 Oct 2026 04:48:00 GMT",
+      "checked_on": "2026-10-09",
+      "verification_scope": "HTTP response and cited source text inspected; reachability alone is not claim validation",
+      "observations": [
+        "The chapter distinguishes indicators, objectives, and contractual agreements, and discusses percentile latency.",
+        "It does not provide evidence for ETISE availability or a measured production SLA."
+      ]
+    },
+    {
+      "id": "fortune_market",
+      "requested_url": "https://fortune.com/2026/09/03/forward-deployed-engineers-fast-growing-six-figure-silicon-valley-job-integrate-ai-with-customers-tech-careers-palantir",
+      "final_url": "https://fortune.com/2026/09/03/forward-deployed-engineers-fast-growing-six-figure-silicon-valley-job-integrate-ai-with-customers-tech-careers-palantir/",
+      "status": 200,
+      "bytes": 460959,
+      "sha256": "7dde6518796c6077fdbfb79d965cff4a5220c21e6c9412e9a64c5cc9afe8923c",
+      "date": "Fri, 09 Oct 2026 11:32:04 GMT",
+      "last_modified": null,
+      "checked_on": "2026-10-09",
+      "verification_scope": "HTTP response and cited source text inspected; reachability alone is not claim validation",
+      "observations": [
+        "September 3, 2026 reporting attributes more than 1,000% growth to Lightcast for January-August 2026 versus the same period a year earlier.",
+        "The article reports median advertised salaries of more than $188,000, not an exact $188,000 paid-salary median.",
+        "Underlying Lightcast records were not obtained; this remains secondary reporting."
+      ]
+    },
+    {
+      "id": "fortune_pilots",
+      "url": "https://fortune.com/2025/08/18/mit-report-95-percent-generative-ai-pilots-at-companies-failing/",
+      "error": "HTTP Error 404: Not Found",
+      "checked_on": "2026-10-09",
+      "verification_scope": "HTTP response and cited source text inspected; reachability alone is not claim validation",
+      "observations": [
+        "Source retrieved; legacy quantitative claims are not independently confirmed by this check."
+      ]
+    },
+    {
+      "id": "fde_interviews",
+      "requested_url": "https://fde.hinehal.com/blogs/fde-interview-questions",
+      "final_url": "https://fde.hinehal.com/blogs/fde-interview-questions",
+      "status": 200,
+      "bytes": 47982,
+      "sha256": "31b42bf1a660a030e4d7f89325a20a7b54aa2005cbe89ba5b4a3e32dfd9d5ce7",
+      "date": "Mon, 24 Aug 2026 10:44:35 GMT",
+      "last_modified": null,
+      "checked_on": "2026-10-09",
+      "verification_scope": "HTTP response and cited source text inspected; reachability alone is not claim validation",
+      "observations": [
+        "Source retrieved; legacy quantitative claims are not independently confirmed by this check."
+      ]
+    },
+    {
+      "id": "practitioner",
+      "requested_url": "https://www.sundeepteki.org/advice/the-definitive-guide-to-forward-deployed-engineer-interviews-in-2026",
+      "final_url": "https://www.sundeepteki.org/advice/the-definitive-guide-to-forward-deployed-engineer-interviews-in-2026",
+      "status": 200,
+      "bytes": 695453,
+      "sha256": "4716e91a52ee86fc1878ed4a36d8fcb3e5044ab72fdd91b0cf812ac8fb304538",
+      "date": "Fri, 09 Oct 2026 11:32:04 GMT",
+      "last_modified": "Fri, 09 Oct 2026 11:32:04 GMT",
+      "checked_on": "2026-10-09",
+      "verification_scope": "HTTP response and cited source text inspected; reachability alone is not claim validation",
+      "observations": [
+        "Source retrieved; legacy quantitative claims are not independently confirmed by this check."
+      ]
+    },
+    {
+      "id": "plank",
+      "requested_url": "https://joinplank.com",
+      "final_url": "https://joinplank.com",
+      "status": 200,
+      "bytes": 565592,
+      "sha256": "e7bd9cba2ce2858039d16ef4a9f65ac263419d26f0c6f2bc000081a0c8c1ba0c",
+      "date": "Fri, 09 Oct 2026 11:32:04 GMT",
+      "last_modified": null,
+      "checked_on": "2026-10-09",
+      "verification_scope": "HTTP response and cited source text inspected; reachability alone is not claim validation",
+      "observations": [
+        "Source retrieved; legacy quantitative claims are not independently confirmed by this check."
+      ]
+    },
+    {
+      "id": "cfpb_today",
+      "url": "https://www.consumerfinance.gov/data-research/consumer-complaints/search/api/v1/?date_received_min=2026-10-09&date_received_max=2026-10-09&size=5&sort=created_date_desc",
+      "retrieved_on": "2026-10-09",
+      "response_date": "Fri, 09 Oct 2026 11:33:15 GMT",
+      "response_sha256": "74b3a2d273209c48e3ae68f886b9226e6eb5822827dc8ba82d9cac3281903e20",
+      "response_bytes": 5270,
+      "status": 200,
+      "checked_on": "2026-10-09",
+      "verification_scope": "Five returned records inspected; source receipt dates, unique IDs, complete response and categorical fields checked.",
+      "observations": [
+        "Five API records have source date_received timestamps on 2026-10-09; only categorical metadata is retained.",
+        "Company labels and complaint issues are public source assertions, not adjudicated findings."
+      ]
+    }
+  ]
+}
