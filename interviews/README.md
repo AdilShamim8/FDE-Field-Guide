@@ -29,7 +29,7 @@ The JSON checks validate structure, declarations, and cross-references. They do 
 
 ## Related documents
 
-- [Expert practicum](../learning-paths/expert-practicum.md) - build evidence you can defend
+- [Expert practicum](../learning-paths/expert-fde-practicum.md) - build evidence you can defend
 - [Reference project](../portfolio/reference-project/README.md) - bounded implementation and executable checks
 - [Evidence discipline](../STYLING.md) - source and claim requirements
 
