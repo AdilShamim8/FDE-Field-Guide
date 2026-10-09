@@ -11,7 +11,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from evals.run_evals import evaluate_cases
 from src.config import settings
 from src.engine.agent import TriageAgent
-from src.models.schemas import RoutingDecision, TicketIngestRequest
+from src.models.schemas import DefectCategory, RoutingDecision, TicketIngestRequest
 from src.pipeline.ingestion import HybridKnowledgeIndex
 
 CASES = json.loads((PROJECT_ROOT / "evals/golden_dataset.json").read_text())[:2]
@@ -100,3 +100,33 @@ def test_quote_must_match_exact_text_and_cited_section():
     assert index.verify_quote(chunk.document_id, quote, section=chunk.section)
     assert not index.verify_quote(chunk.document_id, quote.upper(), section=chunk.section)
     assert not index.verify_quote(chunk.document_id, quote, section="wrong section")
+
+
+def test_denied_applicable_policy_cannot_be_replaced_by_unrelated_quotes():
+    result = TriageAgent().process_ticket(
+        request("Need assistance with GDPR data residency compliance under Section 11.3."),
+        user_roles=["support_tier1"],
+    )
+    assert result.category == DefectCategory.COMPLIANCE
+    assert result.citations == []
+    assert result.routing_decision == RoutingDecision.HUMAN_REVIEW_REQUIRED
+
+
+def test_accessible_applicable_policy_allows_compliance_dispatch():
+    result = TriageAgent().process_ticket(
+        request("Need assistance with GDPR data residency compliance under Section 11.3."),
+        user_roles=["compliance"],
+    )
+    assert result.routing_decision == RoutingDecision.AUTOMATED_DISPATCH
+    assert result.citations
+    assert all(c.document_id == "APEX-COMPLIANCE-DOC" for c in result.citations)
+
+
+def test_general_inquiry_without_applicable_policy_requires_review():
+    result = TriageAgent().process_ticket(
+        request("What are your standard support team business hours for regional branches?"),
+        user_roles=["admin"],
+    )
+    assert result.category == DefectCategory.GENERAL_INQUIRY
+    assert result.citations == []
+    assert result.routing_decision == RoutingDecision.HUMAN_REVIEW_REQUIRED
