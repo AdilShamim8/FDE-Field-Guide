@@ -36,7 +36,7 @@ VALID_STAGES = {
     "Behavioral & Ownership",
 }
 
-VERIFIED_AUTHORS = {
+DECLARED_AUTHORS = {
     "Nehal Vyas",
     "Om Bharatiya",
     "Dr. Sundeep Teki",
@@ -49,7 +49,7 @@ VERIFIED_AUTHORS = {
 
 def run_audit():
     print("=" * 70)
-    print("STARTING 10-PASS RIGOROUS VERIFICATION AUDIT")
+    print("STARTING 10-PASS STRUCTURE AND DECLARATION AUDIT")
     print("=" * 70)
 
     # PASS 1: JSON Syntax & Parsing
@@ -94,8 +94,8 @@ def run_audit():
         assert parsed.scheme in ["http", "https"], f"[{qid}] Invalid scheme in {url}"
         domain = parsed.netloc.lower()
         domain_matched = any(domain == d or domain.endswith("." + d) for d in ALLOWED_DOMAINS)
-        assert domain_matched, f"[{qid}] Domain '{domain}' not in verified whitelist: {ALLOWED_DOMAINS}"
-    print("  --> PASS: All citation URLs verified against authenticated practitioner domains.")
+        assert domain_matched, f"[{qid}] Domain '{domain}' not in declared allowlist: {ALLOWED_DOMAINS}"
+    print("  --> PASS: Citation URL domains match the declared allowlist; sources are not authenticated.")
 
     # PASS 5: Stage Classification Validity
     print("[Pass 5/10] Verifying Interview Stage Taxonomy...")
@@ -114,7 +114,7 @@ def run_audit():
             assert tier in rubric and len(rubric[tier].strip()) >= 30, (
                 f"[{qid}] Rubric tier '{tier}' must have at least 30 characters of actionable criteria"
             )
-    print("  --> PASS: All 3 scoring tiers (Strong Hire, Hire, No Hire) substantive and actionable.")
+    print("  --> PASS: All 3 scoring tiers meet the required text length.")
 
     # PASS 7: Senior Playbook & Core Signal Depth
     print("[Pass 7/10] Verifying Response Playbook & Signal Depth...")
@@ -123,14 +123,14 @@ def run_audit():
         assert len(item["core_signal"].strip()) >= 30, f"[{qid}] Core signal too brief"
         assert len(item["senior_response_playbook"].strip()) >= 150, f"[{qid}] Senior response playbook too brief"
         assert len(item["red_flag_response"].strip()) >= 40, f"[{qid}] Red flag response too brief"
-    print("  --> PASS: Playbooks and signals provide senior practitioner-level depth.")
+    print("  --> PASS: Playbooks and signals meet the required text length.")
 
     # PASS 8: Declared Author Consistency
     print("[Pass 8/10] Checking declared author names...")
     for item in data:
         qid = item["id"]
         author = item["primary_source"]["author"]
-        assert author in VERIFIED_AUTHORS, f"[{qid}] Author '{author}' not in verified authors {VERIFIED_AUTHORS}"
+        assert author in DECLARED_AUTHORS, f"[{qid}] Author '{author}' not in declared authors {DECLARED_AUTHORS}"
     print(f"  --> PASS: Declared author names match the allowlist; this does not authenticate sources.")
 
     # PASS 9: Cross-Reference Consistency with Markdown Files
@@ -141,21 +141,21 @@ def run_audit():
     with open(README_FILE, "r", encoding="utf-8") as f:
         readme_text = f.read()
 
-    for author in VERIFIED_AUTHORS:
+    for author in DECLARED_AUTHORS:
         assert author in qb_text, f"Author '{author}' missing from 07-question-bank.md provenance matrix"
         assert author in readme_text, f"Author '{author}' missing from interviews/dataset/README.md"
-    print("  --> PASS: Complete consistency verified between JSON dataset and Markdown guides.")
+    print("  --> PASS: Declared author names occur in both linked documents.")
 
-    # PASS 10: Date Currency Check
-    print("[Pass 10/10] Verifying Date Currency (2026 Verification Timestamps)...")
+    # PASS 10: Legacy Date Convention Check
+    print("[Pass 10/10] Checking legacy date declarations (not source freshness)...")
     for item in data:
         qid = item["id"]
         vdate = item["primary_source"]["verified_date"]
-        assert vdate.startswith("2026-"), f"[{qid}] Verified date '{vdate}' is not current to 2026"
-    print("  --> PASS: All verification timestamps reflect current 2026 data.")
+        assert vdate.startswith("2026-"), f"[{qid}] Verified date '{vdate}' does not match the legacy 2026 convention"
+    print("  --> PASS: Legacy date declarations match the convention; no sources were fetched.")
 
     print("=" * 70)
-    print("ALL 10/10 RIGOROUS VERIFICATION PASSES COMPLETED SUCCESSFULLY WITH ZERO ERRORS!")
+    print("ALL 10/10 STRUCTURE AND DECLARATION CHECKS COMPLETED SUCCESSFULLY WITH ZERO ERRORS!")
     print("=" * 70)
     return True
 
