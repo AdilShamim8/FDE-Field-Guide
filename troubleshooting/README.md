@@ -81,7 +81,7 @@ Every failure mode documented in this module pairs with a hardened, production-t
 | **Context-Aware Semantic Chunker** (Sentence-Boundary Overlap) | [`interviews/code/chunker.py`](../interviews/code/chunker.py) | `pytest interviews/code/test_chunker.py` |
 | **Dirty Export Parser** (BOM Stripping & Data Sanitization) | [`interviews/code/parser.py`](../interviews/code/parser.py) | `pytest interviews/code/test_parser.py` |
 | **Automated Golden Evaluation Suite** (25 Real-World Enterprise Cases) | [`portfolio/reference-project/evals/run_evals.py`](../portfolio/reference-project/evals/run_evals.py) | `python portfolio/reference-project/evals/run_evals.py` |
-| **Permission-Aware RBAC Vector Filtering** | [`portfolio/reference-project/src/server.py`](../portfolio/reference-project/src/server.py) | `pytest portfolio/reference-project/tests/test_server.py` |
+| **Permission-Aware RBAC Vector Filtering** | [`portfolio/reference-project/src/server.py`](../portfolio/reference-project/src/api/server.py) | `pytest portfolio/reference-project/tests/test_server.py` |
 
 ---
 
