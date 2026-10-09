@@ -14,9 +14,7 @@ compensation structure, stack autonomy, customer seniority, and daily operationa
 
 Our empirical analysis of **146 deduplicated enterprise FDE postings across 94 companies**
 (scraped February to July 2026; see [`job-market/dataset/`](../job-market/dataset/fde_market_data.json)),
-corroborated by Plank's market census of **982 live FDE postings across 462 companies**
-([Plank, 2026](https://joinplank.com)), reveals that Forward Deployed Engineering hiring is
-concentrated within seven primary sectors:
+is a historical sample, not a worldwide census. The current [source-pinned snapshot](../job-market/dataset/README.md) matches 212 cumulative IDs across 125 employer names. The previously cited Plank 982/462 counts are not corroborated by its current homepage. The seven sectors below are an organizational framework, not a newly measured concentration estimate. Reviewed 2026-10-09:
 
 ```mermaid
 graph TD
@@ -199,7 +197,7 @@ slot to uncover the true operating environment before signing an offer:
 | **Defense & Air-Gapped Offline Math** | [`portfolio/reference-project/src/pipeline/ingestion.py`](../portfolio/reference-project/src/pipeline/ingestion.py) | Standalone vector math without remote network dependencies |
 | **Startup Idempotency & Replay Defense**| [`interviews/code/webhook_receiver.py`](../interviews/code/webhook_receiver.py) | SHA-256 payload caching preventing duplicate writes |
 | **Hyperscaler Rate Limiting Backpressure**| [`interviews/code/rate_limiter.py`](../interviews/code/rate_limiter.py) | Token bucket rate limiting with sliding windows |
-| **Enterprise Data Redaction Gate** | [`portfolio/reference-project/evals/DATASET_PROVENANCE.md`](../portfolio/reference-project/evals/DATASET_PROVENANCE.md) | Verified CFPB & Bitext regex tokenization |
+| **Enterprise Data Redaction Gate** | [`portfolio/reference-project/evals/DATASET_PROVENANCE.md`](../portfolio/reference-project/evals/DATASET_PROVENANCE.md) | Provenance limits, actual CFPB metadata, and hybrid synthetic Bitext exclusion; regex masking is not anonymization |
 
 ---
 
@@ -214,6 +212,6 @@ slot to uncover the true operating environment before signing an offer:
 ## 7. Further Reading
 
 - [Fortune: The Rise of Forward Deployed Engineers](https://fortune.com/2026/09/03/forward-deployed-engineers-fast-growing-six-figure-silicon-valley-job-integrate-ai-with-customers-tech-careers-palantir) - comprehensive reporting on Palantir and the enterprise hiring surge
-- [Plank FDE Market Census](https://joinplank.com) - empirical database of 982 live postings across 462 companies
+- [Plank FDE Market Census](https://joinplank.com) - hiring platform; legacy counts remain uncorroborated
 - [The New Stack: Forward-Deployed Engineers in AI](https://thenewstack.io/forward-deployed-engineers-ai) - why AI labs require embedded field teams
 - [Anthropic Forward Deployed Engineer Specification](https://job-boards.greenhouse.io/anthropic/jobs/5302966008) - canonical role posting from a frontier AI lab
