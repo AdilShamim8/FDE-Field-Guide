@@ -259,7 +259,7 @@ A deployment is not complete when code lands in production. A deployment is comp
 ### The Handover Triad
 
 1. **Battle-Tested Runbooks**: Step-by-step resolution guides for incidents that actually occurred during staging and cutover (not generic templates).
-2. **Deterministic Test Suites**: Automated evaluation runners ([portfolio/reference-project/evals/run_evals.py](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/portfolio/reference-project/evals/run_evals.py)) that the customer's team can execute on a cron or in pull requests.
+2. **Deterministic Test Suites**: Automated evaluation runners ([portfolio/reference-project/evals/run_evals.py](../portfolio/reference-project/evals/run_evals.py)) that the customer's team can execute on a cron or in pull requests.
 3. **Named Customer Ownership**: Explicit assignment of components (data pipelines, model quotas, monitoring alerts) to named customer engineers on the corporate org chart.
 
 ### The 2-Week "Watch, Don't Touch" Observation Window
