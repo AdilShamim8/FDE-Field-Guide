@@ -158,7 +158,7 @@ flowchart LR
 
 The following implementation exemplifies enterprise extraction standards: strict Pydantic V2 schema validation, automated error-feedback retry loops, and explicit refusal handling for ungrounded text.
 
-See the complete, unit-tested implementation in [`interviews/code/structured_extractor.py`](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/interviews/code/structured_extractor.py):
+See the complete, unit-tested implementation in [`interviews/code/structured_extractor.py`](../interviews/code/structured_extractor.py):
 
 ```python
 """
