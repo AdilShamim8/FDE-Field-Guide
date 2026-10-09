@@ -17,7 +17,7 @@ The [reference service](../portfolio/reference-project/src/api/server.py) exerci
 ## Related documents
 
 - [Audit](../AUDIT.md) - findings, corrections, and remaining limits
-- [Expert practicum](../learning-paths/expert-practicum.md) - evidence required at each delivery gate
+- [Expert practicum](../learning-paths/expert-fde-practicum.md) - evidence required at each delivery gate
 - [Reference project](../portfolio/reference-project/README.md) - commands and implementation boundaries
 
 ## Further reading
