@@ -235,6 +235,19 @@
         "Five API records have source date_received timestamps on 2026-10-09; only categorical metadata is retained.",
         "Company labels and complaint issues are public source assertions, not adjudicated findings."
       ]
+    },
+    {
+      "id": "regulation_e_error_resolution",
+      "url": "https://www.consumerfinance.gov/rules-policy/regulations/1005/11/",
+      "status": 200,
+      "sha256": "783fc05b967bc8f48ec0488ef4898526d342846a7a16a1d1f5ad24c6b202304c",
+      "bytes": 198523,
+      "checked_on": "2026-10-09",
+      "verification_scope": "Official section text inspected for the withdrawn dollar threshold and unconditional deadline claim; not case-specific legal advice",
+      "observations": [
+        "Section 1005.11 distinguishes investigation, provisional credit, and conditional extensions; ten business days is not an unconditional final-resolution deadline.",
+        "The section includes conditional 45-day investigation extensions and 20/90-day exceptions. It does not establish a blanket $1,000 or $5,000 escalation threshold."
+      ]
     }
   ]
 }
