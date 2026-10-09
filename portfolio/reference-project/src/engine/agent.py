@@ -161,7 +161,7 @@ class TriageAgent:
             candidate_quote = sentences[1] if len(sentences) > 1 else sentences[0]
 
             # Step 4: Deterministic quotation verification
-            is_verified = self.index.verify_quote(chunk.document_id, candidate_quote)
+            is_verified = self.index.verify_quote(chunk.document_id, candidate_quote, section=chunk.section)
 
             citation = Citation(
                 document_id=chunk.document_id,
