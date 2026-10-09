@@ -107,8 +107,6 @@ def build_snapshot(source_dir, commit, retrieved_on):
         })
     cumulative_ids = {r["job_id"] for r in records}
     observed_ids = {i for sample in trend for i in sample["fde_job_ids"]}
-    if cumulative_ids != observed_ids:
-        raise ValueError("Cumulative title matches do not reconcile with scrape ID union")
     employers = Counter(r["company"] for r in records)
     sensitivity_count = sum(bool(re.search(SENSITIVITY_PATTERN, r["title"], re.IGNORECASE)) for r in rows)
     return {
@@ -129,10 +127,17 @@ def build_snapshot(source_dir, commit, retrieved_on):
                 "Location duplicates inflate listing-row counts; unique IDs are reported separately.",
                 "Title matching misses equivalent work under other titles and can include adjacent roles.",
                 "No current salary, responsibility, skill, hiring-conversion, or seniority inference is made.",
+                "The cumulative CSV and monthly ID union differ; reconciliation reports this source discrepancy without inventing missing records.",
                 "Collection dates are historical; retrieval today does not create a today-only scrape.",
             ],
         },
         "sources": sources, "trend": trend,
+        "source_reconciliation": {
+            "scrape_union_unique_fde_ids": len(observed_ids),
+            "cumulative_unique_fde_ids": len(cumulative_ids),
+            "scrape_only_ids": sorted(observed_ids - cumulative_ids),
+            "cumulative_only_ids": sorted(cumulative_ids - observed_ids),
+        },
         "summary": {
             "all_unique_job_ids": len(rows), "fde_unique_job_ids": len(records),
             "fde_unique_employer_names": len(employers),
