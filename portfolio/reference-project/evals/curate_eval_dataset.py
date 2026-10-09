@@ -1,7 +1,7 @@
 """
-Curate and verify evaluation golden dataset.
-Documents the exact programmatic pipeline used to transform raw multi-source
-records (CFPB, Bitext, Enterprise Cloud SLAs) into verified, PII-sanitized evaluation cases.
+Inspect legacy regression fixture structure.
+This file contains no source acquisition or reproducible curation pipeline.
+It cannot authenticate CFPB, Bitext, or external policy provenance.
 """
 
 import json
@@ -13,7 +13,8 @@ from typing import Any, Dict, List
 def scrub_pii(text: str) -> str:
     """
     Deterministic PII scrubbing utility:
-    Redacts sensitive personal identifiers (phone numbers, email addresses, SSNs, credit cards).
+    Masks a few identifier patterns. Names, addresses, indirect identifiers, and
+    many international formats remain; this is not validated anonymization.
     """
     # Scrub credit cards / long digits
     text = re.sub(r"\b\d{4}[ -]?\d{4}[ -]?\d{4}[ -]?\d{4}\b", "[REDACTED_CARD]", text)
@@ -36,12 +37,17 @@ def verify_golden_dataset(dataset_path: Path) -> Dict[str, Any]:
     with open(dataset_path, "r", encoding="utf-8") as f:
         cases: List[Dict[str, Any]] = json.load(f)
 
+    if not isinstance(cases, list) or not cases:
+        raise ValueError("Require a nonempty case list")
+    seen_ids = set()
     report = {
         "total_cases": len(cases),
         "categories": {},
         "severities": {},
         "routings": {},
         "grounding_docs": {},
+        "evidence_statuses": {},
+        "provenance_authenticated": False,
     }
 
     required_fields = [
@@ -55,10 +61,15 @@ def verify_golden_dataset(dataset_path: Path) -> Dict[str, Any]:
     ]
 
     for idx, case in enumerate(cases):
+        if case.get("id") in seen_ids:
+            raise ValueError("Duplicate case ID")
+        seen_ids.add(case.get("id"))
         for field in required_fields:
             if field not in case:
                 raise ValueError(f"Case index {idx} ({case.get('id')}) missing mandatory field: {field}")
 
+        evidence = case.get("evidence_status", "unspecified")
+        report["evidence_statuses"][evidence] = report["evidence_statuses"].get(evidence, 0) + 1
         cat = case["expected_category"]
         sev = case["expected_severity"]
         routing = case["expected_routing"]
@@ -77,12 +88,13 @@ if __name__ == "__main__":
     golden_path = Path(__file__).parent / "golden_dataset.json"
     verification = verify_golden_dataset(golden_path)
     print("======================================================================")
-    print("GOLDEN DATASET INTEGRITY AND PROVENANCE AUDIT REPORT")
+    print("LEGACY REGRESSION FIXTURE STRUCTURE REPORT")
     print("======================================================================")
-    print(f"Total Verified Test Cases: {verification['total_cases']}")
+    print(f"Total Regression Cases: {verification['total_cases']}")
     print(f"Category Distribution:     {json.dumps(verification['categories'])}")
     print(f"Severity Distribution:     {json.dumps(verification['severities'])}")
     print(f"Routing Distribution:      {json.dumps(verification['routings'])}")
     print(f"Knowledge Documents:       {json.dumps(verification['grounding_docs'])}")
     print("======================================================================")
-    print("RESULT: ALL DATASET SCHEMA & INTEGRITY AUDITS PASSED.")
+    print(f"Evidence Statuses: {json.dumps(verification["evidence_statuses"])}")
+    print("Structure checks passed. Source provenance is not authenticated.")
