@@ -168,88 +168,23 @@ ORDER BY frequency DESC;
 
 ---
 
-## 4. Production Empirical Case: Enterprise Dispute Escalation Engine
+## 4. Source-backed discovery exercise: what the current records actually establish
 
-To illustrate disciplined discovery in practice, consider the following real-world engagement calibrated
-against empirical records from the **Consumer Financial Protection Bureau (CFPB) Public Complaint Database**
-and **Bitext Enterprise Customer Interaction Datasets** ([`portfolio/reference-project/evals/DATASET_PROVENANCE.md`](../portfolio/reference-project/evals/DATASET_PROVENANCE.md)).
+Reviewed on 2026-10-09. The former narrative of a deployed financial institution, fines, analyst observations, and a 25-case customer sign-off had no reproducible supporting artifacts. It is replaced with an exercise using actual [CFPB categorical metadata](../portfolio/reference-project/evals/real_data/cfpb_metadata_2026-10-09.json) and the [market source audit](../job-market/dataset/README.md).
 
-### Situation & Stakeholder Context
-A Tier-1 financial institution processes over 12,000 monthly consumer disputes across credit cards, consumer loans,
-and retail banking. The executive sponsor (Head of Consumer Operations) approaches the FDE team requesting an
-*"Enterprise GenAI Agent to fully automate customer dispute handling."* They have allocated a 6-week pilot budget.
+1. Identify the decision the customer needs to make before proposing automation. Ask for workflow ownership and an observed baseline; the public records do not provide either.
+2. Inspect the actual source schema and permission. The five CFPB records have product/issue labels but no retained narrative or ETISE severity. Keep missing labels missing.
+3. Record the sampling rule and collection date. Five recent complaints are not a population sample or proof of company fault; a source retrieval today does not redate older records.
+4. Review legal requirements with the responsible customer owner. [Regulation E §1005.11](https://www.consumerfinance.gov/rules-policy/regulations/1005/11/) has conditional business-day investigation and provisional-credit provisions; it does not establish a blanket $1,000 or $5,000 escalation threshold with a universal ten-day final-resolution duty.
+5. Agree a labeled customer holdout and an acceptance measurement before building a classifier. Bitext is publisher-described hybrid synthetic data, and the old ETISE cases are unverified regression fixtures.
+6. Write down source limitations, unresolved access, the next measurable deliverable, and the owner who can resolve each unknown. Do not invent interview quotes or customer outcomes to complete a discovery document.
 
-### Discovered Ground-Truth Constraints
-1. **The Legacy Core**: Dispute records originate in a 20-year-old mainframe core banking database.
-   Exported records contain truncated free-text narratives, inconsistent date formats, and missing transaction IDs.
-2. **Regulatory & Compliance Fence**: Under federal consumer protection guidelines (12 CFR Part 1005 / Regulation E),
-   billing disputes exceeding $5,000 or alleging identity theft must be resolved within strict statutory timelines
-   (10 business days) and require a fully audited paper trail.
-3. **The Data Egress Wall**: Customer financial data may not leave the institution's private AWS VPC. No third-party
-   SaaS LLM APIs may be called without an InfoSec review that requires 12 weeks.
+## 5. Executable references and remaining work
 
-### What Good Looks Like (The Discovery Transformation)
-Instead of attempting to build an autonomous agent that directly issues financial refunds—which would be
-vetoed by Compliance on Day 14—the FDE guides the engagement toward an **Automated Dispute Intelligence & SLA
-Escalation Engine (ETISE)**:
-- High-confidence routine disputes ($< \$250$, zero fraud flags) are classified, enriched with relevant regulatory
-  citations, and drafted for operator batch approval.
-- High-risk disputes ($> \$1,000$, statutory deadlines, legal threats) are immediately routed into an urgent
-  exception queue with deterministic SLA countdown timers.
-
-### The 6-Move Discovery Walkthrough
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor FDE as Forward Deployed Engineer
-    actor Ops as Operations Champion (VP)
-    actor Lead as Senior Dispute Operator
-    actor Sec as Compliance & InfoSec Lead
-
-    FDE->>Ops: "Walk me through the cost of the last regulatory breach."
-    Ops-->>FDE: "Missed 10-day Regulation E deadlines cost $350k in fines last quarter."
-    FDE->>Lead: "Shadowing: What slows down morning dispute triage?"
-    Lead-->>FDE: "Takes 12 minutes per ticket to verify card network rules and check amounts."
-    FDE->>FDE: Executes SQL profiling on 100k records: 18% missing IDs, 2.4% dirty dates.
-    FDE->>Sec: "Can we run containerized models inside your VPC using AWS PrivateLink?"
-    Sec-->>FDE: "Yes, approved if zero customer data traverses public internet."
-    FDE->>Ops: Synthesizes One-Page Spec: ETISE-SPEC-2026-v2.1 with Given/When/Then acceptance criteria.
-```
-
-1. **Move 1: Executive Intent Decoding**: The FDE uncovers that "automate dispute handling" actually means
-   "eliminate regulatory fines caused by missed Regulation E deadlines." Fines totaled $350,000 in Q3 alone.
-2. **Move 2: Operator Shadowing**: The FDE spends 4 hours observing Tier-2 dispute analysts. The bottleneck is
-   not typing responses; it is cross-referencing messy complaint narratives against internal policy PDFs and
-   determining whether statutory 10-day clocks apply.
-3. **Move 3: Forensic Data Profiling**: Running SQL diagnostics against 100,000 historical dispute records reveals
-   that 18.2% of raw records lack standardized transaction IDs and 2.4% contain unparseable dates—meaning any naive
-   pipeline would throw runtime exceptions on 1 out of every 5 incoming tickets.
-4. **Move 4: InfoSec & Compliance Gate**: The FDE presents a containerized enclave architecture using private
-   endpoints (AWS PrivateLink), proving zero data egress and passing security review in Week 1.
-5. **Move 5: Golden Dataset Assembly**: The FDE pairs with the lead compliance officer to curate a 25-case Golden
-   Evaluation dataset representing statutory edge cases, fee disputes, and identity theft allegations.
-6. **Move 6: The Binding Contract**: The FDE authors the formal specification ([`customer/02-requirements-to-spec.md`](../customer/02-requirements-to-spec.md)),
-   establishing measurable acceptance criteria: $\ge 88\%$ category accuracy, $\ge 90\%$ severity classification,
-   and $100\%$ citation grounding before production cutover.
-
----
-
-## 5. Direct Codebase Defense Implementations
-
-The technical discovery practices outlined here map directly to executable code, parsers, and evaluation
-frameworks within this repository:
-
-| Discovery Finding / Artifact | Codebase Defense Implementation | Production Role |
-| :--- | :--- | :--- |
-| **Dirty Export & Missing Fields** | [`interviews/code/parser.py`](../interviews/code/parser.py) | Defensive CSV/JSON parser repairing dirty amounts, missing timestamps, and corrupted rows |
-| **Schema Validation & Gating** | [`interviews/code/structured_extractor.py`](../interviews/code/structured_extractor.py) | Pydantic model validation with self-healing error correction loops |
-| **Empirical Evaluation Harness** | [`portfolio/reference-project/evals/run_evals.py`](../portfolio/reference-project/evals/run_evals.py) | Automated scorecard executing 25 golden enterprise dispute scenarios against acceptance SLAs |
-| **Real-World Dataset Provenance**| [`portfolio/reference-project/evals/DATASET_PROVENANCE.md`](../portfolio/reference-project/evals/DATASET_PROVENANCE.md) | Ground truth documentation based on CFPB public dispute records and Bitext interactions |
-| **Executable Spec Skeleton** | [`customer/02-requirements-to-spec.md`](../customer/02-requirements-to-spec.md) | Standardized one-page specification skeleton with Given/When/Then acceptance criteria |
-| **Production SLA Gateway** | [`portfolio/reference-project/src/api/server.py`](../portfolio/reference-project/src/api/server.py) | FastAPI service asserting statutory SLA escalation tags and operator override workflows |
-
----
+- [Source ledger](../research/source_checks_2026-10-09.json) records selected primary-source checks and failures.
+- [Evidence validator](../research/validate_evidence.py) checks the retained metadata projection and date/ID accounting.
+- [ETISE](../portfolio/reference-project/README.md) implements local triage and review mechanics; it does not implement statutory deadline clocks or authenticated customer boundaries.
+- [Expert practicum](../learning-paths/expert-fde-practicum.md) defines the real data, decision, and handover artifacts required to proceed.
 
 ## 6. Primary Practitioner Literature & Citations
 
@@ -257,5 +192,5 @@ frameworks within this repository:
 2. **Anthropic**: *Forward Deployed Engineer - Enterprise Deployments & Customer Discovery Rigor* (2026). [job-boards.greenhouse.io/anthropic/jobs/5302966008](https://job-boards.greenhouse.io/anthropic/jobs/5302966008)
 3. **MIT NANDA Initiative / Fortune**: *The GenAI Divide: Why 95% of Enterprise AI Pilots Fail* (August 2025). [fortune.com/2025/08/18/mit-report-95-percent-generative-ai-pilots-at-companies-failing-cfo](https://fortune.com/2025/08/18/mit-report-95-percent-generative-ai-pilots-at-companies-failing-cfo)
 4. **Consumer Financial Protection Bureau (CFPB)**: *Consumer Complaint Database Public API & Schema Specifications*. [consumerfinance.gov/data-research/consumer-complaints](https://www.consumerfinance.gov/data-research/consumer-complaints/)
-5. **Bitext**: *Enterprise Customer Support & Intent Classification Benchmark Corpus*. [huggingface.co/datasets/bitext](https://huggingface.co/datasets/bitext)
+5. Bitext: hybrid synthetic training data, excluded from real-world-only evidence. [huggingface.co/datasets/bitext](https://huggingface.co/datasets/bitext)
 6. **Alexander Karp & Shyam Sankar**: *The Palantir Forward Deployed Engineering Methodology: Direct Ground-Truth Discovery* (Palantir Technologies, 2024).
