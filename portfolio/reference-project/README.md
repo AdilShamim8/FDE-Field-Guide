@@ -1,116 +1,80 @@
-# Enterprise Ticket Intelligence and Grounded Synthesis Engine (ETISE)
+# ETISE: deterministic ticket intake reference
 
-This directory contains a complete, production-grade reference project designed to demonstrate forward deployed engineering competence end to end. It transforms an ambiguous customer brief into a resilient, evaluated, and client-operable system.
+ETISE is a local teaching application for ticket classification, sample-policy retrieval, and operator review. The implementation and data claims were audited on 2026-10-09. It is a development reference, with explicit production gaps rather than a claimed customer deployment.
 
-## The customer problem
+## Implemented behavior
 
-A high-growth B2B enterprise receives 12,000 incoming support tickets and policy exceptions per day across email, web forms, and external webhooks. Support engineers spend an average of 4.5 minutes per ticket manually reading text, categorizing defects, checking internal compliance manuals, and drafting responses.
+- FastAPI intake with bounded ticket fields and Pydantic validation.
+- Keyword classification with feature-hashed cosine similarity for fallback scoring. Confidence values are uncalibrated heuristics.
+- Retrieval using token overlap and feature-hash vectors over locally authored Apex policies. This is not BM25, a trained embedding model, or a vector database.
+- Exact quotation membership checks against the cited sample section. Strict mode routes missing evidence to review; P0 incidents escalate even without evidence.
+- In-process replay handling scoped to account, key, and simulated role, with payload conflict detection, TTL, a bounded cache, and serialized state changes.
+- In-memory exception review, operator resolutions, feedback records, and counters.
 
-Customer pain points identified during discovery:
-- Unsorted firehose: high-severity P0 outages sit in the same queue as general billing questions.
-- Unreliable triage: manual classification errors exceed 18%, leading to misrouted tickets and delayed SLAs.
-- Compliance risk: support reps copy-paste outdated policy clauses from local notes rather than official documentation.
-- Mistrust of pure AI: operations leadership refuses to allow ungrounded LLM generation to communicate directly with Tier-1 accounts.
+`AUTOMATED_DISPATCH` is a returned routing label. The service does not send replies, charge money, mutate a customer's ticketing platform, call an LLM, or run an extraction repair loop.
 
-## The architecture solution
+## Data and evidence status
 
-ETISE addresses these constraints through five deterministic components:
+The [five CFPB metadata records](evals/real_data/cfpb_metadata_2026-10-09.json) were returned by the official API and received on 2026-10-09. They contain categorical fields for ingestion and lineage exercises, with no narratives or ETISE ground-truth labels.
 
-1. Defensive ingestion: receives incoming tickets via REST API with idempotency key deduplication, payload checksum validation, and schema enforcement via Pydantic.
-2. Self-healing structured extraction: extracts target fields (urgency score, defect category, customer account, affected system) with an automated repair loop that feeds validation errors back to the model.
-3. Hybrid grounding engine: performs dense semantic search and keyword retrieval over an embedded compliance corpus, requiring verbatim quote matching before any citation is presented.
-4. Human-in-the-loop exception review queue: tickets with confidence scores below 0.85 or P0 severity are routed to an operator review queue with one-click approval and override capture.
-5. Automated evaluation harness: measures extraction accuracy, citation integrity, schema failure rate, and latency over a curated 25-case golden dataset.
+The historical `golden_dataset.json` filename refers to 25 known regression fixtures with unverified origins. The Apex policies are sample text. Passing those cases demonstrates regression behavior; it does not authenticate consumer records, provider contracts, legal compliance, or production accuracy. See [dataset provenance](evals/DATASET_PROVENANCE.md).
 
-## System topology
+## Local setup
 
-```
-[ Incoming Webhook / Email ]
-             |
-             v
-[ API Layer: FastAPI with Idempotency Guard ]
-             |
-             +---> [ Ingestion & Defensive Normalizer ]
-             |
-             v
-[ Engine: Self-Healing Structured Extraction ]
-             |
-             +---> [ Hybrid Knowledge Retrieval & Citation Grounding ]
-             |
-             v
-[ Confidence & Policy Gate ]
-      |
-      +---> Confidence >= 0.85 & Non-P0: [ Automated Draft & Direct Route ]
-      |
-      +---> Confidence < 0.85 or P0:     [ Operator Exception Review Queue ]
-                                                           |
-                                                           v
-                                            [ Human Feedback Ledger ]
+From the repository root, use Linux and Python 3.12 for the verified dependency resolution:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r portfolio/reference-project/requirements.txt \
+  -c portfolio/reference-project/requirements.lock
+python -m pip check
 ```
 
-## Quickstart and local execution
+Application defaults suffice for local development. A project-local `.env` is optional and is read when the project is the working directory. Keep credentials out of Git. The sample API secret setting is not used to authenticate requests; changing it does not secure the service.
 
-### 1. Requirements
+## Tests and regression evaluation
 
-- Python 3.10+
-- pip or uv
+From the repository root:
 
-### 2. Environment setup
+```bash
+python -m pytest interviews/code/ portfolio/reference-project/tests/ job-market/dataset/tests/ -v
+python portfolio/reference-project/evals/curate_eval_dataset.py
+python portfolio/reference-project/evals/run_evals.py --report /tmp/etise-regression.json
+python research/validate_evidence.py
+```
 
-Clone the repository and install dependencies:
+The evaluation gates category and severity accuracy, exact expected routing, required document retrieval, independently rechecked quotes, and empty automated dispatches. Reports include per-class metrics, failure cases, and local engine CPU timing. This timing excludes HTTP, queueing, external inference, and operator review.
 
-`pip install -r portfolio/reference-project/requirements.txt`
+## Start and check the API
 
-Copy the sample environment file:
+From the project directory:
 
-`cp portfolio/reference-project/.env.example portfolio/reference-project/.env`
+```bash
+cd portfolio/reference-project
+../../.venv/bin/python -m uvicorn src.api.server:app --host 127.0.0.1 --port 8000
+```
 
-### 3. Run the evaluation suite
+In another terminal, check `/health`, process a sample ticket, and inspect `/metrics`. The automated API tests include functional billing triage, replay conflicts, account and simulated-role scopes, expiry, concurrent delivery, review resolution, and knowledge filtering. Use the [runbook](docs/SLA_RUNBOOK.md) for concrete requests.
 
-Validate the system against the 25-case golden dataset:
+The Dockerfile and Compose file are optional packaging examples. Their builds have not been validated by this audit. A container does not add the missing controls below.
 
-`python portfolio/reference-project/evals/run_evals.py`
+## Production boundary
 
-### 4. Run the unit and integration tests
+Do not expose this service to untrusted traffic. It has no authenticated tenant identity, operator authorization, durable queue or audit storage, distributed lock, telemetry redaction, ingress byte ceiling, retention enforcement, model-quality holdout, or measured availability objective. Ticket field limits do not bound every incoming request resource or persistent queue.
 
-`python -m pytest portfolio/reference-project/tests/ -v`
+`X-User-Roles` is a caller-supplied role simulation. Omitting it defaults to `support_tier1`; a caller can still supply `admin`. Account IDs are request data, not authenticated tenant identity. The queues and feedback endpoint behavior are not tenant-isolated. Restarting loses all in-memory state, and multiple workers create independent state stores.
 
-### 5. Start the API server
-
-`python -m uvicorn portfolio.reference-project.src.api.server:app --port 8000 --reload`
-
-## Dataset provenance and verified references
-
-This reference project strictly rejects synthetic shortcuts. The evaluation suite and compliance corpus are derived from verified public sources, detailed in [evals/DATASET_PROVENANCE.md](evals/DATASET_PROVENANCE.md):
-
-- [Consumer Financial Protection Bureau (CFPB) Complaint Database](https://www.consumerfinance.gov/data-research/consumer-complaints/): real consumer financial disputes, fee waivers, and billing escalations.
-- [Hugging Face Bitext Customer Support Dataset](https://huggingface.co/datasets/bitext/customer-support-llm-dataset): multi-channel enterprise support tickets and intent classifications.
-- Public Enterprise SLA Handbooks: official availability terms and incident thresholds from [AWS Service Level Agreements](https://aws.amazon.com/legal/service-level-agreements/), [Stripe Legal Services Agreement](https://stripe.com/legal/ssa), and [Datadog Service Level Objectives](https://docs.datadoghq.com/monitors/service_level_objectives/).
-- [FDE Academy Masterclass](https://youtu.be/Fruw822BMBc): architectural blueprint for intake-to-resolution enterprise workflows and permission-aware RAG systems.
-
-## Project artifacts in this directory
-
-- `docs/ARCHITECTURE.md` - comprehensive architecture, threat model, and data boundary specification
-- `docs/SOW.md` - Statement of Work detailing scope boundaries, deliverables, and acceptance criteria
-- `docs/SLA_RUNBOOK.md` - operational runbook, alert thresholds, and rollback procedures
-- `docs/ADR-001.md` - Architecture Decision Record justifying hybrid search, dense embeddings, and local validation
-- `evals/DATASET_PROVENANCE.md` - exact provenance and licensing documentation for evaluation cases and handbook corpus
-- `src/` - production source code (FastAPI server, extraction engine with vector similarity, hybrid retrieval with RBAC ACLs, Pydantic schemas)
-- `evals/` - golden evaluation dataset and automated scoring harness
-- `tests/` - unit and regression test suite
-- `docker-compose.yml` & `Dockerfile` - containerized deployment setup
+Use one local worker. The process lock intentionally serializes this small CPU-only example; it is not a distributed transaction or exactly-once guarantee. A real deployment must address these boundaries and complete the [expert practicum](../../learning-paths/expert-fde-practicum.md).
 
 ## Related documents
 
-- [Project selection masterclass](../04-project-selection-masterclass.md) - the five enterprise archetypes, dataset directory, and candidate sequencing
-- [What to build](../01-what-to-build.md) - portfolio principles that separate deployment systems from tutorials
-- [Project ideas](../02-project-ideas.md) - twelve customer briefs with hidden depth
-- [Presenting projects](../03-presenting-projects.md) - how to present this system to hiring managers
-- [System design rounds](../../interviews/03-system-design.md) - system design interview frameworks
+- [Architecture and threat model](docs/ARCHITECTURE.md) - actual boundaries and required controls
+- [Decision record](docs/ADR-001.md) - retrieval trade-offs and known limitations
+- [Pilot scope template](docs/SOW.md) - proposed deliverables, not a real engagement
+- [Operations runbook](docs/SLA_RUNBOOK.md) - tested local operating procedures
 
 ## Further reading
 
-- [CFPB Consumer Complaint Database](https://www.consumerfinance.gov/data-research/consumer-complaints/) - public enterprise dispute data
-- [Hugging Face Bitext Dataset](https://huggingface.co/datasets/bitext/customer-support-llm-dataset) - real-world customer support intents
-- [FastAPI Documentation](https://fastapi.tiangolo.com/) - production Python web frameworks
-- [Pydantic Documentation](https://docs.pydantic.dev/) - data validation and settings management
+- [CFPB data catalog](https://www.consumerfinance.gov/data-research/consumer-complaints/) - source interpretation notices, checked 2026-10-09
+- [OWASP 2026 guidance](https://github.com/GenAI-Security-Project/GenAI-LLM-Top10/tree/9253e38ade58e959b531c0c5c9a4842272c9cd0e/2026/final) - threat guidance; reference controls still require implementation and review
