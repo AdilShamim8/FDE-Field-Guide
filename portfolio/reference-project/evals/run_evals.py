@@ -1,125 +1,132 @@
-"""
-Automated evaluation harness for ETISE.
-Executes golden dataset, calculates precision, recall, citation grounding rate,
-and latency percentiles, outputting an executive engineering scorecard.
-"""
+"""Offline regression checks; legacy fixtures are not a production quality estimate."""
 
+import argparse
 import json
-import os
+import math
 import sys
 import time
 from pathlib import Path
-from typing import Any, Dict, List
 
-# Ensure reference-project directory is on sys.path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.engine.agent import TriageAgent
-from src.models.schemas import TicketIngestRequest
+from src.models.schemas import DefectCategory, RoutingDecision, SeverityLevel, TicketIngestRequest
 
 
-def run_evaluation() -> bool:
-    golden_path = Path(__file__).resolve().parent / "golden_dataset.json"
-    if not golden_path.exists():
-        print(f"Error: Golden dataset not found at {golden_path}")
-        return False
+def wilson_interval(successes, total):
+    """Descriptive 95% Wilson interval; nonrandom fixtures do not support inference."""
+    if not total:
+        return None
+    z = 1.959963984540054
+    p = successes / total
+    denominator = 1 + z * z / total
+    center = (p + z * z / (2 * total)) / denominator
+    radius = z * math.sqrt(p * (1 - p) / total + z * z / (4 * total * total)) / denominator
+    return [max(0.0, center - radius), min(1.0, center + radius)]
 
-    with open(golden_path, "r", encoding="utf-8") as f:
-        cases: List[Dict[str, Any]] = json.load(f)
 
-    agent = TriageAgent()
-    print("=" * 70)
-    print("ETISE AUTOMATED GOLDEN EVALUATION HARNESS")
-    print(f"Executing {len(cases)} enterprise test cases against compliance engine...")
-    print("=" * 70)
-
-    category_correct = 0
-    severity_correct = 0
-    routing_correct = 0
-    citation_grounding_success = 0
-    total_citations_evaluated = 0
-    latencies_ms: List[float] = []
-
+def evaluate_cases(cases, agent=None):
+    if not isinstance(cases, list) or not cases:
+        raise ValueError("Evaluation requires a nonempty case list")
+    agent = agent or TriageAgent()
+    ids = set()
+    results = []
+    latencies = []
+    category_correct = severity_correct = routing_correct = 0
+    grounded = citation_total = document_correct = document_total = 0
+    empty_dispatches = 0
+    failures = []
     for case in cases:
-        req = TicketIngestRequest(
-            ticket_id=case["ticket_id"],
-            account_id=case["account_id"],
-            raw_text=case["raw_text"],
-        )
-
-        t_start = time.perf_counter()
-        result = agent.process_ticket(req)
-        elapsed_ms = (time.perf_counter() - t_start) * 1000
-        latencies_ms.append(elapsed_ms)
-
-        # Check Category
-        if result.category.value == case["expected_category"]:
-            category_correct += 1
-
-        # Check Severity
-        if result.severity.value == case["expected_severity"]:
-            severity_correct += 1
-
-        # Check Routing
-        if result.routing_decision.value == case["expected_routing"]:
-            routing_correct += 1
-
-        # Check Citations
-        if result.citations:
-            for cit in result.citations:
-                total_citations_evaluated += 1
-                if cit.is_verified:
-                    citation_grounding_success += 1
+        if case["id"] in ids:
+            raise ValueError("Duplicate evaluation case ID")
+        ids.add(case["id"])
+        DefectCategory(case["expected_category"])
+        SeverityLevel(case["expected_severity"])
+        RoutingDecision(case["expected_routing"])
+        request = TicketIngestRequest(ticket_id=case["ticket_id"], account_id=case["account_id"], raw_text=case["raw_text"])
+        start = time.perf_counter()
+        # Full corpus access here is a local benchmark setting, not an authenticated role.
+        result = agent.process_ticket(request, user_roles=["admin"])
+        latencies.append((time.perf_counter() - start) * 1000)
+        cat_ok = result.category.value == case["expected_category"]
+        sev_ok = result.severity.value == case["expected_severity"]
+        route_ok = result.routing_decision.value == case["expected_routing"]
+        category_correct += cat_ok
+        severity_correct += sev_ok
+        routing_correct += route_ok
+        verified = [c for c in result.citations if c.is_verified and agent.index.verify_quote(
+            c.document_id, c.verbatim_quote, section=c.section
+        )]
+        citation_total += len(result.citations)
+        grounded += len(verified)
+        expected_doc = case.get("expected_citation_doc")
+        doc_ok = True
+        if expected_doc:
+            document_total += 1
+            doc_ok = any(c.document_id == expected_doc for c in verified)
+            document_correct += doc_ok
+        empty_dispatch = result.routing_decision == RoutingDecision.AUTOMATED_DISPATCH and not verified
+        empty_dispatches += empty_dispatch
+        if not (cat_ok and sev_ok and route_ok and doc_ok) or len(verified) != len(result.citations) or empty_dispatch:
+            failures.append({"id": case["id"], "category": cat_ok, "severity": sev_ok,
+                             "routing": route_ok, "required_document": doc_ok,
+                             "empty_dispatch": empty_dispatch})
+        results.append((case["expected_category"], result.category.value))
 
     total = len(cases)
-    cat_accuracy = (category_correct / total) * 100
-    sev_accuracy = (severity_correct / total) * 100
-    routing_accuracy = (routing_correct / total) * 100
+    per_class = {}
+    for category in DefectCategory:
+        name = category.value
+        tp = sum(expected == predicted == name for expected, predicted in results)
+        fp = sum(predicted == name and expected != name for expected, predicted in results)
+        fn = sum(expected == name and predicted != name for expected, predicted in results)
+        precision = tp / (tp + fp) if tp + fp else None
+        recall = tp / (tp + fn) if tp + fn else None
+        f1 = 2 * tp / (2 * tp + fp + fn) if 2 * tp + fp + fn else None
+        per_class[name] = {"support": tp + fn, "precision": precision, "recall": recall, "f1": f1}
+    supported_f1 = [v["f1"] for v in per_class.values() if v["support"] > 0]
+    ordered = sorted(latencies)
+    p95 = ordered[max(0, math.ceil(0.95 * total) - 1)]
+    grounding_rate = grounded / citation_total if citation_total else None
+    passed = (category_correct / total >= 0.88 and severity_correct / total >= 0.90
+              and routing_correct == total and document_total > 0 and document_correct == document_total
+              and citation_total > 0 and grounded == citation_total and empty_dispatches == 0 and p95 < 200)
+    return {
+        "scope": "known regression fixtures; not an independent customer holdout or production SLA",
+        "cases": total, "category_correct": category_correct, "severity_correct": severity_correct,
+        "routing_correct": routing_correct, "citations_verified": grounded, "citations_evaluated": citation_total,
+        "grounding_rate": grounding_rate, "required_documents_correct": document_correct,
+        "required_documents_evaluated": document_total, "empty_automated_dispatches": empty_dispatches,
+        "per_class": per_class, "macro_f1_supported_classes": sum(supported_f1) / len(supported_f1),
+        "category_accuracy_wilson_95_descriptive": wilson_interval(category_correct, total),
+        "interval_limit": "Known nonrandom fixtures cannot estimate deployment or worldwide accuracy.",
+        "engine_cpu_p95_ms": p95, "latency_scope": "single-process local engine timing, excluding HTTP and external dependencies",
+        "evidence_statuses": sorted({c.get("evidence_status", "unspecified") for c in cases}),
+        "failures": failures, "passed": passed,
+    }
 
-    grounding_rate = (
-        (citation_grounding_success / total_citations_evaluated) * 100
-        if total_citations_evaluated > 0
-        else 100.0
-    )
 
-    latencies_ms.sort()
-    p50 = latencies_ms[int(total * 0.50)]
-    p90 = latencies_ms[int(total * 0.90)]
-    p95 = latencies_ms[int(total * 0.95)]
-    p99 = latencies_ms[min(total - 1, int(total * 0.99))]
-
-    print("\nSCORECARD SUMMARY")
-    print("-" * 70)
-    print(f"Total Test Cases:            {total}")
-    print(f"Category Classification:     {category_correct}/{total} ({cat_accuracy:.1f}%) [SLA Target: >= 88.0%]")
-    print(f"Severity Classification:     {severity_correct}/{total} ({sev_accuracy:.1f}%) [SLA Target: >= 90.0%]")
-    print(f"Decision Gating Accuracy:    {routing_correct}/{total} ({routing_accuracy:.1f}%)")
-    print(f"Citation Grounding Rate:     {citation_grounding_success}/{total_citations_evaluated} ({grounding_rate:.1f}%) [Target: 100.0%]")
-    print("-" * 70)
-    print("LATENCY DISTRIBUTION (p50 / p90 / p95 / p99)")
-    print(f"p50:  {p50:.2f} ms")
-    print(f"p90:  {p90:.2f} ms")
-    print(f"p95:  {p95:.2f} ms")
-    print(f"p99:  {p99:.2f} ms")
-    print("=" * 70)
-
-    # Acceptance threshold checks
-    passed = (
-        cat_accuracy >= 88.0
-        and sev_accuracy >= 90.0
-        and grounding_rate == 100.0
-        and p95 < 200.0
-    )
-
-    if passed:
-        print("RESULT: ALL ENTERPRISE SLA ACCEPTANCE CRITERIA PASSED.")
-    else:
-        print("RESULT: SLA BREACH DETECTED.")
-
-    return passed
+def run_evaluation(dataset_path=None, agent=None, report_path=None):
+    path = Path(dataset_path) if dataset_path else PROJECT_ROOT / "evals/golden_dataset.json"
+    cases = json.loads(path.read_text(encoding="utf-8"))
+    report = evaluate_cases(cases, agent=agent)
+    output = json.dumps(report, indent=2)
+    print(output)
+    if report_path:
+        Path(report_path).write_text(output + "\n", encoding="utf-8")
+    print("RESULT: REGRESSION CHECKS PASSED." if report["passed"] else "RESULT: REGRESSION CHECKS FAILED.")
+    return report["passed"]
 
 
 if __name__ == "__main__":
-    success = run_evaluation()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--dataset", type=Path)
+    parser.add_argument("--report", type=Path)
+    args = parser.parse_args()
+    try:
+        success = run_evaluation(args.dataset, report_path=args.report)
+    except (KeyError, ValueError, OSError) as error:
+        print(f"Evaluation failed: {error}", file=sys.stderr)
+        success = False
     sys.exit(0 if success else 1)
