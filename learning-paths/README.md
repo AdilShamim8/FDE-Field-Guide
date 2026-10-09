@@ -1,5 +1,7 @@
 # Forward Deployed Engineering Learning Paths: The Master Transition Portal
 
+For experienced engineers, begin with the [expert FDE practicum](expert-fde-practicum.md): source lineage, independent evaluation, authenticated authority, failure recovery, economics, and operator handover. Reviewed 2026-10-09. Historical salary and 146-role aggregates below retain their original windows; they are not measurements of today's 212-role cumulative sample.
+
 This portal serves as the authoritative architectural master index for the **Learning Paths & Career Transitions Pillar** of the Forward Deployed Engineering (FDE) Field Guide.
 
 Transitioning into Forward Deployed Engineering represents one of the highest-leverage career pivots in technology. Independent labor analytics from Lightcast (*Fortune*, September 2026) reveals that advertised FDE median salaries exceed **$188,000**, commanding a **~30% cash salary premium** over traditional software engineers ($145,000). At frontier AI labs and enterprise platforms (Anthropic, Palantir, OpenAI), senior FDE total compensation packages reach **$400,000 to $800,000+**.
