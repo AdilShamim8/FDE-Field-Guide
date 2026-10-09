@@ -1,0 +1,82 @@
+{
+  "metadata": {
+    "schema_version": 1,
+    "retrieved_on": "2026-10-09",
+    "source": {
+      "url": "https://www.consumerfinance.gov/data-research/consumer-complaints/search/api/v1/?date_received_min=2026-10-09&date_received_max=2026-10-09&size=5&sort=created_date_desc",
+      "retrieved_on": "2026-10-09",
+      "response_date": "Fri, 09 Oct 2026 11:33:15 GMT",
+      "response_sha256": "74b3a2d273209c48e3ae68f886b9226e6eb5822827dc8ba82d9cac3281903e20",
+      "response_bytes": 5270
+    },
+    "evidence_status": "official API metadata retrieved today; consumer assertions are not independently adjudicated",
+    "selection": "five most recent API results received on 2026-10-09, using the documented API query date fields; not random or representative",
+    "observation_date_basis": "date_received as supplied by the source; timestamps include UTC offset Z",
+    "privacy": "Only public categorical complaint metadata. Narratives, state, ZIP, tags, and individual consumer identifiers are excluded.",
+    "use": "ingestion, schema, and lineage exercises only; no ETISE severity, routing, ground-truth answer, or quality labels",
+    "reproduction_limit": "The live API may change. Response hash records the captured response; the full response is not redistributed. Retained categorical records are the versioned artifact.",
+    "terms": "Review CFPB data-use notices before reuse. Public complaint assertions are not verified facts about the named companies."
+  },
+  "records": [
+    {
+      "complaint_id": "29496093",
+      "date_received": "2026-10-09T02:57:32.000Z",
+      "product": "Credit reporting or other personal consumer reports",
+      "sub_product": "Credit reporting",
+      "issue": "Incorrect information on your report",
+      "sub_issue": "Information belongs to someone else",
+      "company": "Experian Information Solutions Inc.",
+      "submitted_via": "Web",
+      "company_response": "In progress",
+      "timely": "Yes"
+    },
+    {
+      "complaint_id": "29495731",
+      "date_received": "2026-10-09T02:52:04.000Z",
+      "product": "Credit reporting or other personal consumer reports",
+      "sub_product": "Credit reporting",
+      "issue": "Incorrect information on your report",
+      "sub_issue": "Information belongs to someone else",
+      "company": "Experian Information Solutions Inc.",
+      "submitted_via": "Web",
+      "company_response": "In progress",
+      "timely": "Yes"
+    },
+    {
+      "complaint_id": "29494637",
+      "date_received": "2026-10-09T02:43:10.000Z",
+      "product": "Credit reporting or other personal consumer reports",
+      "sub_product": "Credit reporting",
+      "issue": "Incorrect information on your report",
+      "sub_issue": "Information belongs to someone else",
+      "company": "Experian Information Solutions Inc.",
+      "submitted_via": "Web",
+      "company_response": "In progress",
+      "timely": "Yes"
+    },
+    {
+      "complaint_id": "29494137",
+      "date_received": "2026-10-09T02:32:59.000Z",
+      "product": "Credit reporting or other personal consumer reports",
+      "sub_product": "Credit reporting",
+      "issue": "Incorrect information on your report",
+      "sub_issue": "Information belongs to someone else",
+      "company": "Experian Information Solutions Inc.",
+      "submitted_via": "Web",
+      "company_response": "In progress",
+      "timely": "Yes"
+    },
+    {
+      "complaint_id": "29493012",
+      "date_received": "2026-10-09T02:23:40.000Z",
+      "product": "Credit reporting or other personal consumer reports",
+      "sub_product": "Credit reporting",
+      "issue": "Incorrect information on your report",
+      "sub_issue": "Information belongs to someone else",
+      "company": "Experian Information Solutions Inc.",
+      "submitted_via": "Web",
+      "company_response": "In progress",
+      "timely": "Yes"
+    }
+  ]
+}
