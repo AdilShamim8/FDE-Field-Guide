@@ -6,7 +6,7 @@ This architecture describes the code present on 2026-10-09. It is a local determ
 
 FastAPI validates a ticket, parses simulated roles, expires cached entries, and checks the account/key/role replay scope under an in-process lock. A conflicting payload returns 409; a full replay cache returns 503. The engine classifies with keyword rules and feature-hash similarity, retrieves sample policies, checks exact quotations, and returns a routing decision.
 
-Missing evidence or low heuristic confidence routes to human review. P0 incidents escalate. The response is a local draft; no downstream dispatch or business mutation occurs. Queued review items, feedback, metrics, and cached results are lost on restart.
+Missing applicable policy evidence or low heuristic confidence routes to human review. The local category-to-document map prevents compliance tickets from substituting unrelated SLA quotes when the compliance policy is inaccessible. Categories without a mapped policy require review in strict mode; exact text plus this map still does not establish answer entailment. P0 incidents escalate. The response is a local draft; no downstream dispatch or business mutation occurs. Queued review items, feedback, metrics, and cached results are lost on restart.
 
 ## Implemented controls and limits
 
