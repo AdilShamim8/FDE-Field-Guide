@@ -105,11 +105,11 @@ The engineering patterns documented across this pillar are implemented as fully 
 
 | Architectural Mechanism | Repository Reference Implementation | Unit Test & Evaluation Coverage |
 | :--- | :--- | :--- |
-| **Self-Healing Structured Extractor** | [`interviews/code/structured_extractor.py`](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/interviews/code/structured_extractor.py) | [`interviews/code/test_structured_extractor.py`](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/interviews/code/test_structured_extractor.py) (3 tests passed) |
-| **Deterministic Document Chunker** | [`interviews/code/chunker.py`](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/interviews/code/chunker.py) | [`interviews/code/test_chunker.py`](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/interviews/code/test_chunker.py) (3 tests passed) |
-| **Enterprise Decision Agent (ETISE)** | [`portfolio/reference-project/src/engine/agent.py`](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/portfolio/reference-project/src/engine/agent.py) | [`portfolio/reference-project/tests/test_server.py`](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/portfolio/reference-project/tests/test_server.py) (7 tests passed) |
-| **Hybrid Knowledge Search (BM25 + Vector)** | [`portfolio/reference-project/src/pipeline/ingestion.py`](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/portfolio/reference-project/src/pipeline/ingestion.py) | [`portfolio/reference-project/tests/test_server.py`](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/portfolio/reference-project/tests/test_server.py) (100% RBAC filtering) |
-| **Automated Golden Evaluation Harness** | [`portfolio/reference-project/evals/run_evals.py`](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/portfolio/reference-project/evals/run_evals.py) | 25 Enterprise Test Cases (100% citation grounding, p50: 0.17ms) |
+| **Self-Healing Structured Extractor** | [`interviews/code/structured_extractor.py`](../interviews/code/structured_extractor.py) | [`interviews/code/test_structured_extractor.py`](../interviews/code/test_structured_extractor.py) (3 tests passed) |
+| **Deterministic Document Chunker** | [`interviews/code/chunker.py`](../interviews/code/chunker.py) | [`interviews/code/test_chunker.py`](../interviews/code/test_chunker.py) (3 tests passed) |
+| **Enterprise Decision Agent (ETISE)** | [`portfolio/reference-project/src/engine/agent.py`](../portfolio/reference-project/src/engine/agent.py) | [`portfolio/reference-project/tests/test_server.py`](../portfolio/reference-project/tests/test_server.py) (7 tests passed) |
+| **Hybrid Knowledge Search (BM25 + Vector)** | [`portfolio/reference-project/src/pipeline/ingestion.py`](../portfolio/reference-project/src/pipeline/ingestion.py) | [`portfolio/reference-project/tests/test_server.py`](../portfolio/reference-project/tests/test_server.py) (100% RBAC filtering) |
+| **Automated Golden Evaluation Harness** | [`portfolio/reference-project/evals/run_evals.py`](../portfolio/reference-project/evals/run_evals.py) | 25 Enterprise Test Cases (100% citation grounding, p50: 0.17ms) |
 
 ---
 
