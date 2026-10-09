@@ -1,16 +1,16 @@
 # FDE Interview Question Bank
 
-This document is a practice tool for Forward Deployed Engineer (FDE) interview preparation: recurring question patterns by round type, paired with the underlying evaluation signals, verbatim candidate playbooks, red flags, and scoring rubrics.
+This document is a practice tool for Forward Deployed Engineer (FDE) interview preparation: recurring question patterns by round type, paired with the underlying evaluation signals, authored candidate playbooks, red flags, and scoring rubrics.
 
-Every question in this bank is **empirically grounded** and backed by our machine-readable [dataset](dataset/fde_interview_questions.json). The questions and evaluation patterns are synthesized from real interview accounts across frontier labs (Google, OpenAI, Anthropic, Palantir), enterprise platforms (Databricks, Scale AI), and published practitioner guides.
+Reviewed 2026-10-09. The machine-readable [dataset](dataset/fde_interview_questions.json) contains curated practice material with unverified company attributions. The prompts, suggested responses, and scoring rubrics are synthesized for preparation. No event-level transcripts or company-approved scoring policies are supplied.
 
 ---
 
-## Empirical Provenance Matrix
+## Declared practitioner references
 
-Following the data-first methodology of [alexeygrigorev/ai-engineering-field-guide](https://github.com/alexeygrigorev/ai-engineering-field-guide), every question pattern is mapped to verified practitioner sources:
+Following the data-first methodology of [alexeygrigorev/ai-engineering-field-guide](https://github.com/alexeygrigorev/ai-engineering-field-guide), the collection cites the following preparation references. Citation presence does not authenticate exact wording or company usage:
 
-| Source Authority | Core Topics & Rounds Contributed | Verified Citation Link |
+| Source Authority | Core Topics & Rounds Contributed | Declared Citation Link |
 |---|---|---|
 | **Nehal Vyas** | 5-round hiring structure, customer simulations, live debugging, RAG vs. fine-tuning, scale failure modes | [fde.hinehal.com/blogs/fde-interview-questions](https://fde.hinehal.com/blogs/fde-interview-questions) |
 | **Om Bharatiya** | Problem decomposition ("decomp"), 48-hour executive demo scoping, ER wait time triage, contract debugging | [github.com/ombharatiya](https://github.com/ombharatiya/AI-Engineer-Interview-Questions/blob/main/15-role-guides/forward-deployed-engineer.md) |
@@ -87,12 +87,12 @@ Following the data-first methodology of [alexeygrigorev/ai-engineering-field-gui
 
 ## Deep Response Playbooks for High-Signal Probes
 
-The ten questions below represent the most predictive probes in enterprise FDE interview loops. For each, we provide the verified practitioner signal, a verbatim senior FDE response, the red flag response that gets candidates rejected, and the exact evaluation scoring rubric.
+The ten questions below are practice probes. Each has a suggested signal, an authored response, a contrasting response, and a proposed rubric. Predictive validity and employer adoption have not been measured.
 
 ---
 
 ### 1. "A customer signed a contract because their CEO said 'we need AI.' They cannot articulate a use case. Walk me through your first two weeks."
-*Verified Source: [Om Bharatiya (AI-Engineer-Interview-Questions)](https://github.com/ombharatiya/AI-Engineer-Interview-Questions/blob/main/15-role-guides/forward-deployed-engineer.md)*
+*Preparation reference: [Om Bharatiya (AI-Engineer-Interview-Questions)](https://github.com/ombharatiya/AI-Engineer-Interview-Questions/blob/main/15-role-guides/forward-deployed-engineer.md)*
 
 #### The signal
 Evaluates ambiguity tolerance, operator discovery over executive hype, identifying high-volume language bottlenecks, and scoping a thin vertical slice.
@@ -117,7 +117,7 @@ Deliverables at two weeks: one working clickable slice, a ranked backlog of 2-3 
 ---
 
 ### 2. "An enterprise COO says: 'Our emergency room wait times are too long. Can AI fix this?' Decompose the problem."
-*Verified Source: [Om Bharatiya (AI-Engineer-Interview-Questions)](https://github.com/ombharatiya/AI-Engineer-Interview-Questions/blob/main/15-role-guides/forward-deployed-engineer.md)*
+*Preparation reference: [Om Bharatiya (AI-Engineer-Interview-Questions)](https://github.com/ombharatiya/AI-Engineer-Interview-Questions/blob/main/15-role-guides/forward-deployed-engineer.md)*
 
 #### The signal
 Tests problem decomposition into functional pipelines, constraint identification (HIPAA, EHR integration, clinician sign-off), knowing when NOT to use AI, and thin wedge selection.
@@ -147,7 +147,7 @@ I propose a wedge project: discharge summary drafting. It is measurable (bed tur
 ---
 
 ### 3. "In a 60-minute Google FDE 'Vibe Coding' / live build round, you receive dirty CSV/JSON data and an API key. How do you structure your time?"
-*Verified Source: [YagyanshB (Google FDE Interview Guide)](https://github.com/YagyanshB/google-fde-interview-guide)*
+*Preparation reference: [YagyanshB (Google FDE Interview Guide)](https://github.com/YagyanshB/google-fde-interview-guide)*
 
 #### The signal
 Evaluates rapid prototyping under pressure, scoping down to the critical path, defensive data cleaning, testable seams over boilerplate architecture, and verbalized engineering narration.
@@ -171,7 +171,7 @@ Evaluates rapid prototyping under pressure, scoping down to the critical path, d
 ---
 
 ### 4. "You have 48 hours before an executive demo to a Fortune 500 leadership team using their proprietary data. What do you build and what do you deliberately cut?"
-*Verified Source: [Om Bharatiya (AI-Engineer-Interview-Questions)](https://github.com/ombharatiya/AI-Engineer-Interview-Questions/blob/main/15-role-guides/forward-deployed-engineer.md)*
+*Preparation reference: [Om Bharatiya (AI-Engineer-Interview-Questions)](https://github.com/ombharatiya/AI-Engineer-Interview-Questions/blob/main/15-role-guides/forward-deployed-engineer.md)*
 
 #### The signal
 Tests executive demo prioritization, scope ruthlessness, grounding and citation verification, and proactive failure scripting.
@@ -205,7 +205,7 @@ Two non-negotiable disciplines: rehearse twice on the exact venue network, and p
 ---
 
 ### 5. "When would you fine-tune vs. use RAG vs. use prompt engineering?"
-*Verified Source: [Nehal Vyas (fde.hinehal.com)](https://fde.hinehal.com/blogs/fde-interview-questions)*
+*Preparation reference: [Nehal Vyas (fde.hinehal.com)](https://fde.hinehal.com/blogs/fde-interview-questions)*
 
 #### The signal
 Tests architectural pragmatism, understanding the simplest-viable-system principle, and knowing when to talk enterprise customers OUT of expensive fine-tuning.
@@ -230,7 +230,7 @@ I explicitly advise enterprise customers against fine-tuning to inject factual k
 ---
 
 ### 6. "How do you design AI agent tools with least-privilege permissions and robust human-in-the-loop safeguards?"
-*Verified Source: [Dr. Sanjay Kumar PhD (Medium)](https://skphd.medium.com/top-25-forward-deployed-engineer-fde-interview-questions-and-answers-ad9ac4a6ad7f)*
+*Preparation reference: [Dr. Sanjay Kumar PhD (Medium)](https://skphd.medium.com/top-25-forward-deployed-engineer-fde-interview-questions-and-answers-ad9ac4a6ad7f)*
 
 #### The signal
 Evaluates agentic deployment security, tool risk classification (read vs. reversible write vs. destructive write), human-in-the-loop approval workflows, and blast radius defense.
@@ -255,7 +255,7 @@ Architecture: When the agent decides to invoke a Tier 3 tool, it generates an id
 ---
 
 ### 7. "The pilot RAG system is giving wrong answers on the customer's contracts. You are on-site tomorrow. How do you debug it?"
-*Verified Source: [Om Bharatiya (AI-Engineer-Interview-Questions)](https://github.com/ombharatiya/AI-Engineer-Interview-Questions/blob/main/15-role-guides/forward-deployed-engineer.md)*
+*Preparation reference: [Om Bharatiya (AI-Engineer-Interview-Questions)](https://github.com/ombharatiya/AI-Engineer-Interview-Questions/blob/main/15-role-guides/forward-deployed-engineer.md)*
 
 #### The signal
 Tests bisection debugging methodology (retrieval vs. generation), error taxonomies, chunk inspection, and preventing regression via golden eval suites.
@@ -281,7 +281,7 @@ Finally, I codify all 10 examples into our automated golden evaluation dataset w
 ---
 
 ### 8. "Interviewer role-plays a furious VP: 'Your implementation is two weeks late and my CEO is asking why we hired you.' How do you respond?"
-*Verified Source: [Nehal Vyas (fde.hinehal.com)](https://fde.hinehal.com/blogs/fde-interview-questions)*
+*Preparation reference: [Nehal Vyas (fde.hinehal.com)](https://fde.hinehal.com/blogs/fde-interview-questions)*
 
 #### The signal
 Evaluates composure under fire, non-defensive accountability, separating technical facts from excuses, delivering concrete recovery dates, and establishing collaborative customer action items.
@@ -306,7 +306,7 @@ Evaluates composure under fire, non-defensive accountability, separating technic
 ---
 
 ### 9. "The customer insists on an architectural approach you know is technically wrong and will fail in production. What do you do?"
-*Verified Source: [Nehal Vyas (fde.hinehal.com)](https://fde.hinehal.com/blogs/fde-interview-questions)*
+*Preparation reference: [Nehal Vyas (fde.hinehal.com)](https://fde.hinehal.com/blogs/fde-interview-questions)*
 
 #### The signal
 Tests customer diplomacy, translating technical debt into business impact, running empirical benchmarks, and practicing healthy disagree-and-commit discipline.
@@ -328,7 +328,7 @@ Tests customer diplomacy, translating technical debt into business impact, runni
 ---
 
 ### 10. "Walk me through a system you built and deployed to production that failed, and how you owned the outcome."
-*Verified Source: [Alexey Grigorev (AI Engineering Field Guide)](https://github.com/alexeygrigorev/ai-engineering-field-guide/blob/main/role/06-fde.md)*
+*Preparation reference: [Alexey Grigorev (AI Engineering Field Guide)](https://github.com/alexeygrigorev/ai-engineering-field-guide/blob/main/role/06-fde.md)*
 
 #### The signal
 Evaluates full-lifecycle operational ownership, blameless postmortem discipline, telemetry awareness, and permanent automated prevention.
