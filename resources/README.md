@@ -4,7 +4,7 @@ This portal serves as the authoritative architectural master index for the **Res
 
 The Forward Deployed Engineering tooling philosophy is grounded in a singular operational invariant: **boring, auditable, and battle-tested technologies always defeat fashionable, fragile abstractions in customer deployments**. When an FDE embeds inside an enterprise client's VPC, the customer's Site Reliability Engineering (SRE) and InfoSec teams will not permit unverified, rapidly breaking frameworks. Furthermore, when the FDE engagement concludes, the customer's on-call engineers must maintain the system at 2:00 AM without vendor hand-holding.
 
-Across our empirical dataset of 146 deduplicated 2026 enterprise FDE job postings, hiring requirements reflect this operational discipline: **Python appears in 91.0% of postings**, **Docker in 51.0%**, **AWS in 47.0%**, **Kubernetes in 35.0%**, **Azure in 34.0%**, and **Terraform in 31.0%**. This portal curates the definitive toolbox, primary literature, and practitioner networks that define modern enterprise AI deployment.
+The historical February–July 146-role summary reports Python in 133 postings (91.1%) and Docker in 59 (40.4%); the former Docker 51.0% figure was inconsistent with that source. The former Terraform 31.0% claim lacks a traceable count and is withdrawn. These historical labels have not been remeasured on the current 212-ID sample. Tool choices below are recommendations, not evidence that every customer uses the stack. Reviewed 2026-10-09; see the [market method](../job-market/dataset/README.md).
 
 ---
 
@@ -44,7 +44,7 @@ flowchart TD
 *Build, deploy, evaluate, and observe tooling, organized by engagement lifecycle phases.*
 - **Build Phase**: Python 3.12+ as the default language (91.0% of postings); `FastAPI` for asynchronous HTTP APIs; `Pydantic V2` for strict runtime schema boundaries; `Docker` multi-stage containers for environment parity.
 - **The AI Application Layer**: Direct provider SDKs ([Anthropic](https://docs.anthropic.com), [OpenAI](https://platform.openai.com/docs)) over un-instrumented third-party wrappers; `pgvector` for in-database vector storage; `Qdrant` for high-performance HNSW retrieval; `vLLM` for self-hosted in-VPC model execution.
-- **Deploy Phase**: Cloud console fluency across AWS (47.0%), GCP (38.0%), and Azure (34.0%); `Terraform` / `OpenTofu` for declarative Infrastructure as Code (31.0%); AWS Systems Manager (SSM) and PrivateLink endpoints for zero-egress connectivity.
+- **Deploy Phase**: Cloud console fluency across AWS (47.0%), GCP (38.0%), and Azure (34.0%); `Terraform` / `OpenTofu` for declarative Infrastructure as Code (recommended; no measured share); AWS Systems Manager (SSM) and PrivateLink endpoints for zero-egress connectivity.
 - **Evaluate Phase**: Standalone golden evaluation test suites; automated regression CLI runners; `MLflow` for experiment tracking; statistical Cohen's Kappa calculations ($\kappa \ge 0.85$).
 - **Observe Phase**: `OpenTelemetry` GenAI semantic conventions; dual-plane telemetry emitting both infrastructure metrics (CPU/RAM) and model metrics (TTFT, tokens, cost) to `Prometheus` and `Datadog`.
 
@@ -62,8 +62,8 @@ flowchart TD
   - *ReAct: Synergizing Reasoning and Acting in Language Models* (Yao et al., 2022) - The state machine pattern for tool-use loops.
   - *Reciprocal Rank Fusion (RRF)* (Cormack et al., 2009) - Mathematical fusion of dense vector and BM25 lexical search.
 - **Authoritative Industry Reports**:
-  - *The GenAI Divide: State of AI in Business 2025* (MIT NANDA, reported in *Fortune*) - Landmark empirical study revealing that 95% of enterprise AI pilots fail to deliver P&L impact.
-  - *Forward Deployed Engineers: Silicon Valley Job Growth* (Lightcast / *Fortune*, September 2026) - Empirical labor analytics showing >1,000% YoY growth and $188,000 median advertised salary.
+  - *The GenAI Divide: State of AI in Business 2025* (MIT NANDA, reported in *Fortune*) - Landmark empirical study previously cited for a 95% figure; the guessed Fortune URL failed retrieval in the current audit, so that number is not newly verified here.
+  - *Forward Deployed Engineers: Silicon Valley Job Growth* (Lightcast / *Fortune*, September 2026) - Empirical labor analytics showing >1,000% YoY growth and more than $188,000 advertised median salary, reported by Fortune.
 
 ---
 
@@ -103,7 +103,7 @@ flowchart TD
 | Cloud Networking      | AWS PrivateLink         | Azure Private Endpoints | Required for Topologies | IGW-less VPCs; zero external    |
 |                       | (Interface Endpoints)   | GCP Private Service Conn| 1 and 3 (Zero-Egress)   | public internet egress allowed. |
 +-----------------------+-------------------------+-------------------------+-------------------------+---------------------------------+
-| Infrastructure as Code| Terraform               | OpenTofu / AWS CDK      | 31.0% of postings       | Declarative state files enable  |
+| Infrastructure as Code| Terraform               | OpenTofu / AWS CDK      | Recommended; share unmeasured       | Declarative state files enable  |
 | (IaC)                 | (HashiCorp Version 1.5+)| (Open-Source Fork)      |                         | customer CAB review sign-off.   |
 +-----------------------+-------------------------+-------------------------+-------------------------+---------------------------------+
 | Production Telemetry  | OpenTelemetry GenAI     | Prometheus / Datadog    | 49.0% (Evals & Telemetry| Dual-plane export: CPU/RAM plus |
