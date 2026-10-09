@@ -46,6 +46,15 @@ CATEGORY_ANCHORS: Dict[DefectCategory, str] = {
     ),
 }
 
+# Explicit applicability for the locally authored sample policies. Exact text
+# matching alone does not establish relevance, factual entailment, or legality.
+CATEGORY_POLICY_DOCUMENTS: Dict[DefectCategory, str] = {
+    DefectCategory.OUTAGE: "APEX-SLA-2026",
+    DefectCategory.BILLING: "APEX-BILLING-POLICY",
+    DefectCategory.INTEGRATION_BUG: "APEX-INTEGRATION-GUIDE",
+    DefectCategory.COMPLIANCE: "APEX-COMPLIANCE-DOC",
+}
+
 
 class TriageAgent:
     """
@@ -151,6 +160,11 @@ class TriageAgent:
 
         # Step 2: Permission-aware hybrid knowledge retrieval
         search_results = self.index.search(request.raw_text, top_k=2, user_roles=user_roles)
+        required_document = CATEGORY_POLICY_DOCUMENTS.get(extracted.category)
+        search_results = [
+            (chunk, score) for chunk, score in search_results
+            if chunk.document_id == required_document
+        ]
 
         # Step 3: Formulate citation-grounded response draft
         citations: List[Citation] = []
