@@ -1,5 +1,7 @@
 # Architecture for Customer Systems: Engineering Under Hostile Constraints
 
+Scope, reviewed 2026-10-09: architectures, latency/cost ranges, deployment schedules, and example dialogue below are planning guidance or assumptions unless linked to a specific measured artifact. Historical 146-role labels retain their original window and are not remeasured on the current snapshot. The executable-scope section states which controls actually run.
+
 In consumer or internal SaaS engineering, system architects enjoy total sovereignty over their technical stack:
 they choose the cloud provider, the database engine, the deployment orchestrator, the authentication framework,
 and the CI/CD pipeline. In Forward Deployed Engineering (FDE), this sovereignty is completely absent.
@@ -239,26 +241,24 @@ is too complex and must be simplified**.
 
 ---
 
-## 6. Direct Codebase Defense Implementations
+## Executable scope
 
-Every architectural pattern in this guide is implemented and verified in this repository's codebase:
+These blueprints are design recommendations. The repository supplies selected local exercises, not full implementations of every architecture. Reviewed 2026-10-09.
 
-| Architecture Principle | Codebase Defense File | Verification Command | Production Role |
-| :--- | :--- | :--- | :--- |
-| **Deterministic Decision Gating** | [`portfolio/reference-project/src/api/server.py`](../portfolio/reference-project/src/api/server.py) | `pytest portfolio/reference-project/tests/` | Graceful fallback gateway ensuring statutory rules never hallucinate |
-| **Atomic Webhook Idempotency** | [`interviews/code/webhook_receiver.py`](../interviews/code/webhook_receiver.py) | `pytest interviews/code/test_webhook_receiver.py` | Replay protection with SHA-256 conflict detection |
-| **Tenant Sliding-Window Throttling** | [`interviews/code/rate_limiter.py`](../interviews/code/rate_limiter.py) | `pytest interviews/code/test_rate_limiter.py` | Blast radius isolation preventing quota starvation |
-| **Resilient Retries with Jitter** | [`interviews/code/resilient_client.py`](../interviews/code/resilient_client.py) | `pytest interviews/code/test_resilient_client.py` | Full-jitter exponential backoff honoring `Retry-After` headers |
-| **Hybrid Retrieval Seam** | [`portfolio/reference-project/src/api/server.py`](../portfolio/reference-project/src/api/server.py) | `pytest portfolio/reference-project/tests/` | Reciprocal rank fusion combining dense cosine and sparse BM25 |
-| **Automated Golden Evals Harness** | [`portfolio/reference-project/evals/run_evals.py`](../portfolio/reference-project/evals/run_evals.py) | `python portfolio/reference-project/evals/run_evals.py` | 25 enterprise test cases asserting 100% citation grounding |
+| Artifact | Exercised behavior | Boundary |
+|---|---|---|
+| [ETISE API](../portfolio/reference-project/src/api/server.py) | Payload-conflict detection, account/role replay context, TTL, single-process serialized replay, default document filtering | Caller roles are unauthenticated; queues and cache are process-local |
+| [Retrieval](../portfolio/reference-project/src/pipeline/ingestion.py) | Feature hashing, token overlap, exact document/section quote checks | No learned embeddings, BM25, RRF, or regulatory entailment |
+| [Regression runner](../portfolio/reference-project/evals/run_evals.py) | Routing, required documents, nonempty grounding, and failure reporting | 25 known legacy fixtures with unverified origins; no independent customer holdout |
+| [Chunker](../interviews/code/chunker.py) | Bounded regex-token windows and overlap | Regex units are not a model tokenizer or a PDF ingestion pipeline |
+| [Retry exercise](../interviews/code/resilient_client.py) | Real default delay, retry budgets, header-aware retry | An isolated exercise, not a durable event-processing system |
 
----
+Use the [reference README](../portfolio/reference-project/README.md) for setup and current test commands. Authentication, tenant isolation, durable transactions, restore drills, private cloud networking, and measured workload SLOs remain required production work. Customer-defined thresholds are not statutes. Regulation E deadlines require review of the [official conditional rules](https://www.consumerfinance.gov/rules-policy/regulations/1005/11/).
 
 ## 7. Primary Practitioner Literature & Citations
 
 1. **Dan McKinley**: *Choose Boring Technology* (mcfunley.com, 2015). The foundational essay on innovation tokens, operational shelfware, and sustainable systems engineering.
-2. **Anthropic**: *Enterprise Architecture Guidelines & Model Context Protocol Specification* (2026). [docs.anthropic.com](https://docs.anthropic.com)
+2. [Anthropic documentation](https://docs.anthropic.com) - consult current product-specific documentation; no separately verified publication with the former title is supplied.
 3. **AWS Well-Architected Framework**: *Reliability & Security Pillars: Designing Resilient Workloads in Foreign VPCs*. [aws.amazon.com/architecture/well-architected](https://aws.amazon.com/architecture/well-architected/)
 4. **Google Site Reliability Engineering**: *Designing Distributed Systems for Graceful Degradation and Failure Containment*. [sre.google/sre-book](https://sre.google/sre-book/)
 5. **Martin Fowler**: *Patterns of Enterprise Application Architecture* (Addison-Wesley, 2002). Core patterns for domain logic isolation, repository boundaries, and gateway adapters.
-6. **Alexander Karp & Shyam Sankar**: *Forward Deployed System Architecture in Enterprise Enclaves* (Palantir Technologies, 2024).
