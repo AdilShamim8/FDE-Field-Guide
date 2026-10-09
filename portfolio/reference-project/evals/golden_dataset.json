@@ -7,7 +7,9 @@
     "expected_category": "OUTAGE",
     "expected_severity": "P0",
     "expected_routing": "ESCALATED_P0",
-    "expected_citation_doc": "APEX-SLA-2026"
+    "expected_citation_doc": "APEX-SLA-2026",
+    "evidence_status": "unverified_legacy_fixture",
+    "evaluation_split": "regression"
   },
   {
     "id": "TC-002",
@@ -17,7 +19,9 @@
     "expected_category": "BILLING",
     "expected_severity": "P2",
     "expected_routing": "AUTOMATED_DISPATCH",
-    "expected_citation_doc": "APEX-BILLING-POLICY"
+    "expected_citation_doc": "APEX-BILLING-POLICY",
+    "evidence_status": "unverified_legacy_fixture",
+    "evaluation_split": "regression"
   },
   {
     "id": "TC-003",
@@ -27,7 +31,9 @@
     "expected_category": "INTEGRATION_BUG",
     "expected_severity": "P2",
     "expected_routing": "AUTOMATED_DISPATCH",
-    "expected_citation_doc": "APEX-INTEGRATION-GUIDE"
+    "expected_citation_doc": "APEX-INTEGRATION-GUIDE",
+    "evidence_status": "unverified_legacy_fixture",
+    "evaluation_split": "regression"
   },
   {
     "id": "TC-004",
@@ -37,7 +43,9 @@
     "expected_category": "COMPLIANCE",
     "expected_severity": "P2",
     "expected_routing": "AUTOMATED_DISPATCH",
-    "expected_citation_doc": "APEX-COMPLIANCE-DOC"
+    "expected_citation_doc": "APEX-COMPLIANCE-DOC",
+    "evidence_status": "unverified_legacy_fixture",
+    "evaluation_split": "regression"
   },
   {
     "id": "TC-005",
@@ -47,7 +55,9 @@
     "expected_category": "GENERAL_INQUIRY",
     "expected_severity": "P3",
     "expected_routing": "HUMAN_REVIEW_REQUIRED",
-    "expected_citation_doc": null
+    "expected_citation_doc": null,
+    "evidence_status": "unverified_legacy_fixture",
+    "evaluation_split": "regression"
   },
   {
     "id": "TC-006",
@@ -56,8 +66,10 @@
     "raw_text": "Core reporting dashboard degradation observed. Queries that usually take 200ms are timing out after 60 seconds. High priority P1 issue.",
     "expected_category": "OUTAGE",
     "expected_severity": "P1",
-    "expected_routing": "AUTOMATED_DISPATCH",
-    "expected_citation_doc": "APEX-SLA-2026"
+    "expected_routing": "HUMAN_REVIEW_REQUIRED",
+    "expected_citation_doc": "APEX-SLA-2026",
+    "evidence_status": "unverified_legacy_fixture",
+    "evaluation_split": "regression"
   },
   {
     "id": "TC-007",
@@ -67,7 +79,9 @@
     "expected_category": "BILLING",
     "expected_severity": "P2",
     "expected_routing": "AUTOMATED_DISPATCH",
-    "expected_citation_doc": "APEX-BILLING-POLICY"
+    "expected_citation_doc": "APEX-BILLING-POLICY",
+    "evidence_status": "unverified_legacy_fixture",
+    "evaluation_split": "regression"
   },
   {
     "id": "TC-008",
@@ -77,7 +91,9 @@
     "expected_category": "INTEGRATION_BUG",
     "expected_severity": "P2",
     "expected_routing": "AUTOMATED_DISPATCH",
-    "expected_citation_doc": "APEX-INTEGRATION-GUIDE"
+    "expected_citation_doc": "APEX-INTEGRATION-GUIDE",
+    "evidence_status": "unverified_legacy_fixture",
+    "evaluation_split": "regression"
   },
   {
     "id": "TC-009",
@@ -87,7 +103,9 @@
     "expected_category": "COMPLIANCE",
     "expected_severity": "P2",
     "expected_routing": "AUTOMATED_DISPATCH",
-    "expected_citation_doc": "APEX-COMPLIANCE-DOC"
+    "expected_citation_doc": "APEX-COMPLIANCE-DOC",
+    "evidence_status": "unverified_legacy_fixture",
+    "evaluation_split": "regression"
   },
   {
     "id": "TC-010",
@@ -97,7 +115,9 @@
     "expected_category": "GENERAL_INQUIRY",
     "expected_severity": "P3",
     "expected_routing": "HUMAN_REVIEW_REQUIRED",
-    "expected_citation_doc": null
+    "expected_citation_doc": null,
+    "evidence_status": "unverified_legacy_fixture",
+    "evaluation_split": "regression"
   },
   {
     "id": "TC-011",
@@ -107,7 +127,9 @@
     "expected_category": "OUTAGE",
     "expected_severity": "P0",
     "expected_routing": "ESCALATED_P0",
-    "expected_citation_doc": "APEX-SLA-2026"
+    "expected_citation_doc": "APEX-SLA-2026",
+    "evidence_status": "unverified_legacy_fixture",
+    "evaluation_split": "regression"
   },
   {
     "id": "TC-012",
@@ -117,7 +139,9 @@
     "expected_category": "BILLING",
     "expected_severity": "P2",
     "expected_routing": "AUTOMATED_DISPATCH",
-    "expected_citation_doc": "APEX-BILLING-POLICY"
+    "expected_citation_doc": "APEX-BILLING-POLICY",
+    "evidence_status": "unverified_legacy_fixture",
+    "evaluation_split": "regression"
   },
   {
     "id": "TC-013",
@@ -127,7 +151,9 @@
     "expected_category": "INTEGRATION_BUG",
     "expected_severity": "P2",
     "expected_routing": "AUTOMATED_DISPATCH",
-    "expected_citation_doc": "APEX-INTEGRATION-GUIDE"
+    "expected_citation_doc": "APEX-INTEGRATION-GUIDE",
+    "evidence_status": "unverified_legacy_fixture",
+    "evaluation_split": "regression"
   },
   {
     "id": "TC-014",
@@ -137,7 +163,9 @@
     "expected_category": "COMPLIANCE",
     "expected_severity": "P2",
     "expected_routing": "AUTOMATED_DISPATCH",
-    "expected_citation_doc": "APEX-COMPLIANCE-DOC"
+    "expected_citation_doc": "APEX-COMPLIANCE-DOC",
+    "evidence_status": "unverified_legacy_fixture",
+    "evaluation_split": "regression"
   },
   {
     "id": "TC-015",
@@ -147,7 +175,9 @@
     "expected_category": "GENERAL_INQUIRY",
     "expected_severity": "P3",
     "expected_routing": "AUTOMATED_DISPATCH",
-    "expected_citation_doc": null
+    "expected_citation_doc": null,
+    "evidence_status": "unverified_legacy_fixture",
+    "evaluation_split": "regression"
   },
   {
     "id": "TC-016",
@@ -157,7 +187,9 @@
     "expected_category": "OUTAGE",
     "expected_severity": "P0",
     "expected_routing": "ESCALATED_P0",
-    "expected_citation_doc": "APEX-SLA-2026"
+    "expected_citation_doc": "APEX-SLA-2026",
+    "evidence_status": "unverified_legacy_fixture",
+    "evaluation_split": "regression"
   },
   {
     "id": "TC-017",
@@ -167,7 +199,9 @@
     "expected_category": "BILLING",
     "expected_severity": "P2",
     "expected_routing": "AUTOMATED_DISPATCH",
-    "expected_citation_doc": "APEX-BILLING-POLICY"
+    "expected_citation_doc": "APEX-BILLING-POLICY",
+    "evidence_status": "unverified_legacy_fixture",
+    "evaluation_split": "regression"
   },
   {
     "id": "TC-018",
@@ -177,7 +211,9 @@
     "expected_category": "INTEGRATION_BUG",
     "expected_severity": "P2",
     "expected_routing": "AUTOMATED_DISPATCH",
-    "expected_citation_doc": "APEX-INTEGRATION-GUIDE"
+    "expected_citation_doc": "APEX-INTEGRATION-GUIDE",
+    "evidence_status": "unverified_legacy_fixture",
+    "evaluation_split": "regression"
   },
   {
     "id": "TC-019",
@@ -187,7 +223,9 @@
     "expected_category": "COMPLIANCE",
     "expected_severity": "P2",
     "expected_routing": "AUTOMATED_DISPATCH",
-    "expected_citation_doc": "APEX-COMPLIANCE-DOC"
+    "expected_citation_doc": "APEX-COMPLIANCE-DOC",
+    "evidence_status": "unverified_legacy_fixture",
+    "evaluation_split": "regression"
   },
   {
     "id": "TC-020",
@@ -197,7 +235,9 @@
     "expected_category": "GENERAL_INQUIRY",
     "expected_severity": "P3",
     "expected_routing": "AUTOMATED_DISPATCH",
-    "expected_citation_doc": null
+    "expected_citation_doc": null,
+    "evidence_status": "unverified_legacy_fixture",
+    "evaluation_split": "regression"
   },
   {
     "id": "TC-021",
@@ -207,7 +247,9 @@
     "expected_category": "OUTAGE",
     "expected_severity": "P0",
     "expected_routing": "ESCALATED_P0",
-    "expected_citation_doc": "APEX-SLA-2026"
+    "expected_citation_doc": "APEX-SLA-2026",
+    "evidence_status": "unverified_legacy_fixture",
+    "evaluation_split": "regression"
   },
   {
     "id": "TC-022",
@@ -217,7 +259,9 @@
     "expected_category": "BILLING",
     "expected_severity": "P2",
     "expected_routing": "AUTOMATED_DISPATCH",
-    "expected_citation_doc": "APEX-BILLING-POLICY"
+    "expected_citation_doc": "APEX-BILLING-POLICY",
+    "evidence_status": "unverified_legacy_fixture",
+    "evaluation_split": "regression"
   },
   {
     "id": "TC-023",
@@ -227,7 +271,9 @@
     "expected_category": "INTEGRATION_BUG",
     "expected_severity": "P2",
     "expected_routing": "AUTOMATED_DISPATCH",
-    "expected_citation_doc": "APEX-INTEGRATION-GUIDE"
+    "expected_citation_doc": "APEX-INTEGRATION-GUIDE",
+    "evidence_status": "unverified_legacy_fixture",
+    "evaluation_split": "regression"
   },
   {
     "id": "TC-024",
@@ -237,7 +283,9 @@
     "expected_category": "COMPLIANCE",
     "expected_severity": "P2",
     "expected_routing": "AUTOMATED_DISPATCH",
-    "expected_citation_doc": "APEX-COMPLIANCE-DOC"
+    "expected_citation_doc": "APEX-COMPLIANCE-DOC",
+    "evidence_status": "unverified_legacy_fixture",
+    "evaluation_split": "regression"
   },
   {
     "id": "TC-025",
@@ -247,6 +295,8 @@
     "expected_category": "GENERAL_INQUIRY",
     "expected_severity": "P3",
     "expected_routing": "AUTOMATED_DISPATCH",
-    "expected_citation_doc": null
+    "expected_citation_doc": null,
+    "evidence_status": "unverified_legacy_fixture",
+    "evaluation_split": "regression"
   }
 ]
