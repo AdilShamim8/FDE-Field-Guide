@@ -1,5 +1,7 @@
 # Trade-Offs and Technical Decision Records: Eliminating Decision Debt
 
+Scope, reviewed 2026-10-09: architectures, latency/cost ranges, deployment schedules, and example dialogue below are planning guidance or assumptions unless linked to a specific measured artifact. Historical 146-role labels retain their original window and are not remeasured on the current snapshot. The executable-scope section states which controls actually run.
+
 In enterprise forward deployed engineering, the greatest enemy of sustained delivery is not computational
 complexity—it is **Decision Debt**.
 
@@ -71,7 +73,7 @@ graph LR
 ---
 
 ### Trade-Off 1: In-Tenant Custom Build vs Managed Enterprise SaaS
-- **The Tension**: Building inside the customer's VPC guarantees data sovereignty and honors strict security fences,
+- **The Tension**: Building inside the customer's VPC can support a residency requirement when all storage, backups, telemetry, and egress paths are verified,
   but creates a custom codebase that the customer must maintain after handover. Buying SaaS accelerates delivery
   but introduces third-party data egress risk and procurement delays.
 - **The Tipping Point**:
@@ -87,7 +89,7 @@ graph LR
 ### Trade-Off 2: Hosted Frontier Model APIs vs Self-Hosted Enclaves (vLLM)
 - **The Tension**: Commercial hosted APIs (Anthropic Claude, OpenAI) deliver state-of-the-art reasoning, continuous
   upgrades, and zero GPU infrastructure management, but carry per-token variable costs and egress concerns. Self-hosting
-  open-weight models (vLLM / TensorRT-LLM on dedicated GPUs) guarantees air-gap isolation and fixed unit economics,
+  open-weight models (vLLM / TensorRT-LLM on dedicated GPUs) requires verified network isolation and measured infrastructure economics,
   but requires dedicated MLOps infrastructure, GPU capacity reservation, and patching.
 - **The Tipping Point**:
   - **Hosted API over PrivateLink**: When transaction volume is under 1,000,000 requests/month, reasoning complexity
@@ -124,18 +126,18 @@ graph LR
   - **Batch Ingestion**: When operators review data in morning shifts (e.g. 06:00 triage), when reconciliation
     requires cross-table integrity, or when upstream systems lack webhook interfaces.
 - **TDR Framing**: Explicitly document the business staleness tolerance (e.g., *"4-hour batch staleness is acceptable
-  for dispute triage; batch architecture reduces infrastructure cost by 75% and guarantees backfill replayability"*).
+  for dispute triage; measure batch cost against the streaming baseline and test backfill replayability"*).
 
 ---
 
 ### Trade-Off 5: Synchronous Inference vs Semantic Caching & Queue Backpressure
-- **The Tension**: Synchronous direct model calls guarantee instant answer generation, but expose client applications
+- **The Tension**: Synchronous model calls place inference latency on the request path, but expose client applications
   to downstream rate-limit spikes (HTTP 429), latency jitter, and token budget exhaustion. Semantic caching and
   asynchronous queue backpressure protect system availability and eliminate redundant spending, but introduce cache
   invalidation complexity.
 - **The Tipping Point**:
   - **Semantic Caching**: When query distributions exhibit high repetition (e.g., top 20% of customer questions
-    account for 70% of volume). A cosine similarity threshold $> 0.96$ delivers sub-15ms responses at zero token cost.
+    account for a measured share of volume). Choose similarity thresholds and cache expiry on a measured workload; latency, false cache hits, and cost remain unmeasured here.
   - **Asynchronous Queuing**: When batch ingestion spikes would otherwise exceed provider Token-Per-Minute (TPM) caps.
 - **TDR Framing**: Implemented directly in [`interviews/code/rate_limiter.py`](../interviews/code/rate_limiter.py)
   to protect shared tenant quotas.
@@ -211,38 +213,32 @@ graph TD
     class C1,C2,C3,C4 curr;
 ```
 
-1. **Risk Currency**: *"Option A keeps all data within your private VPC boundary over AWS PrivateLink, eliminating
-   any risk of unmonitored external network leakage."*
-2. **Cost Currency**: *"Option B utilizes sliding-window semantic caching, reducing monthly inference token costs
-   from $14,000 to $1,800 at your projected volume."*
+1. **Risk Currency**: *"Option A keeps all data within your private VPC boundary over AWS PrivateLink, subject to verification of telemetry, backup, and egress paths."*
+2. **Cost Currency**: *"Option B utilizes sliding-window semantic caching, requires a measured hit rate, quality-loss analysis, and total-cost comparison at your projected volume."*
 3. **Velocity Currency**: *"Deploying the Walking Skeleton on Day 3 allows your analysts to begin validating real
    records in Week 2, rather than waiting six weeks for custom infrastructure provisioning."*
-4. **Compliance Currency**: *"Implementing deterministic rule gating guarantees 100% audit traceability for federal
-   examiners, eliminating the $350k statutory fine risk."*
+4. **Compliance Currency**: *"Rule gating is one proposed control. We still need durable audit events, jurisdiction-specific policy review, and evidence from recovery tests before discussing compliance."*
 
 ---
 
-## 5. Direct Codebase Defense Implementations
+## Executable scope
 
-Every architectural trade-off analyzed in this guide maps directly to working code, evaluation suites, and
-decision artifacts within this repository:
+These blueprints are design recommendations. The repository supplies selected local exercises, not full implementations of every architecture. Reviewed 2026-10-09.
 
-| Architectural Trade-Off | Primary Codebase Defense File | Verification Command | Production Role |
-| :--- | :--- | :--- | :--- |
-| **Deterministic Decision Gating** | [`portfolio/reference-project/src/api/server.py`](../portfolio/reference-project/src/api/server.py) | `pytest portfolio/reference-project/tests/` | Implements TDR-2026-009; hard-diverts statutory complaints to operator queue |
-| **Golden Evaluation Gating** | [`portfolio/reference-project/evals/run_evals.py`](../portfolio/reference-project/evals/run_evals.py) | `python portfolio/reference-project/evals/run_evals.py` | 25 enterprise test cases gating model selection and proving SLA accuracy |
-| **Universal Idempotency** | [`interviews/code/webhook_receiver.py`](../interviews/code/webhook_receiver.py) | `pytest interviews/code/test_webhook_receiver.py` | Atomic transaction deduplication and SHA-256 conflict detection |
-| **Tenant Sliding-Window Throttling** | [`interviews/code/rate_limiter.py`](../interviews/code/rate_limiter.py) | `pytest interviews/code/test_rate_limiter.py` | Blast radius isolation preventing multi-tenant quota exhaustion |
-| **Defensive Parsing & Normalization** | [`interviews/code/parser.py`](../interviews/code/parser.py) | `pytest interviews/code/test_parser.py` | Unstructured log repair, dirty date normalization, data drop logs |
-| **Executable Contract Integration** | [`customer/02-requirements-to-spec.md`](../customer/02-requirements-to-spec.md) | Markdown specification integration | Codifies binding Given/When/Then acceptance criteria alongside TDRs |
+| Artifact | Exercised behavior | Boundary |
+|---|---|---|
+| [ETISE API](../portfolio/reference-project/src/api/server.py) | Payload-conflict detection, account/role replay context, TTL, single-process serialized replay, default document filtering | Caller roles are unauthenticated; queues and cache are process-local |
+| [Retrieval](../portfolio/reference-project/src/pipeline/ingestion.py) | Feature hashing, token overlap, exact document/section quote checks | No learned embeddings, BM25, RRF, or regulatory entailment |
+| [Regression runner](../portfolio/reference-project/evals/run_evals.py) | Routing, required documents, nonempty grounding, and failure reporting | 25 known legacy fixtures with unverified origins; no independent customer holdout |
+| [Chunker](../interviews/code/chunker.py) | Bounded regex-token windows and overlap | Regex units are not a model tokenizer or a PDF ingestion pipeline |
+| [Retry exercise](../interviews/code/resilient_client.py) | Real default delay, retry budgets, header-aware retry | An isolated exercise, not a durable event-processing system |
 
----
+Use the [reference README](../portfolio/reference-project/README.md) for setup and current test commands. Authentication, tenant isolation, durable transactions, restore drills, private cloud networking, and measured workload SLOs remain required production work. Customer-defined thresholds are not statutes. Regulation E deadlines require review of the [official conditional rules](https://www.consumerfinance.gov/rules-policy/regulations/1005/11/).
 
 ## 6. Primary Practitioner Literature & Citations
 
 1. **Michael Nygard**: *Documenting Architecture Decisions* (cognitect.com, 2011). The foundational formulation of the Architecture Decision Record (ADR) framework.
 2. **Martin Fowler**: *Architecture Decision Records & Technical Debt Traps* (martinfowler.com, 2020). Principles of sustainable evolution and architectural record-keeping.
-3. **Jeff Bezos**: *1997 Amazon Letter to Shareholders: Type 1 and Type 2 Decisions* (Amazon Inc., 1997). The decision reversibility matrix governing speed versus ceremony.
+3. **Jeff Bezos**: *2015 Amazon Letter to Shareholders: Type 1 and Type 2 Decisions* (Amazon Inc., 2015). The decision reversibility matrix governing speed versus ceremony.
 4. **Chip Huyen**: *Building LLM Applications for Production: Trade-offs in Inference, Caching, and Evaluation* (O'Reilly, 2024).
 5. **Google Site Reliability Engineering**: *Managing Incidents & Software Architecture Trade-offs*. [sre.google/sre-book](https://sre.google/sre-book/)
-6. **Palantir Technologies**: *Forward Deployed Engineering: Decision Governance in High-Stakes Environments* (2024).
