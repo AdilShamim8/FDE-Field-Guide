@@ -110,12 +110,12 @@ def validate_dataset(filepath: Path) -> bool:
             print(f"  - {err}", file=sys.stderr)
         return False
 
-    print(f"[+] Dataset successfully validated: {len(data)} questions verified.")
+    print(f"[+] Dataset successfully validated: {len(data)} practice records structurally valid; provenance is not authenticated.")
     print("\n--- Breakdown by Interview Stage ---")
     for s, c in sorted(stages_count.items()):
         print(f"  - {s}: {c} question(s)")
 
-    print("\n--- Breakdown by Verified Primary Source ---")
+    print("\n--- Breakdown by Declared Source ---")
     for a, c in sorted(sources_count.items()):
         print(f"  - {a}: {c} citation(s)")
 
