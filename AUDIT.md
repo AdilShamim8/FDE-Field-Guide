@@ -1,6 +1,6 @@
 # Repository evidence and engineering audit
 
-This audit is for contributors taking the guide from useful learning material to defensible engineering work. Reviewed on 2026-10-09 against repository commit `ff473e3` and the current reachable upstream sources. Recommendations below are engineering judgments, not claims about a real customer deployment.
+This audit is for contributors taking the guide from useful learning material to defensible engineering work. The initial findings refer to repository commit `ff473e3`; remediation and source checks were completed on 2026-10-09. Recommendations are engineering judgments, not claims about a real customer deployment.
 
 ## Scope and verification limits
 
@@ -8,17 +8,20 @@ The repository inventory contains 128 tracked project files across all fourteen 
 
 The current market source was fetched today at [AI Engineering Field Guide commit ed590319](https://github.com/alexeygrigorev/ai-engineering-field-guide/tree/ed590319553252e2b8275486597b144ac55a4f3c). Its raw CSVs extend through 2026-09-23, although its FDE article still describes February–July. Retrieval date is not collection date. No source accessed here establishes an October 9 job-board scrape or the entire worldwide FDE labor market.
 
-CFPB, Hugging Face, NIST, and several news and documentation sites returned proxy access denials during this audit. Their cited material is not newly verified. Existing timestamps, reachable URLs, author allowlists, and passing JSON assertions do not authenticate quotations, interviews, licenses, or customer outcomes.
+Initial proxy denials were resolved and the affected selected sources were rechecked. The [source ledger](research/source_checks_2026-10-09.json) preserves sixteen successful retrievals, response hashes, scoped observations, and one failed retrieval of a guessed Fortune URL. It covers CFPB, the Bitext publisher card, upstream extraction notes, NIST, current OWASP guidance, selected provider documentation, and practitioner/secondary reporting. Existing timestamps, reachable URLs, author allowlists, and passing JSON assertions do not authenticate every adjacent quotation, interview, license, or customer outcome.
 
-## Why the current guide does not establish an expert bar
+## Why the initial guide did not establish an expert bar
 
 The issue is the gap between assertions and evidence. More diagrams, named frameworks, or larger checklists cannot establish production experience. An expert deliverable states which controls run, tests their failure boundaries, preserves data lineage, quantifies uncertainty, and gives an operator a recovery procedure that works.
+
+The findings below describe the initial state. The remediation section identifies the changes actually implemented; unresolved production requirements remain separate.
 
 ### Data and claims
 
 - The market JSON contains aggregates, not 146 raw postings. The current upstream deduplicated CSV contains 8,051 job IDs; the original `FDE|forward deploy` title filter matches 212 IDs across 125 employer names. This is a dated, board-specific sample, not a census.
 - Per-scrape CSV rows contain repeated job IDs across locations. September has 127 matching rows but 91 unique matching IDs; August has 140 rows but 103 unique IDs. Raw rows and distinct vacancies must have separate labels. A decline between these two observations also contradicts an uninterrupted-growth narrative.
 - Matching hyphenated titles and word-bounded `FDE` changes the cumulative result to 220. Report this sensitivity; changing a title definition changes the measured market.
+- Monthly title matches contain 237 distinct IDs, versus 212 cumulative matches. Twenty-five IDs appear only in the monthly matching union. The source artifact preserves this membership/title discrepancy instead of forcing agreement.
 - The upstream extraction audit explicitly reports problems with management and company-stage labels and warns that a known evaluation seed is burned. Existing source-derived skill and responsibility aggregates are historical estimates, not newly verified measurements of the 212-role sample.
 - ETISE's 25-case file has no original record hashes, immutable source revisions, transformation artifacts, or annotator records. The claimed CFPB complaint IDs and Bitext intent mappings cannot be reproduced from `curate_eval_dataset.py`, which only counts fields. Keep these cases as legacy regression fixtures with unverified provenance; exclude them from real-world quality claims.
 - The Apex knowledge corpus is locally authored sample policy text. Substring matching against that corpus does not verify AWS, Stripe, Datadog, GDPR, factual answer support, or legal compliance.
@@ -50,6 +53,23 @@ The issue is the gap between assertions and evidence. More diagrams, named frame
 4. Replace unsupported production stories and numeric outcomes with clearly labeled design exercises or remove them. Keep statutory obligations separate from illustrative customer policies.
 5. Add an expert practicum with reproducible evidence, holdout discipline, adversarial boundaries, reliability and cost measurement, and a customer handover acceptance gate.
 6. Run these checks in CI. Keep failure counts, skipped checks, and external access limits visible.
+
+## Remediation verified on 2026-10-09
+
+- Published a source-pinned market snapshot, deterministic refresh tool, accounting validator, mutation tests, hashes, record references, sensitivity analysis, and the 212-versus-237 reconciliation. Full reproduction against the immutable upstream Git objects passed. The 146-role aggregates remain explicitly historical.
+- Retained five actual CFPB categorical metadata records received today, with acquisition parameters and a source-response hash. No narratives, invented ETISE labels, or asserted customer outcomes were added. The sample is not random or representative. Bitext's publisher describes hybrid synthetic generation and `cdla-sharing-1.0`; the old real-interaction and CC BY 4.0 claims were withdrawn.
+- Removed the classifier's artificial confidence floor and fictitious repair attempts. Missing applicable sample-policy evidence routes to review in strict mode. Live testing also exposed unrelated SLA quotations replacing an inaccessible compliance policy; an explicit local category/document map now prevents that dispatch. This is narrower than semantic entailment or legal verification.
+- Corrected account/role replay context, payload conflict detection, configured TTL, bounded cache size, default role filtering, request-field limits, and single-process concurrent replay. Caller roles remain unauthenticated and queues remain process-local. These changes do not establish production tenant isolation or durable exactly-once effects.
+- Repaired retry delay, chunk budgets and overlap, and Linux audit portability. Strengthened evaluation to gate routing, required documents, exact section quotations, nonempty grounding, and explicit failures. Interview checks now report declaration and structure validity rather than source authentication.
+- Replaced unsupported customer stories, production scorecards, interview conversion rates, and provenance assertions with observed cases or labeled practice material. Reviewed indices and portfolio pitches now link to actual artifacts. The official Regulation E section supports conditional investigation/provisional-credit rules, not a universal dollar trigger or ten-day final-resolution guarantee.
+- Added the [expert practicum](learning-paths/expert-fde-practicum.md) with baseline, lineage, holdout, authority, recovery, economics, platform, and handover gates. Rewrote architecture, scope, and runbook documents around actual local behavior and missing acceptance inputs.
+- Verified constrained Python 3.12 installation and dependency consistency, 75 passing tests, all 25 known regression contracts, declaration/accounting validators, and 977 local Markdown links with zero failures. The Starlette TestClient deprecation warning remains visible; there were no skipped tests. Docker packaging and real-cloud deployment were not run.
+- Restarted the corrected API and verified health/index, billing intake, applicable quotes, replay, 409 conflict, unknown-input review, denied-policy review, simulated compliance access, knowledge search, and metrics. Restart still clears in-memory state.
+- Added [CI](.github/workflows/verify.yml) with full-SHA actions, read-only repository permissions, and retained regression reports. [GitHub run 37928424895](https://github.com/AdilShamim8/FDE-Field-Guide/actions/runs/37928424895) passed on commit `f4ae8fc` before this audit update. Later pushes receive their own checks.
+
+TC-006, TC-015, TC-020, and TC-025 routing expectations were explicitly changed to review to match the corrected safety contracts. These are regression expectation changes, not newly adjudicated real-world labels. The source refresh's initial premature validation claim is documented in the [observed failure investigation](case-studies/03-failure-stories.md); subsequent full source reproduction passed.
+
+All repository changes were committed one file at a time and each push was verified before proceeding to the next file. Git authentication temporarily failed during the CI push; the existing GitHub CLI credential binding restored access without storing a new token.
 
 ## What remains outside a verified production claim
 
