@@ -149,3 +149,113 @@ def test_dense_vector_cosine_similarity():
 
     assert sim_related > sim_unrelated
     assert sim_related > 0.30
+
+
+def sample_ticket(**overrides):
+    payload = {
+        "ticket_id": "TKT-BOUNDARY", "account_id": "ACC-BOUNDARY",
+        "raw_text": "Requesting fee waiver and credit on invoice INV-9901 as per Section 5.4 billing policy.",
+        "idempotency_key": "boundary-key",
+    }
+    payload.update(overrides)
+    return payload
+
+
+def test_conflicting_idempotency_payload_rejected():
+    assert client.post("/api/v1/tickets/process", json=sample_ticket()).status_code == 200
+    conflict = client.post("/api/v1/tickets/process", json=sample_ticket(raw_text="A different billing request"))
+    assert conflict.status_code == 409
+    assert metrics_data["total_processed"] == 1
+    assert metrics_data["total_idempotent_replays"] == 0
+
+
+def test_idempotency_key_is_account_scoped():
+    first = client.post("/api/v1/tickets/process", json=sample_ticket())
+    second = client.post("/api/v1/tickets/process", json=sample_ticket(account_id="ACC-OTHER"))
+    assert first.status_code == second.status_code == 200
+    assert second.json()["account_id"] == "ACC-OTHER"
+    assert metrics_data["total_processed"] == 2
+
+
+def test_role_scope_prevents_privileged_cache_replay():
+    payload = sample_ticket(raw_text="Need GDPR data residency compliance safeguards under Section 11.3.")
+    privileged = client.post("/api/v1/tickets/process", json=payload, headers={"X-User-Roles": "compliance"})
+    unprivileged = client.post("/api/v1/tickets/process", json=payload)
+    assert privileged.status_code == unprivileged.status_code == 200
+    assert any(c["document_id"] == "APEX-COMPLIANCE-DOC" for c in privileged.json()["citations"])
+    assert not any(c["document_id"] == "APEX-COMPLIANCE-DOC" for c in unprivileged.json()["citations"])
+    assert metrics_data["total_processed"] == 2
+
+
+def test_expired_replay_is_processed_again(monkeypatch):
+    from src.api import server
+    monkeypatch.setattr(server.settings, "idempotency_ttl_seconds", 1)
+    before = server.time.monotonic()
+    assert client.post("/api/v1/tickets/process", json=sample_ticket()).status_code == 200
+    record = next(iter(idempotency_store.values()))
+    assert before + 1 <= record.expires_at <= server.time.monotonic() + 1
+    record.expires_at = -1
+    assert client.post("/api/v1/tickets/process", json=sample_ticket()).status_code == 200
+    assert metrics_data["total_processed"] == 2
+    assert metrics_data["total_idempotent_replays"] == 0
+
+
+def test_concurrent_retries_process_once(monkeypatch):
+    import time
+    from concurrent.futures import ThreadPoolExecutor
+    from threading import Barrier
+    from src.api import server
+    original = server.agent.process_ticket
+    barrier = Barrier(8)
+    calls = []
+
+    def slow_process(*args, **kwargs):
+        calls.append(1)
+        time.sleep(0.02)
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(server.agent, "process_ticket", slow_process)
+
+    def send(_):
+        barrier.wait(timeout=5)
+        with TestClient(app) as local_client:
+            return local_client.post("/api/v1/tickets/process", json=sample_ticket())
+
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        responses = list(pool.map(send, range(8)))
+    assert all(r.status_code == 200 for r in responses)
+    assert all(r.json() == responses[0].json() for r in responses)
+    assert len(calls) == metrics_data["total_processed"] == 1
+    assert metrics_data["total_idempotent_replays"] == 7
+
+
+def test_replay_cache_capacity_is_bounded(monkeypatch):
+    from src.api import server
+    monkeypatch.setattr(server, "MAX_IDEMPOTENCY_ENTRIES", 1)
+    assert client.post("/api/v1/tickets/process", json=sample_ticket()).status_code == 200
+    assert client.post("/api/v1/tickets/process", json=sample_ticket(idempotency_key="next")).status_code == 503
+    assert client.post("/api/v1/tickets/process", json=sample_ticket()).status_code == 200
+    assert len(idempotency_store) == 1
+
+
+@pytest.mark.parametrize("overrides", [
+    {"account_id": " "}, {"ticket_id": ""}, {"idempotency_key": " "}, {"raw_text": "x" * 20001},
+])
+def test_invalid_ticket_boundaries(overrides):
+    assert client.post("/api/v1/tickets/process", json=sample_ticket(**overrides)).status_code == 422
+
+
+def test_missing_and_empty_role_headers_do_not_bypass_filtering():
+    query = "/api/v1/knowledge/search?q=GDPR%20data%20residency%20Section%2011.3"
+    default = client.get(query)
+    empty = client.get(query, headers={"X-User-Roles": ""})
+    assert not any(r["document_id"] == "APEX-COMPLIANCE-DOC" for r in default.json()["results"])
+    assert empty.json()["results"] == []
+    assert client.get(query, headers={"X-User-Roles": "invented-role"}).status_code == 400
+
+
+def test_operator_action_is_schema_validated():
+    response = client.post("/api/v1/queue/resolve", json={
+        "ticket_id": "TKT-UNKNOWN", "operator_id": "OP-TEST", "action": "DELETE",
+    })
+    assert response.status_code == 422
