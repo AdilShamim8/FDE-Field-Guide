@@ -58,3 +58,28 @@ def test_unretryable_exception_fails_immediately():
     with pytest.raises(ValueError):
         client.execute(lambda: (_ for _ in ()).throw(ValueError("400 Bad Request: Invalid schema")))
     assert len(client.sleep_history) == 0
+
+
+def test_default_sleep_receives_backoff_delay(monkeypatch):
+    delays = []
+    monkeypatch.setattr("resilient_client.time.sleep", delays.append)
+    caller = ResilientCaller(max_retries=1, random_func=lambda low, high: high)
+    calls = 0
+
+    def operation():
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            raise ServerError("temporary")
+        return "recovered"
+
+    assert caller.execute(operation) == ("recovered", 2)
+    assert delays == [0.5]
+
+
+@pytest.mark.parametrize("kwargs", [
+    {"base_delay_sec": -1}, {"max_delay_sec": -1}, {"max_retries": -1},
+])
+def test_invalid_retry_budget_rejected(kwargs):
+    with pytest.raises(ValueError):
+        ResilientCaller(**kwargs)
