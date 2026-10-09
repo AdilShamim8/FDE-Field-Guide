@@ -1,5 +1,7 @@
 # Customer Scenario Rounds and Adversarial Role-Plays
 
+Evidence status, reviewed 2026-10-09: dialogue, examples, incident quantities, and stories below are authored practice scenarios. They are not authenticated interviews or observed customer events. Use your own events and measured outcomes in interviews; proposed rubrics are not company hiring policies.
+
 This guide prepares candidates for the round that most decisively differentiates senior Forward Deployed Engineers: the **interactive customer scenario and role-play simulation**. In this 45-to-60 minute round, the interviewer assumes the persona of an enterprise stakeholder—a skeptical VP of Engineering, a furious Head of Customer Operations, an unyielding CISO, or an overwhelmed Product Director—and evaluates how you navigate ambiguity, technical pushback, and critical production escalations in real time.
 
 ---
@@ -68,7 +70,7 @@ Interviewers evaluate candidates across six core dimensions:
 
 ## Five Verified Real-World Scenarios
 
-The following scenarios are drawn from documented interview loops and field engagements across Palantir, Google, and enterprise AI deployments. Each scenario includes the enterprise context, hidden evaluation traps, a 3-tier grading rubric, and verbatim dialogue scripts.
+The following scenarios are drawn from documented interview loops and field engagements across Palantir, Google, and enterprise AI deployments. Each scenario includes the enterprise context, hidden evaluation traps, a 3-tier grading rubric, and authored dialogue scripts.
 
 ---
 
@@ -91,7 +93,7 @@ You are three weeks into a new client engagement. The VP of Engineering calls an
 - **Hire**: Acknowledges that nine weeks is tight for company-wide deployment; suggests narrowing scope to one or two workflows; asks reasonable questions about available data.
 - **No Hire**: Either commits to deploying across all operations in nine weeks without scoping, or dismisses the CEO's request as impossible and demands six months of infrastructure setup before starting.
 
-#### Verbatim Dialogue Transcript
+#### Practice Dialogue Transcript
 
 **Interviewer (VP of Engineering)**:
 > *"Our CEO was in San Francisco last week, saw an enterprise keynote demo, and pinged our executive staff at midnight. He wants AI deployed across all our internal operations by the end of Q3. We have nine weeks. What is your rollout timeline?"*
@@ -134,7 +136,7 @@ The candidate's AI pipeline completed a successful pilot, and the business spons
 - **Hire**: Listens to the ops concerns without arguing; agrees to add logging and alerting; asks for feedback on the runbook.
 - **No Hire**: Cites model vendor SLAs (99.9%); attempts to leverage the business VP's authority to force hand-off; dismisses ops objections as resistance to change.
 
-#### Verbatim Dialogue Transcript
+#### Practice Dialogue Transcript
 
 **Interviewer (Ops Team Lead)**:
 > *"I do not care that the VP liked your demo. My on-call team will not take pager duty for this service. When your model or your upstream API hiccups, it does not throw clean errors; it just hangs or returns empty JSON, and we only find out when angry customer service agents start pinging us on Slack. We are not supporting this."*
@@ -180,7 +182,7 @@ An enterprise client is six weeks away from an annual SOC 2 and customer complia
 - **Hire**: States that security review cannot be skipped; offers to meet with security to ask for expedited review; proposes deploying to a staging environment for the audit.
 - **No Hire**: Agrees to deploy to production without security sign-off; suggests hiding the deployment or promising to get retroactive approval after the audit.
 
-#### Verbatim Dialogue Transcript
+#### Practice Dialogue Transcript
 
 **Interviewer (Business Sponsor)**:
 > *"The annual SOC 2 and customer trust audit begins in six weeks. If this automated document verification pipeline is not running in production by then, we lose our efficiency rating and our executive bonus pool takes a hit. The CISO says security review takes four to six weeks alone. Can we just push to production on our private subnets and get security sign-off retroactively?"*
@@ -222,7 +224,7 @@ You are 80% through an enterprise integration. The text classification pipeline 
 - **Hire**: Explains that adding audio before Tuesday is risky; suggests sticking to text for the demo and scheduling audio for the next sprint.
 - **No Hire**: Agrees to integrate audio over the weekend; or angrily accuses the client of scope creep and threatens to stop work.
 
-#### Verbatim Dialogue Transcript
+#### Practice Dialogue Transcript
 
 **Interviewer (Product Director)**:
 > *"The ticket categorization demo looks incredible. Since you already have the pipeline running, can we also plug in the audio recordings from our Twilio call center before next Tuesday's steering committee? It is just passing the audio through Whisper, right? Should only take an afternoon."*
@@ -265,7 +267,7 @@ At 8:30 AM, an enterprise document assistant generated an erroneous response to 
 - **Hire**: Apologizes for the error; offers to look at the prompt and add guardrails; provides an update within the day.
 - **No Hire**: Argues that LLMs cannot be 100% accurate; blames the user for asking ambiguous questions; modifies production prompts live in the web console without regression testing.
 
-#### Verbatim Dialogue Transcript
+#### Practice Dialogue Transcript
 
 **Interviewer (VP of Customer Success)**:
 > *"We have a catastrophic incident. Your system quoted a 20% loyalty discount to our largest enterprise client that does not exist in any policy document. The client thinks we are incompetent and our CEO is on the phone. What did you break, and why did the prompt let this happen?"*
@@ -279,7 +281,7 @@ At 8:30 AM, an enterprise document assistant generated an erroneous response to 
 > *"I hear the urgency, and we are treating this as an active P0 incident. Let us stabilize the customer impact immediately before we touch the pipeline.
 >
 > Here is our containment sequence:
-> 1. Immediate containment: I am immediately enabling our strict fallback mode for this client's workspace. Every generated response will require two independent verbatim document citations or refuse and route to a human specialist.
+> 1. Immediate containment: I am immediately enabling our strict fallback mode for this client's workspace. Every generated response will require two independent authored document citations or refuse and route to a human specialist.
 > 2. Zero panic prompt hacks: We will not modify production prompts right now. Prompt changes made under panic introduce regressions across other document categories.
 > 3. Trace root-cause analysis: I have pulled the exact request ID and trace from our logs. We need to determine if this was a retrieval failure—the search engine retrieved an outdated marketing memo—or a generator grounding failure, where the model hallucinated despite clean context.
 > 4. Automated regression suite: Once diagnosed, we will write a permanent regression test case for this query and add it to our automated golden evaluation harness.
