@@ -138,61 +138,15 @@ A sample of 250 real, de-identified dispute records from Q3, paired with a froze
 
 ---
 
-## 4. Production Worked Example: The ETISE 4-Week Decision Memo
+## 4. Reviewed ETISE decision memo
 
-The following is the complete, executive-ready decision memo delivered at the conclusion of Week 4 for the
-reference project in this repository:
+Reviewed 2026-10-09. The former memo's named customer, 250 private records, VPC deployment, compliance fines, review-time savings, and signed acceptance were unsupported and are withdrawn as observations.
 
-```markdown
-# EXECUTIVE DECISION MEMO: ETISE Dispute Intelligence Engine (4-Week PoC)
+Decision: retain ETISE as a local development reference. Do not promote it as a production dispute-resolution service. The [regression runner](../portfolio/reference-project/evals/run_evals.py) verifies 25 known contracts against authored sample policies, not customer accuracy or legal compliance.
 
-- **Date**: 2026-09-18
-- **To**: David Vance, Executive VP of Consumer Operations
-- **From**: Forward Deployed Engineering Lead
-- **Target Initiative**: Enterprise Ticket Intelligence & SLA Escalation Engine (ETISE)
-- **Status**: ALL ACCEPTANCE THRESHOLDS PASSED — RECOMMEND PRODUCTION PILOT
+Observed scope: input validation, replay conflicts and expiry, serialized local replay, policy-access filtering, applicable exact quotations, and human review. The current real-data artifact contains five CFPB categorical metadata records, with no narratives or ETISE outcome labels. Bitext is excluded from real-only evidence.
 
----
-
-## 1. What We Tested
-We executed a 4-week in-enclave proof of concept to determine whether automated structured extraction
-and deterministic rule gating can accurately route consumer financial disputes under Regulation E statutory
-deadlines, eliminating the $350k quarterly compliance fine risk.
-Testing was conducted inside your private AWS VPC on 250 de-identified historical dispute records, judged against
-a 25-case Golden Evaluation harness co-authored with your compliance team.
-
-## 2. Empirical Findings & Scorecard
-
-| Evaluation Metric | Pre-Agreed Target SLA | Measured PoC Result | Verification Status |
-| :--- | :--- | :--- | :--- |
-| **Category Classification** | $\ge 88.0\%$ | **100.0% (25/25)** | **PASSED** |
-| **Severity Classification** | $\ge 90.0\%$ | **100.0% (25/25)** | **PASSED** |
-| **Decision Gating Accuracy** | $100.0\%$ | **100.0% (25/25)** | **PASSED** |
-| **Citation Grounding Rate** | $100.0\%$ | **100.0% (41/41 citations)** | **PASSED** |
-| **Inference Latency (p50)** | $\le 500\text{ ms}$ | **0.17 ms** | **PASSED** |
-| **Inference Latency (p95)** | $\le 800\text{ ms}$ | **0.26 ms** | **PASSED** |
-
-*Verification Command: `python portfolio/reference-project/evals/run_evals.py`*
-
-## 3. Operational Impact Measured
-- **Operator Review Time**: Cut from **8.5 minutes** to **1.2 minutes** per high-risk dispute ticket.
-- **Regulatory Protection**: 100% of disputes exceeding $1,000 or alleging statutory identity theft were
-  deterministically diverted to the urgent review queue with pre-compiled regulatory citations.
-
-## 4. Residual Risks & Known Constraints
-- **Mainframe Timestamp Skew**: Historical data profiling revealed that 2.4% of DB2 export records contain
-  ambiguous timezone formats. We implemented defensive regex normalization ([`interviews/code/parser.py`](../interviews/code/parser.py)),
-  but permanent upstream database synchronization is scheduled for Phase 6.
-- **KMS Key Rotation**: Requires InfoSec to finalize quarterly automated KMS key rotation before Phase 6 cutover.
-
-## 5. Recommended Next Phase
-We recommend proceeding to **Phase 5: Production Staging & 5% Canary Traffic Deployment** starting October 6.
-- **Estimated Duration**: 4 weeks.
-- **Required Resources**: 10% allocation from Lead Analyst Sarah Jenkins for weekly reverse-shadowing.
-- **Decision Required Today**: Formal sign-off to provision Phase 5 staging ECS cluster.
-```
-
----
+Missing acceptance inputs: authenticated identity, durable and tenant-isolated state, approved policy sources, an independently annotated holdout, workload-based cost/latency measurements, retention controls, and a tested recovery plan. Customer approval and rollout dates remain open decisions. A passing local gate cannot supply these artifacts.
 
 ## 5. The 5 Fatal PoC Killers & Forensic Antidotes
 
