@@ -3,7 +3,12 @@
     "id": "FDE-DISC-001",
     "stage": "Discovery & Decomposition",
     "question": "A customer signed a contract because their CEO said 'we need AI.' They cannot articulate a concrete use case. Walk me through your first two weeks on-site.",
-    "tested_at": ["OpenAI", "Anthropic", "Palantir", "Enterprise AI Startups"],
+    "tested_at": [
+      "OpenAI",
+      "Anthropic",
+      "Palantir",
+      "Enterprise AI Startups"
+    ],
     "core_signal": "Ambiguity tolerance, operator-level discovery over executive hype, identifying pain points in existing workflows, fast vertical slice scoping",
     "senior_response_playbook": "Week one is discovery, not building. I request three things: access to operators who execute workflows daily, a tour of their existing systems of record, and actual business artifacts (contracts, tickets, reports). I hunt for workflows that are high-volume, language-heavy, expensive, and tolerant of human review. I interview 5-8 frontline operators asking 'what did you do yesterday hour by hour?' rather than 'what could AI do for you?' Data access is the critical path, so I file security and data boundary requests on day one. In week two, I build a thin vertical slice on real customer data (not a slide deck) by day 10 to anchor executive discussions on concrete software.",
     "red_flag_response": "Organizes multiple brainstorming workshops with VP stakeholders to come up with futuristic AI ideas, or immediately begins writing custom prompt chains and fine-tuning pipelines without talking to daily operators.",
@@ -17,13 +22,20 @@
       "title": "Forward Deployed Engineer (FDE) × AI - Interview Guide",
       "url": "https://github.com/ombharatiya/AI-Engineer-Interview-Questions/blob/main/15-role-guides/forward-deployed-engineer.md",
       "verified_date": "2026-09-19"
-    }
+    },
+    "evidence_status": "curated_practice_company_attribution_unverified",
+    "audited_on": "2026-10-09",
+    "attribution_scope": "tested_at and verified_date are historical unverified declarations; responses and rubrics are authored practice material"
   },
   {
     "id": "FDE-DISC-002",
     "stage": "Discovery & Decomposition",
     "question": "An enterprise COO says: 'Our emergency room wait times are too long. Can AI fix this?' How do you decompose this problem?",
-    "tested_at": ["Palantir", "OpenAI Healthcare", "Google Cloud FDE"],
+    "tested_at": [
+      "Palantir",
+      "OpenAI Healthcare",
+      "Google Cloud FDE"
+    ],
     "core_signal": "Problem decomposition into functional pipelines, constraint identification (HIPAA, EHR integration, clinician sign-off), knowing when NOT to use AI, thin wedge selection",
     "senior_response_playbook": "I decompose 'wait time' into its discrete sequential pipeline: arrival -> triage -> bed assignment -> physician evaluation -> diagnostics -> disposition. First, I ask where their historical data indicates bottlenecks actually accumulate. If they lack instrumentation, step one is telemetry, not AI. Second, I filter stages by AI suitability: high-volume language tasks like triage-note summarization and discharge paperwork drafting are prime candidates; automated clinical diagnosis is ruled out immediately due to regulatory safety and clinician-in-the-loop requirements. Third, I verify constraints (EHR integration via HL7/FHIR, HIPAA BAA with model providers). I propose a high-leverage wedge (e.g. discharge summary drafting to accelerate bed turnover) that delivers measurable ROI without autonomous medical liability.",
     "red_flag_response": "Jumps straight into training a predictive triage neural network or suggests an autonomous diagnostic LLM agent without addressing clinical liability, HIPAA, or EHR integration.",
@@ -37,13 +49,21 @@
       "title": "Forward Deployed Engineer (FDE) × AI - Interview Guide",
       "url": "https://github.com/ombharatiya/AI-Engineer-Interview-Questions/blob/main/15-role-guides/forward-deployed-engineer.md",
       "verified_date": "2026-09-19"
-    }
+    },
+    "evidence_status": "curated_practice_company_attribution_unverified",
+    "audited_on": "2026-10-09",
+    "attribution_scope": "tested_at and verified_date are historical unverified declarations; responses and rubrics are authored practice material"
   },
   {
     "id": "FDE-DISC-003",
     "stage": "Discovery & Decomposition",
     "question": "How do you manage an FDE engagement operating under 'ambiguity by default' where requirements shift weekly?",
-    "tested_at": ["OpenAI", "Anthropic", "Google DeepMind", "Frontier AI Labs"],
+    "tested_at": [
+      "OpenAI",
+      "Anthropic",
+      "Google DeepMind",
+      "Frontier AI Labs"
+    ],
     "core_signal": "High ambiguity tolerance, establishing contract baselines, running iterative sprint demos, defining quantitative acceptance criteria early",
     "senior_response_playbook": "In frontier FDE roles, ambiguity is the default operational environment because LLM capabilities are versatile. My operating rhythm establishes structure: (1) Lock a two-week milestone cadence where every sprint concludes with clickable software in the customer's staging environment, not slide decks. (2) Define an Architecture Decision Record (ADR) and a Statement of Work (SOW) delta log that documents requirement changes and their impact on delivery timelines. (3) Anchor every shifting requirement to a customer business metric (e.g., ticket resolution time, invoice processing cost) so scope changes are evaluated by business return.",
     "red_flag_response": "Complains about lack of product management clarity, demands rigid waterfall specifications before coding, or passively absorbs scope creep until deadlines fail.",
@@ -57,13 +77,21 @@
       "title": "The Definitive Guide to Forward Deployed Engineer Interviews in 2026",
       "url": "https://www.sundeepteki.org/advice/the-definitive-guide-to-forward-deployed-engineer-interviews-in-2026",
       "verified_date": "2026-09-19"
-    }
+    },
+    "evidence_status": "curated_practice_company_attribution_unverified",
+    "audited_on": "2026-10-09",
+    "attribution_scope": "tested_at and verified_date are historical unverified declarations; responses and rubrics are authored practice material"
   },
   {
     "id": "FDE-TECH-001",
     "stage": "Coding & Practical Integration",
     "question": "Build an idempotent API endpoint that integrates an LLM to extract structured entities from unstructured customer documents, with streaming responses and graceful error recovery.",
-    "tested_at": ["Google FDE (Vibe Coding)", "Anthropic Applied AI", "Databricks", "Scale AI"],
+    "tested_at": [
+      "Google FDE (Vibe Coding)",
+      "Anthropic Applied AI",
+      "Databricks",
+      "Scale AI"
+    ],
     "core_signal": "Practical API integration, Pydantic schema validation, idempotency key design, token budget management, streaming SSE protocol, structured output error feedback loops",
     "senior_response_playbook": "I construct an endpoint (FastAPI) accepting an Idempotency-Key header stored in Redis/PostgreSQL with item state tracking. I stream tokens via Server-Sent Events (SSE) while accumulating the payload. For structured entity extraction, I enforce JSON schemas using instructor/Pydantic. If validation fails on model output, I catch the ValidationError and route the error message back to the LLM in a one-turn correction retry before raising a downstream 422. I implement strict timeout budgets (e.g., 5000ms socket timeouts) and backpressure defense.",
     "red_flag_response": "Relies on regex to parse unstructured LLM strings without schema guarantees, fails to handle duplicate webhook/API calls, or blocks the synchronous web event loop during model generation.",
@@ -77,13 +105,20 @@
       "title": "Forward Deployed Engineer Interview Questions (and How to Answer Them)",
       "url": "https://fde.hinehal.com/blogs/fde-interview-questions",
       "verified_date": "2026-09-19"
-    }
+    },
+    "evidence_status": "curated_practice_company_attribution_unverified",
+    "audited_on": "2026-10-09",
+    "attribution_scope": "tested_at and verified_date are historical unverified declarations; responses and rubrics are authored practice material"
   },
   {
     "id": "FDE-TECH-002",
     "stage": "Coding & Practical Integration",
     "question": "In a Google FDE 'Vibe Coding' / live build round, you are given 60 minutes, an API key, and dirty enterprise CSV/JSON exports. How do you structure your time and code?",
-    "tested_at": ["Google FDE", "Palantir", "Applied AI Startups"],
+    "tested_at": [
+      "Google FDE",
+      "Palantir",
+      "Applied AI Startups"
+    ],
     "core_signal": "Rapid prototyping under pressure, scoping down to the critical path, defensive data cleaning, testable seams over boilerplate architecture",
     "senior_response_playbook": "Minutes 0-10: Inspect the schema and print raw anomalies (nulls, mixed types, encoding errors). Agree on the single primary success scenario with the interviewer. Minutes 10-35: Build the data ingestion and transformation pipeline with robust fallbacks, followed by the core LLM/algorithmic logic. Minutes 35-50: Harden the happy path with 3-4 concrete assertions and verify against dirty edge cases. Minutes 50-60: Polish the runner CLI or small UI, narrate remaining technical debt, and articulate how this would be hardened for production (auth, observability, rate limits).",
     "red_flag_response": "Spends 40 minutes setting up complex directory hierarchies, ORMs, and abstract class abstractions without getting data flowing through an LLM call.",
@@ -97,13 +132,20 @@
       "title": "Google Forward Deployed Engineering Interview Prep Guide",
       "url": "https://github.com/YagyanshB/google-fde-interview-guide",
       "verified_date": "2026-09-19"
-    }
+    },
+    "evidence_status": "curated_practice_company_attribution_unverified",
+    "audited_on": "2026-10-09",
+    "attribution_scope": "tested_at and verified_date are historical unverified declarations; responses and rubrics are authored practice material"
   },
   {
     "id": "FDE-TECH-003",
     "stage": "Coding & Practical Integration",
     "question": "You have 48 hours before an executive demo to a Fortune 500 leadership team using their proprietary data. What do you build and what do you deliberately cut?",
-    "tested_at": ["Palantir", "Anthropic", "OpenAI"],
+    "tested_at": [
+      "Palantir",
+      "Anthropic",
+      "OpenAI"
+    ],
     "core_signal": "Executive demonstration prioritization, scope ruthlessness, grounding & citation verification, proactive failure scripting",
     "senior_response_playbook": "Hour 1: Lock scope with the meeting owner to one workflow, five minutes of presentation, and one clear business wow-moment (e.g. answering a query across disparate ERP tables that previously took analysts days). Build priorities: (1) Ingest a curated subset of 50 high-quality documents/records rather than 50,000 dirty ones. (2) Harden the scripted happy path, testing the 5 demo queries 20 times. (3) Grounding and citations: ensure every output has clickable source verification. (4) Intentional, clean UI. Deliberate cuts: auth/SSO (single mock session), full automated eval suites (hand-verify the demo set), edge-case validation, scale, and autonomous write-actions (read-only only). Rehearse twice on venue network; prepare a calm recovery script if the model makes an error.",
     "red_flag_response": "Attempts to ingest the full uncurated multi-gigabyte corpus overnight, implements autonomous write tools without guardrails, or fails to prepare a backup path for model latency/outage.",
@@ -117,13 +159,21 @@
       "title": "Forward Deployed Engineer (FDE) × AI - Interview Guide",
       "url": "https://github.com/ombharatiya/AI-Engineer-Interview-Questions/blob/main/15-role-guides/forward-deployed-engineer.md",
       "verified_date": "2026-09-19"
-    }
+    },
+    "evidence_status": "curated_practice_company_attribution_unverified",
+    "audited_on": "2026-10-09",
+    "attribution_scope": "tested_at and verified_date are historical unverified declarations; responses and rubrics are authored practice material"
   },
   {
     "id": "FDE-SYS-001",
     "stage": "System Design & Architecture",
     "question": "Design an enterprise document Q&A assistant for a regulated financial services institution with strict data residency, auditability, and air-gapped VPC requirements.",
-    "tested_at": ["Palantir", "Databricks", "Anthropic Applied AI", "Deloitte GPS"],
+    "tested_at": [
+      "Palantir",
+      "Databricks",
+      "Anthropic Applied AI",
+      "Deloitte GPS"
+    ],
     "core_signal": "Enterprise compliance boundaries, VPC private endpoints (PrivateLink), KMS encryption, tenant-isolated vector search, zero-data-egress policy",
     "senior_response_playbook": "I establish data perimeters across 3 tiers: (1) Data residency & inference: If cloud LLMs are approved, route traffic via AWS PrivateLink / Azure Private Link to dedicated customer-tenant endpoints with zero-data-retention agreements; if air-gapped, deploy quantized open-weight models (e.g. Llama-3-70B/Qwen-2.5) on customer-managed GPU clusters (vLLM) inside their VPC. (2) Vector storage: Single-tenant vector database (e.g. pgvector or Qdrant) inside VPC with customer-managed KMS encryption at rest and TLS 1.3 in transit. (3) Auditability & RBAC: Every query logs user identity, retrieved chunk hashes, model version, and citation coordinates into an append-only audit trail with PII masked before storage.",
     "red_flag_response": "Recommends sending raw documents to public SaaS LLM endpoints over standard HTTPS without mentioning BAA, PrivateLink, or enterprise data-retention clauses.",
@@ -137,13 +187,20 @@
       "title": "Top 25 Forward Deployed Engineer (FDE) Interview Questions and Answers",
       "url": "https://skphd.medium.com/top-25-forward-deployed-engineer-fde-interview-questions-and-answers-ad9ac4a6ad7f",
       "verified_date": "2026-09-19"
-    }
+    },
+    "evidence_status": "curated_practice_company_attribution_unverified",
+    "audited_on": "2026-10-09",
+    "attribution_scope": "tested_at and verified_date are historical unverified declarations; responses and rubrics are authored practice material"
   },
   {
     "id": "FDE-SYS-002",
     "stage": "System Design & Architecture",
     "question": "We are rolling an FDE AI system out from 1 pilot to 50 enterprise customers. What breaks first and how do you instrument monitoring?",
-    "tested_at": ["Nehal Vyas FDE Hub", "Startup.jobs", "Databricks"],
+    "tested_at": [
+      "Nehal Vyas FDE Hub",
+      "Startup.jobs",
+      "Databricks"
+    ],
     "core_signal": "Multi-tenant scaling bottlenecks, upstream rate limits, silent schema drift, cost blowout prevention, operational telemetry",
     "senior_response_playbook": "The top 4 failure points at 50-customer scale: (1) Upstream model provider TPM/RPM rate limits: requires tier-based queuing, local caching for semantic deduplication, and multi-provider fallback routing. (2) Cost explosion: requires per-tenant token and dollar metering with hard monthly circuit breakers. (3) Customer data schema drift: customer exports change column names or encoding silently, breaking ingestion. (4) Retrieval quality decay: chunk relevance degrades as document volume scales 50x. Telemetry: Instrument OpenTelemetry spans capturing latency percentiles (p50, p95, p99), token consumption, retrieval recall@k, and error rates per tenant.",
     "red_flag_response": "Claims that Kubernetes horizontal pod autoscaling alone solves scale, ignoring third-party model rate limits, API quotas, and vector index performance.",
@@ -157,13 +214,21 @@
       "title": "Forward Deployed Engineer Interview Questions (and How to Answer Them)",
       "url": "https://fde.hinehal.com/blogs/fde-interview-questions",
       "verified_date": "2026-09-19"
-    }
+    },
+    "evidence_status": "curated_practice_company_attribution_unverified",
+    "audited_on": "2026-10-09",
+    "attribution_scope": "tested_at and verified_date are historical unverified declarations; responses and rubrics are authored practice material"
   },
   {
     "id": "FDE-LLM-001",
     "stage": "LLM & Applied AI Engineering",
     "question": "When would you fine-tune vs. use RAG vs. use prompt engineering?",
-    "tested_at": ["Google FDE", "Nehal Vyas", "Om Bharatiya", "Anthropic"],
+    "tested_at": [
+      "Google FDE",
+      "Nehal Vyas",
+      "Om Bharatiya",
+      "Anthropic"
+    ],
     "core_signal": "Pragmatic decision hierarchy, simplest-viable-architecture discipline, awareness of fine-tuning operational maintenance cost",
     "senior_response_playbook": "My default hierarchy is: Prompt Engineering -> RAG -> Fine-tuning. (1) Prompt engineering with in-context few-shot examples is the first lever: fast, zero training infrastructure, solves 70% of reasoning/format issues. (2) RAG is required when the model needs dynamic, proprietary, or frequently updating enterprise knowledge that cannot fit in context or changes daily. (3) Fine-tuning is reserved strictly for style, specialized vocabulary, highly rigid syntax, or distilling a large model into a smaller, cheaper 8B model to cut inference latency. I actively advise enterprise customers AGAINST fine-tuning for factual knowledge, because knowledge updates require continuous retraining and risk hallucinations.",
     "red_flag_response": "Recommends fine-tuning as the primary step to teach the model new enterprise documents and domain facts.",
@@ -177,13 +242,20 @@
       "title": "Forward Deployed Engineer Interview Questions (and How to Answer Them)",
       "url": "https://fde.hinehal.com/blogs/fde-interview-questions",
       "verified_date": "2026-09-19"
-    }
+    },
+    "evidence_status": "curated_practice_company_attribution_unverified",
+    "audited_on": "2026-10-09",
+    "attribution_scope": "tested_at and verified_date are historical unverified declarations; responses and rubrics are authored practice material"
   },
   {
     "id": "FDE-LLM-002",
     "stage": "LLM & Applied AI Engineering",
     "question": "How do you design AI agent tools with least-privilege permissions and robust human-in-the-loop safeguards?",
-    "tested_at": ["Palantir", "Anthropic", "Dr. Sanjay Kumar PhD"],
+    "tested_at": [
+      "Palantir",
+      "Anthropic",
+      "Dr. Sanjay Kumar PhD"
+    ],
     "core_signal": "Agent security, tool risk classification (read vs write vs destructive), human approval gateways, idempotent execution tokens",
     "senior_response_playbook": "I categorize all agent tools into 3 distinct risk tiers: Tier 1 (Read-Only): Querying databases, searching documents; can execute autonomously with tenant filtering. Tier 2 (Reversible Write): Creating draft tickets, drafting emails; requires structured schema validation and audit logging. Tier 3 (Destructive / High-Impact Write): Processing payments, modifying customer permissions, executing refunds; strictly requires a Human-in-the-Loop (HITL) approval gate. The agent generates an approval payload containing the proposed parameters and an idempotency token; the action cannot execute until an authorized human signs off via UI or webhook.",
     "red_flag_response": "Grants the LLM agent direct write access to SQL databases or external APIs with blanket credentials and no human verification or parameter bounds.",
@@ -197,13 +269,21 @@
       "title": "Top 25 Forward Deployed Engineer (FDE) Interview Questions and Answers",
       "url": "https://skphd.medium.com/top-25-forward-deployed-engineer-fde-interview-questions-and-answers-ad9ac4a6ad7f",
       "verified_date": "2026-09-19"
-    }
+    },
+    "evidence_status": "curated_practice_company_attribution_unverified",
+    "audited_on": "2026-10-09",
+    "attribution_scope": "tested_at and verified_date are historical unverified declarations; responses and rubrics are authored practice material"
   },
   {
     "id": "FDE-DEBUG-001",
     "stage": "Live Debugging",
     "question": "The pilot RAG system is giving wrong answers on the customer's enterprise contracts. You are on-site tomorrow. How do you debug it?",
-    "tested_at": ["Om Bharatiya", "Palantir", "Databricks", "Anthropic"],
+    "tested_at": [
+      "Om Bharatiya",
+      "Palantir",
+      "Databricks",
+      "Anthropic"
+    ],
     "core_signal": "Bisection methodology (retrieval vs generation), error taxonomies, chunk inspection, context window debugging, golden evaluation updates",
     "senior_response_playbook": "Before arriving, I request 10 concrete failing query/answer pairs. On-site, I bisect the pipeline: Is this a retrieval failure or a generation failure? For each case, I inspect the raw retrieved chunks. (1) If the correct contract clause was NOT retrieved: Did the document fail OCR? Did chunking split the relevant clause across a boundary? Did embedding similarity fail on specialized legal jargon? Fix: Adjust chunk overlap, add BM25 keyword hybrid search, or apply reranking. (2) If the clause WAS retrieved but the answer is wrong: Did context overflow truncate the chunk? Did competing boilerplate cause attention distraction? Did the prompt fail to enforce strict citations? Fix: Tighten the prompt to enforce strict citation bounds. Finally, add all 10 examples to the automated golden test suite to prevent regressions.",
     "red_flag_response": "Immediately tweaks system prompts randomly or switches model providers without inspecting the retrieved chunks first.",
@@ -217,13 +297,19 @@
       "title": "Forward Deployed Engineer (FDE) × AI - Interview Guide",
       "url": "https://github.com/ombharatiya/AI-Engineer-Interview-Questions/blob/main/15-role-guides/forward-deployed-engineer.md",
       "verified_date": "2026-09-19"
-    }
+    },
+    "evidence_status": "curated_practice_company_attribution_unverified",
+    "audited_on": "2026-10-09",
+    "attribution_scope": "tested_at and verified_date are historical unverified declarations; responses and rubrics are authored practice material"
   },
   {
     "id": "FDE-DEBUG-002",
     "stage": "Live Debugging",
     "question": "The customer's integration suddenly returns empty results in production. What do you check first?",
-    "tested_at": ["Nehal Vyas", "Startup.jobs"],
+    "tested_at": [
+      "Nehal Vyas",
+      "Startup.jobs"
+    ],
     "core_signal": "Systematic root cause isolation, telemetry inspection, external contract changes, network/auth validation",
     "senior_response_playbook": "I follow a structured triage protocol: (1) Reproduce the failure with a minimal test payload using existing production credentials. (2) Check deployment and change logs: Was a new version deployed or configuration flag altered in the last 24 hours? (3) Check authentication & quotas: Did their API key expire, rotate, or hit rate limits? (4) Inspect network & gateway responses: Are requests reaching our ingress, or being dropped by a corporate proxy/firewall? (5) Inspect upstream data payload: Did an upstream customer database schema change render input fields null? I form explicit hypotheses before modifying code.",
     "red_flag_response": "Immediately starts modifying production code or restarting servers blindly without checking logs, error codes, or recent changes.",
@@ -237,13 +323,21 @@
       "title": "Forward Deployed Engineer Interview Questions (and How to Answer Them)",
       "url": "https://fde.hinehal.com/blogs/fde-interview-questions",
       "verified_date": "2026-09-19"
-    }
+    },
+    "evidence_status": "curated_practice_company_attribution_unverified",
+    "audited_on": "2026-10-09",
+    "attribution_scope": "tested_at and verified_date are historical unverified declarations; responses and rubrics are authored practice material"
   },
   {
     "id": "FDE-CUST-001",
     "stage": "Customer Simulation & Role-play",
     "question": "Interviewer role-plays a furious VP: 'Your implementation is two weeks late and my CEO is asking why we hired you.' How do you respond?",
-    "tested_at": ["Nehal Vyas", "Startup.jobs", "Palantir", "Frontier Labs"],
+    "tested_at": [
+      "Nehal Vyas",
+      "Startup.jobs",
+      "Palantir",
+      "Frontier Labs"
+    ],
     "core_signal": "Composure under pressure, non-defensive ownership, separating facts from speculation, concrete delivery commitments, actionable requests",
     "senior_response_playbook": "I stay calm and avoid defensiveness or premature excuses. (1) Immediate validation: 'I completely understand your frustration and your CEO's urgency. If I were in your position, I would expect the same accountability.' (2) Honest, transparent status: State exactly where the project stands: 'The core integration and data pipeline are operational, but we encountered an unexpected schema inconsistency in your legacy SAP export that delayed our validation phase.' (3) Concrete recovery plan: 'Here is our exact timeline: we have isolated the parser fix, will complete staging validation by Thursday 3 PM, and will run executive acceptance testing on Friday.' (4) Clear ask: 'To hit this date, we need 30 minutes with your database administrator tomorrow morning.' Follow up within an hour with a written summary.",
     "red_flag_response": "Gets defensive, blames the customer's IT team for delays, makes unrealistic promises ('I promise it will be done tomorrow morning'), or offers to work all night without addressing root cause blockers.",
@@ -257,13 +351,20 @@
       "title": "Forward Deployed Engineer Interview Questions (and How to Answer Them)",
       "url": "https://fde.hinehal.com/blogs/fde-interview-questions",
       "verified_date": "2026-09-19"
-    }
+    },
+    "evidence_status": "curated_practice_company_attribution_unverified",
+    "audited_on": "2026-10-09",
+    "attribution_scope": "tested_at and verified_date are historical unverified declarations; responses and rubrics are authored practice material"
   },
   {
     "id": "FDE-CUST-002",
     "stage": "Customer Simulation & Role-play",
     "question": "The customer insists on an architectural approach you know is technically wrong and will fail in production. What do you do?",
-    "tested_at": ["Nehal Vyas", "Startup.jobs", "Palantir"],
+    "tested_at": [
+      "Nehal Vyas",
+      "Startup.jobs",
+      "Palantir"
+    ],
     "core_signal": "Customer diplomacy, explaining technical risk in business terms, proposing proof-of-concept bake-offs, disagree-and-commit discipline",
     "senior_response_playbook": "(1) Seek to understand: Ask open-ended questions to uncover the motivation behind their insistence (e.g., existing tooling investments, internal politics, vendor familiarity). (2) Translate technical flaws into customer business risks: Frame concerns in terms of latency, operational cost, and downtime rather than dogmatic engineering purity: 'If we choose this approach, your team will incur an estimated $15k/month in additional egress costs and 4-second query latency.' (3) Offer a data-driven path: Propose a 48-hour side-by-side benchmark on a sample dataset. (4) If they still insist after reviewing data: Document the technical tradeoff and risks in an ADR, disagree and commit, and ensure telemetry is built to detect failures early.",
     "red_flag_response": "Refuses to write the code; insults the customer's technical competence; or passively implements the flawed design without warning them of business risks.",
@@ -277,13 +378,21 @@
       "title": "Forward Deployed Engineer Interview Questions (and How to Answer Them)",
       "url": "https://fde.hinehal.com/blogs/fde-interview-questions",
       "verified_date": "2026-09-19"
-    }
+    },
+    "evidence_status": "curated_practice_company_attribution_unverified",
+    "audited_on": "2026-10-09",
+    "attribution_scope": "tested_at and verified_date are historical unverified declarations; responses and rubrics are authored practice material"
   },
   {
     "id": "FDE-BEH-001",
     "stage": "Behavioral & Ownership",
     "question": "Walk me through a system you built and deployed to production that failed, and how you owned the outcome.",
-    "tested_at": ["Google FDE", "Nehal Vyas", "Startup.jobs", "Alexey Grigorev"],
+    "tested_at": [
+      "Google FDE",
+      "Nehal Vyas",
+      "Startup.jobs",
+      "Alexey Grigorev"
+    ],
     "core_signal": "End-to-end operational ownership, postmortem culture, blameless root cause analysis, permanent automated prevention",
     "senior_response_playbook": "I detail a real production system where I owned the full lifecycle. I outline: (1) The business objective and architecture. (2) The incident: e.g., unhandled upstream API rate limit triggered cascading worker failures during an unannounced marketing campaign. (3) The immediate response: acknowledged within 10 minutes, activated circuit breakers, communicated status to customer stakeholders every 30 minutes. (4) The root cause analysis: absence of jittered exponential backoff and item-level dead-letter queueing. (5) The permanent prevention: committed automated load tests simulating 5x spikes and added tenant-level rate limiters.",
     "red_flag_response": "Describes a project where they only wrote isolated code and blame the DevOps team or model provider for the outage, or claims they have never had a production failure.",
@@ -297,13 +406,20 @@
       "title": "AI Engineering Field Guide: FDE Responsibilities and Interviews",
       "url": "https://github.com/alexeygrigorev/ai-engineering-field-guide/blob/main/role/06-fde.md",
       "verified_date": "2026-09-19"
-    }
+    },
+    "evidence_status": "curated_practice_company_attribution_unverified",
+    "audited_on": "2026-10-09",
+    "attribution_scope": "tested_at and verified_date are historical unverified declarations; responses and rubrics are authored practice material"
   },
   {
     "id": "FDE-SYS-003",
     "stage": "System Design & Architecture",
     "question": "If a customer needs our product deployed into their AWS VPC with SSO (SAML/OIDC) and secure ingestion from Snowflake, how would you architect it at a high level?",
-    "tested_at": ["Startup.jobs FDE Series", "Databricks", "Enterprise SaaS AI"],
+    "tested_at": [
+      "Startup.jobs FDE Series",
+      "Databricks",
+      "Enterprise SaaS AI"
+    ],
     "core_signal": "Enterprise VPC architecture, private connectivity (PrivateLink), IAM/SSO federation (Okta/Azure AD via SAML 2.0/OIDC), secure Snowflake key-pair authentication, data residency enforcement",
     "senior_response_playbook": "I architect this across 4 decoupled layers: (1) Identity & Access Management: Integrate with the customer's identity provider (Okta, Ping, or Azure AD) using SAML 2.0 or OIDC. Enforce Role-Based Access Control (RBAC) where SAML group assertions map dynamically to internal application roles. (2) VPC & Network Perimeter: Deploy the application across multi-AZ private subnets with an internal Application Load Balancer (ALB). Outbound connectivity to Snowflake and LLM inference endpoints traverses AWS PrivateLink interface endpoints, guaranteeing zero traffic egresses across the public internet. (3) Snowflake Ingestion: Establish a secure database integration using Snowflake Key-Pair authentication with RSA 2048-bit keys stored in AWS Secrets Manager (rotated every 90 days), or AWS IAM role federation via Snowflake Storage Integration. Queries execute via dedicated warehouse quotas with read-only permissions and row-level security. (4) Auditability: Stream CloudTrail logs, authentication access logs, and query audit histories into the customer's enterprise SIEM (Datadog/Splunk).",
     "red_flag_response": "Suggests using username/password basic authentication for Snowflake, stores credentials in environment variables, or routes database traffic across the public internet without VPC peering or PrivateLink.",
@@ -317,13 +433,20 @@
       "title": "Forward Deployed Engineer Interview Questions & Core Competencies",
       "url": "https://startup.jobs/interview-questions/forward-deployed-engineer",
       "verified_date": "2026-09-19"
-    }
+    },
+    "evidence_status": "curated_practice_company_attribution_unverified",
+    "audited_on": "2026-10-09",
+    "attribution_scope": "tested_at and verified_date are historical unverified declarations; responses and rubrics are authored practice material"
   },
   {
     "id": "FDE-DISC-004",
     "stage": "Discovery & Decomposition",
     "question": "Two enterprise stakeholders give you conflicting requirements for the deployment. How do you resolve the impasse?",
-    "tested_at": ["Startup.jobs", "Palantir", "Frontier AI Labs"],
+    "tested_at": [
+      "Startup.jobs",
+      "Palantir",
+      "Frontier AI Labs"
+    ],
     "core_signal": "Stakeholder mediation, data-driven tradeoff analysis, aligning on customer business ROI, documented escalation paths",
     "senior_response_playbook": "(1) Active listening and root-cause inquiry: Meet separately with each stakeholder to understand the underlying business driver behind their ask (e.g., Compliance Officer wants zero data retention for risk mitigation, while Head of Support wants 90-day history for QA auditability). (2) Quantify tradeoffs: Present the technical and operational implications of both options in concrete metrics (cost, compliance exposure, user latency). (3) Propose an integrative synthesis: Often, requirements conflict because of binary thinking. In this case, propose a compromise (e.g., retain anonymized query metadata for 90 days while wiping customer PII after 24 hours). (4) Document and escalate with consensus: If an impasse remains, convene both leaders with a 1-page Architecture Decision Record (ADR) outlining trade-offs, and have the executive sponsor sign off rather than deciding unilaterally in code.",
     "red_flag_response": "Picks whichever stakeholder has the higher corporate title, or writes hidden toggle flags to satisfy both without addressing the architectural contradiction.",
@@ -337,6 +460,9 @@
       "title": "Forward Deployed Engineer Interview Questions & Core Competencies",
       "url": "https://startup.jobs/interview-questions/forward-deployed-engineer",
       "verified_date": "2026-09-19"
-    }
+    },
+    "evidence_status": "curated_practice_company_attribution_unverified",
+    "audited_on": "2026-10-09",
+    "attribution_scope": "tested_at and verified_date are historical unverified declarations; responses and rubrics are authored practice material"
   }
 ]
