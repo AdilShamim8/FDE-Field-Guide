@@ -56,7 +56,7 @@ In production distributed systems, standard exponential backoff without randomne
 
 The following implementation represents the enterprise standard for outbound HTTP calls, featuring **Full Jitter**, `Retry-After` header parsing (supporting both delta-seconds and RFC 1123 HTTP-dates), and deterministic error classification.
 
-See the complete unit-tested reference implementation in [`interviews/code/resilient_client.py`](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/interviews/code/resilient_client.py):
+See the complete unit-tested reference implementation in [`interviews/code/resilient_client.py`](../interviews/code/resilient_client.py):
 
 ```python
 """
@@ -210,7 +210,7 @@ sequenceDiagram
 
 ### Idempotent Receiver Implementation
 
-See the full verified implementation in [`interviews/code/webhook_receiver.py`](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/interviews/code/webhook_receiver.py) and production usage in [`portfolio/reference-project/src/api/server.py`](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/portfolio/reference-project/src/api/server.py):
+See the full verified implementation in [`interviews/code/webhook_receiver.py`](../interviews/code/webhook_receiver.py) and production usage in [`portfolio/reference-project/src/api/server.py`](../portfolio/reference-project/src/api/server.py):
 
 ```python
 """
