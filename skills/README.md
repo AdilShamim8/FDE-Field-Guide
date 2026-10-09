@@ -70,7 +70,7 @@ Transforming ambiguous executive conversations into binding, testable engineerin
 - **The 8-Theme Technical Discovery Protocol**: Concrete interview scripts targeting Current-State Mechanics, Quantified Pain & Financial Cost ($350k quarterly fines), Volume/Edge-Case Skew, 90-Day P&L Objectives, Enclave Constraints, Hidden Approvers, and Prior Dead Vendor Post-Mortems.
 - **Forensic Data Walkthrough Playbook**: Non-destructive SQL diagnostic queries profiling schema catalogs (`information_schema.columns`), null rates, unique cardinality, timestamp anomalies, and categorical class imbalance.
 - **The "Demo vs Production Delta"**: Forensic analysis of why curated sandbox data kills 95% of enterprise pilots (The MIT NANDA Report reality).
-- **Production Empirical Case (ETISE Engine)**: Real-world financial dispute escalation case study backed by public CFPB complaint records and Bitext customer interaction datasets.
+- **Source-backed discovery exercise**: Current CFPB categorical metadata and the bounded local ETISE contract; Bitext is excluded from real-only evidence because its publisher describes hybrid synthetic generation.
 
 ### 3. [Communication and Technical Storytelling: The Bilingual Engineer](03-communication-and-storytelling.md)
 Bridging the communication chasm between C-Suite ROI and low-level Linux/cloud systems:
