@@ -4,7 +4,12 @@
     "description": "Empirical dataset tracking FDE market demand, monthly scrape trajectories, employer concentration, responsibility distributions, and compensation benchmarks.",
     "version": "1.0.0",
     "last_updated": "2026-09-19",
-    "inspiration": "alexeygrigorev/ai-engineering-field-guide"
+    "inspiration": "alexeygrigorev/ai-engineering-field-guide",
+    "evidence_status": "archived_aggregate_summary",
+    "audited_on": "2026-10-09",
+    "observation_window": "2026-02-04 through 2026-07-22",
+    "current_snapshot": "market_snapshot_2026-10-09.json",
+    "verification_scope": "Legacy aggregate and citation declarations retained; no row-level provenance for extracted labels or fresh salary survey is claimed"
   },
   "monthly_scrapes": [
     {
@@ -214,7 +219,12 @@
       "fde_premium_percentage": 29.7,
       "top_advertised_compensation_anthropic": 400000,
       "yoy_posting_growth": 1000.0,
-      "three_year_growth_since_2023": 4600.0
+      "three_year_growth_since_2023": 4600.0,
+      "evidence_status": "historical_secondary_reporting",
+      "median_operator": "greater_than",
+      "growth_operators": "greater_than; stored values are lower-bound reference values, not exact estimates",
+      "audited_on": "2026-10-09",
+      "verification_scope": "Fortune publisher text checked; source microdata and derived premium not independently validated"
     },
     "indeed_business_insider_2026": {
       "base_salary_range_low": 170000,
@@ -223,11 +233,13 @@
       "short_term_index_growth_apr2025": 543.0,
       "yoy_postings_apr2025_count": 643,
       "yoy_postings_apr2026_count": 5330,
-      "yoy_growth_percentage": 728.9
+      "yoy_growth_percentage": 728.9,
+      "evidence_status": "historical_secondary_aggregate_not_independently_recomputed"
     },
     "joinplank_platform_2026": {
       "live_fde_postings": 982,
-      "hiring_companies_count": 462
+      "hiring_companies_count": 462,
+      "evidence_status": "historical_counts_not_corrobated_by_current_homepage"
     }
   },
   "provenance_sources": [
