@@ -37,10 +37,31 @@ def test_chunker_splits_and_overlaps():
 
     assert len(chunks) > 1
     for chunk in chunks:
-        assert chunk.token_count <= 40  # Bound by sentence granularity
+        assert chunk.token_count <= 25  # Hard regex-token budget
         assert chunk.metadata["classification"] == "restricted"
         assert chunk.metadata["author"] == "Security Team"
 
     # Verify sliding overlap: end of first chunk content should overlap start of second chunk
     first_chunk_end = chunks[0].content.split(".")[-2].strip()
     assert first_chunk_end in chunks[1].content
+
+
+@pytest.mark.parametrize("overlap", [0, 5, 11])
+def test_long_sentence_never_exceeds_budget(overlap):
+    text = " ".join(f"word{i}" for i in range(501))
+    chunks = split_text_into_chunks(text, max_tokens=12, overlap_tokens=overlap)
+    assert len(chunks) > 1
+    assert all(c.token_count <= 12 for c in chunks)
+    reconstructed = chunks[0].content.split()
+    for chunk in chunks[1:]:
+        reconstructed.extend(chunk.content.split()[overlap:])
+    assert reconstructed == text.split()
+
+
+@pytest.mark.parametrize("kwargs", [
+    {"max_tokens": 0}, {"max_tokens": -1},
+    {"max_tokens": 5, "overlap_tokens": 5}, {"overlap_tokens": -1},
+])
+def test_invalid_chunk_budget_rejected(kwargs):
+    with pytest.raises(ValueError):
+        split_text_into_chunks("nonempty text", **kwargs)
