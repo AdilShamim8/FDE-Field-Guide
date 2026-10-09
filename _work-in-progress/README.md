@@ -23,6 +23,6 @@ International deployment and residency, engagement pricing and margin measuremen
 
 ## Related documents
 
-- [Expert practicum](../learning-paths/expert-practicum.md) - reviewable delivery gates
+- [Expert practicum](../learning-paths/expert-fde-practicum.md) - reviewable delivery gates
 - [Reference project](../portfolio/reference-project/README.md) - implemented local behavior
 - [Source ledger](../research/source_checks_2026-10-09.json) - dated checks and failed retrievals
