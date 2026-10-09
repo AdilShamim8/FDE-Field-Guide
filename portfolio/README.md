@@ -17,7 +17,7 @@ Build a portfolio a reviewer can reproduce and challenge. Reviewed 2026-10-09. S
 - [API](reference-project/src/api/server.py) and [tests](reference-project/tests/test_server.py) - payload conflicts, role/account cache context, expiry, and local concurrent replay
 - [Retrieval](reference-project/src/pipeline/ingestion.py) - locally authored policy corpus and exact section quote checks
 - [Regression evaluation](reference-project/evals/run_evals.py) - routing, required documents, nonempty citations, per-class metrics, and failure reports
-- [Data provenance](reference-project/DATASET_PROVENANCE.md) - legacy fixtures with unverified origins; Bitext excluded from real-only evidence
+- [Data provenance](reference-project/evals/DATASET_PROVENANCE.md) - legacy fixtures with unverified origins; Bitext excluded from real-only evidence
 - [Runbook](reference-project/docs/SLA_RUNBOOK.md) - supported startup, investigation, and restart procedures
 
 ## Real-world data
