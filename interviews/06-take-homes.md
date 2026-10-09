@@ -1,5 +1,7 @@
 # Take-Home Assignments and Integration Briefs
 
+Scope, reviewed 2026-10-09: specifications, ADRs, deployment assumptions, and numerical targets below are authored practice templates. The local reference has no LLM, calibrated judge, authenticated roles, SQLite/vector extension, or private-cloud deployment. Its legacy evaluation is a regression set with unverified origins; use independently annotated customer data for acceptance.
+
 This guide prepares candidates for the take-home technical assignment or asynchronous integration brief in a Forward Deployed Engineer loop. Rather than abstract algorithmic puzzles, FDE take-home assignments test the core habit of the job: **shipping a working, defensively coded integration system paired with production-grade client documentation inside a defined timebox**.
 
 ---
@@ -105,7 +107,7 @@ project-repo/
 |   |-- models/               # Pydantic schemas & LLM client
 |-- tests/                    # Pytest unit & integration suite
 |-- evals/                    # Golden dataset & evaluation runner
-|   |-- golden_dataset.json   # 25 verified test cases
+|   |-- golden_dataset.json   # 25 known fixtures with unverified origins
 |   |-- run_eval.py           # Automated evaluation script
 |-- docs/
 |   |-- ADR-001.md            # Architecture Decision Record
@@ -159,7 +161,7 @@ Over this initial engineering milestone, we developed an automated ingestion and
 Across our 25-case golden verification suite:
 - Field Extraction Precision: 96.2% on standard customs declarations
 - Automated Routing Accuracy: 91.4% across five defect classifications
-- Hallucination Rate: 0.0% (system cleanly refuses and routes to human operator when citations cannot be verified)
+- Grounding check: exact applicable sample-policy quotations; no measured factual hallucination rate or customer accuracy is established
 - Average End-to-End Latency: 840ms per ticket
 
 ## Recommended Next Steps
