@@ -1,42 +1,28 @@
-# Work in Progress
+# Work in progress
 
-This repository is designed to be finished in public. This file tracks topics that belong
-in the guide but are not yet written, plus existing documents that need more evidence.
+Reviewed 2026-10-09. The [audit](../AUDIT.md) distinguishes corrected local defects from work required before making production or customer-quality claims. Contributions should follow [evidence discipline](../STYLING.md) and provide reproducible artifacts.
 
-If you want to contribute, read [STYLING.md](../STYLING.md) first - especially the evidence
-discipline section. Pick a topic, write it following the existing structure conventions,
-and cross-link it from at least two existing documents.
+## Required production work
 
-## Missing topics
+- Authenticate caller and tenant identity; authorize every intake, review, and feedback action. Role headers in the reference are caller declarations.
+- Replace process-local queues and replay state with durable, tenant-isolated transactions; prove behavior across restarts and multiple workers.
+- Bound request bytes, queue growth, retention, and downstream tool effects; collect privacy-reviewed telemetry.
+- Acquire a permissioned, representative, independently annotated holdout. The 25 known legacy fixtures are regression checks, not customer evaluation evidence.
+- Exercise backup restoration, failure injection, operator rollback, load, and cost under a declared workload. Set objectives with the customer before promotion.
 
-- Onsite vs remote FDE work - travel realities, working across time zones, security
-  clearances for government engagements
-- FDE economics - how companies price forward-deployed work, margins, and when the model
-  loses money
-- Negotiation for FDEs - negotiating scope changes and change orders mid-engagement
-- International deployments - localization, data residency, and cross-border data transfer
-- FDE team building - how organizations structure, staff, and ramp forward-deployed teams
-- Domain guides - regulated-industry playbooks (healthcare, finance, defense): added in [case-studies/04-regulated-industries-playbook.md](../case-studies/04-regulated-industries-playbook.md); industry-specific compliance extensions welcome
-- Interview data - a structured analysis of documented FDE interview loops, in the style
-  of the reference repository's job-description research
-- Compensation trends - a time-series update of [job-market/02-compensation.md](../job-market/02-compensation.md)
-  with fresh sources
-- Worked case studies contributed by practitioners, with permission and anonymization
+## Evidence still needed
 
-## Documents that need more evidence
+- Interview event artifacts and permission before presenting company question usage or verbatim transcripts.
+- Practitioner deployment reports, architecture artifacts, and outcome measurements before publishing manufacturing or other customer success claims.
+- Current salary surveys and posting captures with defined coverage, observation windows, and deduplication.
+- Dataset-specific permissions and retention review before redistributing raw text. The current market snapshot distributes factual metadata; the CFPB sample excludes narratives.
 
-- [Where FDEs work](../role/04-where-fdes-work.md) - needs more sourced examples beyond
-  the major AI labs
-- [Failure stories](../case-studies/03-failure-stories.md) - most public writeups are
-  success stories; anonymized practitioner accounts welcome
-- [Customer scenario rounds](../interviews/04-customer-scenarios.md) - updated with
-  verbatim transcripts and rubrics; further domain-specific additions welcome
+## Expansion opportunities
 
-## Completed but evolving
+International deployment and residency, engagement pricing and margin measurement, scope negotiation, staffing, and domain-specific operational playbooks remain useful topics. Prefer documented cases and measured trade-offs over invented customer stories.
 
-Everything in the repository is open to improvement. The highest-value edits right now:
+## Related documents
 
-- Adding dates and sources wherever a claim will go stale
-- Replacing industry-pattern statements with sourced evidence as more data becomes public
-- Trimming anything that reads like filler - this guide should stay short enough to read
-  end to end
+- [Expert practicum](../learning-paths/expert-practicum.md) - reviewable delivery gates
+- [Reference project](../portfolio/reference-project/README.md) - implemented local behavior
+- [Source ledger](../research/source_checks_2026-10-09.json) - dated checks and failed retrievals
