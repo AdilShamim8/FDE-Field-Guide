@@ -1,5 +1,5 @@
 """
-Agent engine orchestrating self-healing structured extraction, dense vector similarity,
+Deterministic teaching engine using keyword rules and feature-hashed vector similarity,
 hybrid retrieval with RBAC permissions, citation verification, and decision gating.
 """
 
@@ -49,9 +49,8 @@ CATEGORY_ANCHORS: Dict[DefectCategory, str] = {
 
 class TriageAgent:
     """
-    Senior forward deployed engineering triage agent.
-    Combines dense semantic vector scoring, permission-aware hybrid search,
-    self-repairing structured output validation, and strict quotation grounding.
+    Local triage reference with heuristic confidence scores.
+    It performs no model inference, calibration, or schema-repair loop.
     """
 
     def __init__(self, index: Optional[HybridKnowledgeIndex] = None):
@@ -91,12 +90,12 @@ class TriageAgent:
         elif len(raw_text.strip()) < 25 or "vague" in text_lower or "test" in text_lower:
             category = DefectCategory.GENERAL_INQUIRY
             confidence = 0.65
-            repair_attempts = 1
+            repair_attempts = 0
         else:
             # Fall back to highest dense vector similarity score
             best_cat = max(category_scores, key=lambda c: category_scores[c])
             category = best_cat
-            confidence = max(0.85, category_scores[best_cat])
+            confidence = category_scores[best_cat]
 
         # 3. Severity classification
         if any(w in text_lower for w in ["total outage", "complete failure", "payment down", "critical emergency", "p0", "crash during"]):
@@ -196,6 +195,7 @@ class TriageAgent:
         elif (
             extracted.confidence < settings.confidence_threshold
             or unverified_citation_present
+            or (settings.strict_grounding_refusal and not grounded_quotes)
         ):
             routing_decision = RoutingDecision.HUMAN_REVIEW_REQUIRED
         else:
