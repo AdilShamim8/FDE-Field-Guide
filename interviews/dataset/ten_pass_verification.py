@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 from urllib.parse import urlparse
 
-WORKSPACE = Path(r"c:\Users\Adil\Downloads\FDE-Field-Guide-main")
+WORKSPACE = Path(__file__).resolve().parents[2]
 DATASET_FILE = WORKSPACE / "interviews" / "dataset" / "fde_interview_questions.json"
 QUESTION_BANK_FILE = WORKSPACE / "interviews" / "07-question-bank.md"
 README_FILE = WORKSPACE / "interviews" / "dataset" / "README.md"
@@ -125,13 +125,13 @@ def run_audit():
         assert len(item["red_flag_response"].strip()) >= 40, f"[{qid}] Red flag response too brief"
     print("  --> PASS: Playbooks and signals provide senior practitioner-level depth.")
 
-    # PASS 8: Author Provenance Authenticity
-    print("[Pass 8/10] Verifying Verified Practitioner Authors...")
+    # PASS 8: Declared Author Consistency
+    print("[Pass 8/10] Checking declared author names...")
     for item in data:
         qid = item["id"]
         author = item["primary_source"]["author"]
         assert author in VERIFIED_AUTHORS, f"[{qid}] Author '{author}' not in verified authors {VERIFIED_AUTHORS}"
-    print(f"  --> PASS: All authors strictly match verified real-world practitioner sources.")
+    print(f"  --> PASS: Declared author names match the allowlist; this does not authenticate sources.")
 
     # PASS 9: Cross-Reference Consistency with Markdown Files
     print("[Pass 9/10] Verifying Cross-File Consistency with 07-question-bank.md...")
