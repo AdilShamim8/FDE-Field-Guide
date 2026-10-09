@@ -8,7 +8,7 @@ Build a portfolio a reviewer can reproduce and challenge. Reviewed 2026-10-09. S
 - [Project ideas](02-project-ideas.md) - proposed specifications, not completed customer engagements
 - [Presenting projects](03-presenting-projects.md) - explain the decision, evidence, and limits
 - [Project selection](04-project-selection-masterclass.md) - architecture options; verify dataset permissions and access before committing to a domain
-- [Expert practicum](../learning-paths/expert-practicum.md) - source admission, independent evaluation, authenticated authority, recovery, economics, and handover
+- [Expert practicum](../learning-paths/expert-fde-practicum.md) - source admission, independent evaluation, authenticated authority, recovery, economics, and handover
 
 ## Executable reference
 
