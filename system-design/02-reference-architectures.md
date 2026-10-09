@@ -1,5 +1,7 @@
 # Reference Architectures for Forward Deployed Engineering
 
+Scope, reviewed 2026-10-09: architectures, latency/cost ranges, deployment schedules, and example dialogue below are planning guidance or assumptions unless linked to a specific measured artifact. Historical 146-role labels retain their original window and are not remeasured on the current snapshot. The executable-scope section states which controls actually run.
+
 In enterprise technology, staring at a blank whiteboard during an architecture review is an invitation to
 analysis paralysis. While every customer enterprise possesses unique legacy quirks, Virtual Private Cloud (VPC)
 layouts, and compliance boundaries, **more than 90% of forward-deployed systems resolve into one of four canonical
@@ -187,7 +189,7 @@ graph TD
     end
 
     subgraph Policy & Exception Gating Tier
-        WriteTool --> PolicyGate{"<b>Deterministic Policy Gate</b><br/>(Threshold > $1,000 OR Statutory Deadline?)"}
+        WriteTool --> PolicyGate{"<b>Deterministic Policy Gate</b><br/>(Customer-Approved Threshold OR Review Rule?)"}
         PolicyGate -->|Low-Risk Routine| AutoExecute["<b>Automated Execution Worker</b>"]
         PolicyGate -->|High-Risk / Statutory| HumanQueue["<b>Human-in-the-Loop Exception Queue</b><br/>(Pre-populated evidence & citations)"]
         HumanQueue --> OperatorReview["<b>Operator Approval / Override</b>"]
@@ -217,7 +219,7 @@ graph TD
 - **Atomic Idempotency Engine**: SHA-256 fingerprint verification preventing duplicate ticket processing
   ([`interviews/code/webhook_receiver.py`](../interviews/code/webhook_receiver.py)).
 - **Deterministic Policy Gate**: Python rule enforcement that intercepts state-mutating actions based on business
-  thresholds (e.g. disputes exceeding $1,000 or alleging statutory Regulation E violations are hard-diverted to human review).
+  thresholds approved by the customer, separate from jurisdiction-specific legal obligations. No universal statutory dollar threshold is established here.
 - **Human Exception Queue**: Production FastAPI endpoint routing ambiguous edge cases to operators with pre-compiled
   citations, cutting manual review time by 80% without relinquishing regulatory control
   ([`portfolio/reference-project/src/api/server.py`](../portfolio/reference-project/src/api/server.py)).
@@ -306,19 +308,19 @@ Use this matrix during Phase 3 architectural discovery to evaluate candidate sha
 
 ---
 
-## 4. Direct Codebase Defense Implementations
+## Executable scope
 
-Each of the four reference architectures is implemented as functional, evaluated, and testable code within
-this repository:
+These blueprints are design recommendations. The repository supplies selected local exercises, not full implementations of every architecture. Reviewed 2026-10-09.
 
-| Reference Architecture | Primary Codebase Implementation | Test & Evaluation Suite | Production Verification Role |
-| :--- | :--- | :--- | :--- |
-| **Document Intelligence (Shape 1)** | [`interviews/code/chunker.py`](../interviews/code/chunker.py)<br/>[`interviews/code/parser.py`](../interviews/code/parser.py) | `pytest interviews/code/test_chunker.py`<br/>`pytest interviews/code/test_parser.py` | Word-boundary chunking, CSV/JSON log repair, dirty date normalization |
-| **Hybrid RAG Assistant (Shape 2)** | [`portfolio/reference-project/src/api/server.py`](../portfolio/reference-project/src/api/server.py) | `pytest portfolio/reference-project/tests/` | Reciprocal rank fusion combining dense cosine and sparse BM25 with RBAC |
-| **Agentic Automation Engine (Shape 3)** | [`portfolio/reference-project/src/api/server.py`](../portfolio/reference-project/src/api/server.py)<br/>[`interviews/code/webhook_receiver.py`](../interviews/code/webhook_receiver.py) | `python portfolio/reference-project/evals/run_evals.py` | 25-case golden evaluation harness asserting 100% citation grounding and SLA routing |
-| **Batch Data Plane (Shape 4)** | [`interviews/code/rate_limiter.py`](../interviews/code/rate_limiter.py)<br/>[`interviews/code/resilient_client.py`](../interviews/code/resilient_client.py) | `pytest interviews/code/test_rate_limiter.py`<br/>`pytest interviews/code/test_resilient_client.py` | Sliding-window tenant throttling, full-jitter backoff, header-aware retries |
+| Artifact | Exercised behavior | Boundary |
+|---|---|---|
+| [ETISE API](../portfolio/reference-project/src/api/server.py) | Payload-conflict detection, account/role replay context, TTL, single-process serialized replay, default document filtering | Caller roles are unauthenticated; queues and cache are process-local |
+| [Retrieval](../portfolio/reference-project/src/pipeline/ingestion.py) | Feature hashing, token overlap, exact document/section quote checks | No learned embeddings, BM25, RRF, or regulatory entailment |
+| [Regression runner](../portfolio/reference-project/evals/run_evals.py) | Routing, required documents, nonempty grounding, and failure reporting | 25 known legacy fixtures with unverified origins; no independent customer holdout |
+| [Chunker](../interviews/code/chunker.py) | Bounded regex-token windows and overlap | Regex units are not a model tokenizer or a PDF ingestion pipeline |
+| [Retry exercise](../interviews/code/resilient_client.py) | Real default delay, retry budgets, header-aware retry | An isolated exercise, not a durable event-processing system |
 
----
+Use the [reference README](../portfolio/reference-project/README.md) for setup and current test commands. Authentication, tenant isolation, durable transactions, restore drills, private cloud networking, and measured workload SLOs remain required production work. Customer-defined thresholds are not statutes. Regulation E deadlines require review of the [official conditional rules](https://www.consumerfinance.gov/rules-policy/regulations/1005/11/).
 
 ## 5. Primary Practitioner Literature & Citations
 
@@ -327,4 +329,3 @@ this repository:
 3. **AWS Architecture Center**: *Architecting Generative AI Applications on AWS: Hybrid Cloud and VPC Enclave Topologies*. [aws.amazon.com/architecture](https://aws.amazon.com/architecture/)
 4. **Google Site Reliability Engineering**: *Cascading Failures and Reliable Bulk Data Processing*. [sre.google/sre-book](https://sre.google/sre-book/)
 5. **Databricks**: *The Big Book of GenAI Reference Architectures: Ingestion, Hybrid Search, and Evaluation*. [databricks.com](https://www.databricks.com)
-6. **Palantir Technologies**: *Forward Deployed Field Architecture: Composable Data Planes and Operational Microservices* (2024).
