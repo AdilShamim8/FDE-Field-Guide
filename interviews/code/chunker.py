@@ -1,5 +1,5 @@
 """
-Production document chunking utility for enterprise RAG pipelines.
+Bounded document chunking exercise for RAG pipelines.
 Provides token-aware boundary splitting, sliding overlap, and metadata inheritance.
 """
 
@@ -21,7 +21,7 @@ class TextChunk:
 def estimate_token_count(text: str) -> int:
     """
     Estimates token count using a deterministic regex token pattern.
-    Standard rule of thumb: ~0.75 words per token (1 word ~= 1.33 tokens).
+    This is a local regex-token budget, not a model-specific tokenizer.
     """
     tokens = re.findall(r"\b\w+\b|[^\w\s]", text)
     return len(tokens)
@@ -39,44 +39,28 @@ def split_text_into_chunks(
     Enforces maximum token budget and sliding overlap across chunks.
     Injects document metadata, chunk index, and total chunk count.
     """
+    if max_tokens <= 0 or not 0 <= overlap_tokens < max_tokens:
+        raise ValueError("Require max_tokens > 0 and 0 <= overlap_tokens < max_tokens")
     if not text.strip():
         return []
 
     base_metadata = base_metadata or {}
-    sentences = re.split(r"(?<=[.!?\n])\s+", text.strip())
-
+    tokens = list(re.finditer(r"\b\w+\b|[^\w\s]", text))
     chunks_raw: List[str] = []
-    current_sentences: List[str] = []
-    current_tokens = 0
-
-    for sentence in sentences:
-        s_tokens = estimate_token_count(sentence)
-        if not sentence:
-            continue
-
-        if current_tokens + s_tokens <= max_tokens:
-            current_sentences.append(sentence)
-            current_tokens += s_tokens
-        else:
-            if current_sentences:
-                chunks_raw.append(" ".join(current_sentences))
-
-            # Compute overlap sentences
-            overlap_sentences: List[str] = []
-            overlap_count = 0
-            for s in reversed(current_sentences):
-                st = estimate_token_count(s)
-                if overlap_count + st <= overlap_tokens:
-                    overlap_sentences.insert(0, s)
-                    overlap_count += st
-                else:
-                    break
-
-            current_sentences = overlap_sentences + [sentence]
-            current_tokens = sum(estimate_token_count(s) for s in current_sentences)
-
-    if current_sentences:
-        chunks_raw.append(" ".join(current_sentences))
+    start = 0
+    while start < len(tokens):
+        end = min(start + max_tokens, len(tokens))
+        if end < len(tokens):
+            # Prefer a sentence end only when the next window still advances.
+            boundaries = [i + 1 for i in range(start, end)
+                          if tokens[i].group() in {".", "!", "?"}
+                          and i + 1 - start > overlap_tokens]
+            if boundaries:
+                end = boundaries[-1]
+        chunks_raw.append(text[tokens[start].start():tokens[end - 1].end()].strip())
+        if end == len(tokens):
+            break
+        start = end - overlap_tokens
 
     # Construct final chunk objects with metadata
     total_chunks = len(chunks_raw)
