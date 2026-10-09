@@ -1,73 +1,45 @@
-# Statement of Work: Enterprise Ticket Intelligence Pilot
+# Pilot scope template for a ticket intake service
 
-This document defines the formal scope of work, technical boundaries, delivery milestones, and acceptance criteria for the forward-deployed deployment of the Enterprise Ticket Intelligence and Grounded Synthesis Engine (ETISE).
+This is a proposal template reviewed on 2026-10-09, not an executed engagement or a record of customer outcomes. Fill its open requirements using authorized customer evidence. The repository supplies a local teaching implementation and public metadata samples, not a customer's baseline, contractual SLA, or approved policies.
 
-## Engagement summary
+## Required discovery inputs
 
-- Customer: Apex Enterprise Cloud Services
-- Provider: Forward Deployed Engineering Practice
-- Timeline: 6-week pilot engagement
-- Primary objective: Automate the categorization, triage, and policy-grounded draft response synthesis for 12,000 daily incoming support tickets, achieving at least an 85% reduction in manual triage latency while maintaining zero hallucinated citations.
+Before promising automation, obtain the workflow owner, approved data access, actual arrival and payload distributions, existing error and resolution rates, reviewed policies, operator capacity, and applicable legal interpretation. Record source dates and uncertainty. Do not fill missing fields with invented volumes, fines, savings, or statutory thresholds.
 
-## Scope boundaries
+## Proposed scope
 
-### In scope
+- Validate and normalize agreed intake fields with a documented rejection contract.
+- Compare a deterministic baseline with any proposed model on an independently labeled customer holdout.
+- Retrieve approved policy versions with authenticated access controls and explicit abstention behavior.
+- Offer review suggestions and capture authorized operator decisions.
+- Measure the full request path, review workload, reliability, and costs under a declared workload.
+- Deliver a tested recovery and rollback runbook with named operational ownership.
 
-- Ingestion of incoming support tickets via REST API and webhook endpoints.
-- Extraction and schema validation of key fields: Account ID, Severity Level (P0 to P3), Defect Category, Affected System, and Summary.
-- Automated knowledge grounding against the Apex Customer Service & SLA Handbook (PDF and Markdown formats).
-- Human-in-the-loop exception queue for low-confidence classifications (< 0.85) and P0 incidents.
-- Operational metrics dashboard tracking triage precision, recall, latency, and operator override rate.
-- Golden evaluation harness with at least 25 edge-case scenarios.
+No irreversible customer action should be introduced without an approved authorization and review policy. A local `AUTOMATED_DISPATCH` label is not permission to send a message or alter a financial record.
 
-### Explicitly out of scope
+## Acceptance gates to agree with the customer
 
-- Direct automated dispatch of responses to external end-customers without human review during Phase 1.
-- Direct automated writebacks or schema alterations to customer enterprise ERP database tables.
-- Ingestion of audio or telephony streams (deferred to Phase 2).
-- Modification of existing customer Active Directory or Okta identity infrastructure.
+Define numeric thresholds after the baseline exists. Each gate needs a metric, measurement window, representative sample, accountable owner, and documented exception policy:
 
-## Deliverables and milestones
+1. Data: traceable authorized source records, required-field validation, accounted-for exclusions, and privacy review.
+2. Quality: per-slice precision/recall, risk-weighted errors, abstention coverage, and retrieval evidence on an untouched evaluation set.
+3. Authority: authenticated tenant and operator permissions, denied cross-tenant requests, and revocation checks.
+4. Reliability: agreed latency and availability objectives, durable recovery, replay behavior, and operator-completed failure drills.
+5. Economics: measured cost and review capacity compared with the pre-build workflow.
+6. Handover: a customer operator can explain the reports and perform recovery without the author.
 
-### Milestone 1: Discovery and environment validation (Week 1 to 2)
+The five CFPB categorical records are an ingestion exercise only; they cannot replace the customer's sample or labeling. The 25 legacy regression fixtures cannot sign off customer quality.
 
-- Delivery of signed Architecture and Threat Model document.
-- Ingestion pipeline running locally and verified against historical anonymized ticket sample.
-- Acceptance criteria: Ingestion pipeline correctly parses 1,000 historical tickets with zero unhandled exceptions.
+## Current reference and excluded capabilities
 
-### Milestone 2: Core extraction and knowledge grounding engine (Week 3 to 4)
-
-- Self-healing structured extraction module with automated schema repair.
-- Hybrid search index over Apex SLA and Policy documentation.
-- Acceptance criteria: Automated evaluation harness demonstrates field extraction precision above 90% and citation verification rate of 100% on golden dataset.
-
-### Milestone 3: Operational queue and shadow deployment (Week 5)
-
-- Exception review queue operational for support supervisors.
-- System running in shadow mode alongside human triage team.
-- Acceptance criteria: 99th percentile end-to-end processing latency under 1,500ms; zero disruption to existing ticket queues.
-
-### Milestone 4: Handover and operational runbook sign-off (Week 6)
-
-- Final delivery of production Docker containers, operations runbook, and staff training session.
-- Executive Handover Memo presented to executive sponsors.
-- Acceptance criteria: Formal sign-off on operations runbook by customer operations lead.
-
-## Acceptance criteria sign-off matrix
-
-- Performance: p95 latency <= 1,200ms across all ticket sizes up to 10,000 tokens.
-- Precision: classification precision >= 88.0% across all defect classes.
-- Citation integrity: 100% of generated citations match source policy text verbatim; zero ungrounded policy citations permitted.
-- Reliability: 99.9% uptime of API ingestion endpoint during shadow phase.
+The reference implements bounded ticket fields, sample retrieval, exact quotation checks, local replay semantics, and in-memory operator review. It does not implement authentication, durable queues, model inference, customer-system integration, production observability, or measured service availability. Those require separate deliverables and review.
 
 ## Related documents
 
-- [Project README](../README.md) - project architecture and quickstart guide
-- [Enterprise architecture](ARCHITECTURE.md) - component and threat model specifications
-- [Operations runbook](SLA_RUNBOOK.md) - alert thresholds, on-call runbook, and rollback plans
-- [The engagement lifecycle](../../customer/01-engagement-lifecycle.md) - field guide on engagement lifecycle phases
+- [Project README](../README.md) - implemented reference behavior
+- [Architecture](ARCHITECTURE.md) - missing production boundaries
+- [Requirements to spec](../../../customer/02-requirements-to-spec.md) - agreement structure
 
 ## Further reading
 
-- [Requirements to spec](../../customer/02-requirements-to-spec.md) - converting customer conversations into binding specifications
-- [Managing expectations](../../customer/04-managing-expectations.md) - scope boundaries and delivery contracts
+- [Google SRE objectives](https://sre.google/sre-book/service-level-objectives/) - indicators, objectives, and contractual agreements, checked 2026-10-09
