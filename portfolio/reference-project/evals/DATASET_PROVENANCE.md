@@ -18,7 +18,7 @@ The [market snapshot](../../../job-market/dataset/market_snapshot_2026-10-09.jso
 
 The former provenance document claimed CFPB complaint-ID mappings, Bitext intent IDs, and expert annotation. Those claims cannot be reproduced by `curate_eval_dataset.py`: it contains a field counter and a limited regex masker, not an acquisition or annotation pipeline. Those mappings are withdrawn from authenticated evidence. This audit does not establish whether every originally claimed record exists; it establishes that the claimed transformations are not evidenced here.
 
-Use these fixtures to prevent behavioral regressions. Do not describe 25/25 known-case results as real-customer accuracy, independent validation, a zero-hallucination guarantee, or a production SLA. The TC-006 expected routing was deliberately changed to review when the classifier's artificial confidence floor was removed; it is a regression expectation, not a new human-adjudicated label.
+Use these fixtures to prevent behavioral regressions. Do not describe 25/25 known-case results as real-customer accuracy, independent validation, a zero-hallucination guarantee, or a production SLA. TC-006 was changed to review when the artificial confidence floor was removed. TC-015, TC-020, and TC-025 were changed to review because general inquiries have no applicable sample policy; unrelated exact quotes cannot justify strict-mode dispatch. These are explicit regression contract changes, not new human-adjudicated real-world labels.
 
 ## Bitext source correction
 
