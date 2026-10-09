@@ -1,6 +1,6 @@
 """
-Ingestion, dense vector embedding, and hybrid knowledge base index for enterprise compliance policies.
-Provides dense vector cosine similarity, BM25-style sparse keyword matching,
+Feature-hashed retrieval exercise over locally authored sample policies.
+Provides dense vector cosine similarity, token-overlap sparse keyword matching,
 role-based access control (RBAC) filtering, and deterministic quote verification.
 """
 
@@ -30,6 +30,8 @@ def compute_dense_embedding(text: str, dim: int = 128) -> List[float]:
     if not tokens:
         return [0.0] * dim
 
+    if dim <= 0:
+        raise ValueError("Embedding dimension must be positive")
     vector = [0.0] * dim
 
     # 1. Semantic cluster subspace projection
@@ -75,7 +77,7 @@ class DocumentChunk:
     allowed_roles: List[str] = field(default_factory=lambda: ["support_tier1", "support_tier2", "admin", "compliance"])
 
 
-# Curated compliance and SLA handbook corpus with document-level security ACLs
+# Locally authored Apex sample policies; no verified external legal provenance.
 DEFAULT_KNOWLEDGE_BASE: List[Dict[str, Any]] = [
     {
         "document_id": "APEX-SLA-2026",
@@ -142,8 +144,8 @@ DEFAULT_KNOWLEDGE_BASE: List[Dict[str, Any]] = [
 
 class HybridKnowledgeIndex:
     """
-    Enterprise hybrid knowledge index combining dense vector cosine similarity
-    with BM25-style keyword matching and role-based access control (RBAC).
+    Local hybrid index combining feature-hash cosine similarity
+    with token overlap and simulated role filtering. It is not BM25.
     """
 
     def __init__(self, documents: Optional[List[Dict[str, Any]]] = None):
@@ -216,17 +218,15 @@ class HybridKnowledgeIndex:
         scored_chunks.sort(key=lambda x: x[1], reverse=True)
         return scored_chunks[:top_k]
 
-    def verify_quote(self, document_id: str, quote: str) -> bool:
+    def verify_quote(self, document_id: str, quote: str, section: Optional[str] = None) -> bool:
         """
         Deterministically verifies that the cited quote exists verbatim
         in the referenced document.
         """
         if not quote or not quote.strip():
             return False
-        clean_quote = " ".join(quote.split()).lower()
         for chunk in self.chunks:
-            if chunk.document_id == document_id:
-                clean_content = " ".join(chunk.content.split()).lower()
-                if clean_quote in clean_content:
+            if chunk.document_id == document_id and (section is None or chunk.section == section):
+                if quote in chunk.content:
                     return True
         return False
