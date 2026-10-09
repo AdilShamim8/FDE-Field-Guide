@@ -1,5 +1,7 @@
 # Behavioral Rounds and Ownership Deep-Dives
 
+Evidence status, reviewed 2026-10-09: dialogue, examples, incident quantities, and stories below are authored practice scenarios. They are not authenticated interviews or observed customer events. Use your own events and measured outcomes in interviews; proposed rubrics are not company hiring policies.
+
 This guide prepares candidates for the behavioral and leadership rounds of a Forward Deployed Engineer loop. Unlike general software engineering behavioral screens that prioritize generic teamwork and agile process adherence, FDE behavioral loops heavily weight **high agency under extreme ambiguity**, **customer boundary ownership**, **systemic error prevention**, and **constructive conflict resolution**.
 
 ---
@@ -60,7 +62,7 @@ Generic software engineering behavioral interviews use the standard STAR method 
 
 ---
 
-## Four Verbatim STAR+P Exemplar Stories
+## Four Practice STAR+P Exemplar Stories
 
 The following exemplar stories reflect real-world enterprise engagements across Palantir, Google, and enterprise AI startups. Rehearse these narrative structures using your own authentic experiences.
 
@@ -72,7 +74,7 @@ The following exemplar stories reflect real-world enterprise engagements across 
 > **Verified Source**: [Nehal Vyas](https://fde.hinehal.com/blogs/fde-interview-questions) | **Dataset ID**: `FDE-BEHV-001`  
 > **Core Trait**: Customer Boundary Ownership & Production Triage Under Pressure
 
-#### Verbatim Story (STAR+P)
+#### Practice Story (STAR+P)
 - **Situation**: *"Three weeks after deploying an invoice ingestion pipeline for a Fortune 500 logistics client, their overnight batch sync failed completely at 2:30 AM, blocking morning financial reconciliation for 40 distribution centers."*
 - **Tension**: *"The client's IT director called a P0 escalation bridge at 6:00 AM, blaming our service for crashing and demanding we roll back to their legacy manual workflow before the 8:00 AM market open."*
 - **Action**: *"I joined the incident call immediately, validated their operational urgency, and pulled our request traces rather than debating blame. I discovered that their upstream SAP export had silently begun emitting UTF-8 with Byte Order Marks (BOM) and non-standard European currency strings with comma decimals, which our strict parser rejected. I did not patch the prompt or disable validation. In 35 minutes, I wrote a hotfix with safe encoding detection (`utf-8-sig` fallback) and regex currency normalization, ran our local pytest suite against their corrupted sample batch, and deployed the patch behind our feature flag."*
@@ -87,7 +89,7 @@ The following exemplar stories reflect real-world enterprise engagements across 
 > **Verified Source**: [Anthropic Careers](https://job-boards.greenhouse.io/anthropic/jobs/5302966008) & [Dr. Sundeep Teki](https://www.sundeepteki.org/advice/the-definitive-guide-to-forward-deployed-engineer-interviews-in-2026)  
 > **Core Trait**: Navigating Conflicting Executive Priorities & Discovery Discipline
 
-#### Verbatim Story (STAR+P)
+#### Practice Story (STAR+P)
 - **Situation**: *"I was deployed to a Tier-1 healthcare network where the Chief Medical Officer wanted an AI clinical note summarizer to reduce physician burnout, while the Chief Compliance Officer mandated that no patient data could be processed off-premise, and the IT team had zero available GPU infrastructure."*
 - **Tension**: *"Both executives gave mutually contradictory mandates, and the project had stalled for four months before our team arrived. Team members were waiting for senior management to reconcile the conflict."*
 - **Action**: *"Recognizing that waiting for executive consensus was guaranteed failure, I initiated a five-day discovery sprint. I shadowed six attending physicians during evening charting to document their exact workflow, measuring baseline time per patient summary (average 18.5 minutes). I then drafted a phased architectural compromise: instead of sending full clinical notes to cloud APIs, we deployed a small 7-billion-parameter open model strictly inside their on-premise VMware CPU cluster to extract non-PII medical codes, and routed only synthetic medical research queries to our cloud endpoints via AWS PrivateLink with zero data retention."*
@@ -102,7 +104,7 @@ The following exemplar stories reflect real-world enterprise engagements across 
 > **Verified Source**: [Om Bharatiya](https://github.com/ombharatiya/AI-Engineer-Interview-Questions/blob/main/15-role-guides/forward-deployed-engineer.md) & [Nehal Vyas](https://fde.hinehal.com/blogs/fde-interview-questions)  
 > **Core Trait**: Stakeholder Pushback, Governance Defense, and Phased Negotiation
 
-#### Verbatim Story (STAR+P)
+#### Practice Story (STAR+P)
 - **Situation**: *"During a pilot deployment at a global investment bank, the commercial business sponsor demanded that we push an automated research document analysis tool to production four weeks early to coincide with their quarterly investor day."*
 - **Tension**: *"Our mandatory information security and model grounding audit was only halfway complete, and the system was currently exhibiting a 6% hallucination rate on complex derivatives prospectuses."*
 - **Action**: *"The commercial sponsor was furious when I raised concerns, accusing engineering of moving slowly and threatening to cancel the contract. I scheduled a 30-minute 1-on-1 with him. Rather than lecturing him on model hallucination, I translated the technical risk into his language: if an analyst relied on a hallucinated derivative yield in front of an investor, the regulatory SEC penalty and brand damage would erase any efficiency gains. I said 'no' to releasing the autonomous pipeline on investor day, but proposed a 'yes' to a gated, assisted version: the model would generate analysis strictly in draft mode with mandatory dual-analyst sign-off and watermark disclaimers on every export."*
@@ -117,7 +119,7 @@ The following exemplar stories reflect real-world enterprise engagements across 
 > **Verified Source**: [Dr. Sundeep Teki](https://www.sundeepteki.org/advice/the-definitive-guide-to-forward-deployed-engineer-interviews-in-2026) & [Alexey Grigorev](https://github.com/alexeygrigorev/ai-engineering-field-guide/blob/main/role/06-fde.md)  
 > **Core Trait**: Career Motivation, Customer Centricity, and Field Engineering Philosophy
 
-#### Verbatim Story Framework
+#### Practice Story Framework
 When interviewers ask: *"Why do you want to be a Forward Deployed Engineer instead of a standard backend software engineer or an AI research scientist?"*, high-scoring candidates deliver this structured response:
 
 > *"In pure backend engineering or research, you are insulated from the consequences of your code. You train models on clean benchmark datasets or optimize microservices against synthetic load tests, but you rarely see what happens when your software meets messy real-world data, legacy enterprise networks, and skeptical operators.
