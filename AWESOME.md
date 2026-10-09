@@ -1,8 +1,8 @@
 # Awesome FDE Resources
 
-A curated, verified collection of the best resources for becoming and succeeding as a Forward Deployed AI Engineer. Everything here is cited to a primary source. Nothing is synthetic or fabricated.
+A curated resource index for Forward Deployed Engineering. Entries include published guidance, historical measurements, and authored practice material. A listed link is not proof that every adjacent claim has been verified.
 
-Last verified: September 2026.
+Index reviewed: 2026-10-09. See the [audit](AUDIT.md), [dated source checks](research/source_checks_2026-10-09.json), and [expert practicum](learning-paths/expert-fde-practicum.md) for verification scope and delivery gates.
 
 ---
 
@@ -35,7 +35,7 @@ Start here if you are still unclear on what the role is and whether it is right 
 
 ### Market data
 
-- [Market Overview](job-market/01-market-overview.md) — 146 deduplicated 2026 postings, 1,000%+ YoY growth, median $188,000
+- [Market Overview](job-market/01-market-overview.md) — current source-pinned 212-ID sample, monthly deduplication, and historical secondary salary reporting
 - [Compensation](job-market/02-compensation.md) — sourced base, bonus, and equity bands across Early Startups, Growth Tech, and Tier-1 AI Labs
 
 ---
@@ -153,11 +153,11 @@ The three source documents (83 pages total) are stored locally in `forward-deplo
 - [Customer Scenario Rounds](interviews/04-customer-scenarios.md) — verbatim role-play transcripts, adversarial pushback, 3-tier rubrics
 - [Behavioral Rounds](interviews/05-behavioral.md) — ownership stories, stakeholder negotiation, failure under pressure
 - [Take-Home Assignments](interviews/06-take-homes.md) — 72-hour enterprise challenge, 100-point rubric, ADR templates
-- [Question Bank](interviews/07-question-bank.md) — 17 verified real-world questions with practitioner response playbooks
+- [Question Bank](interviews/07-question-bank.md) — curated practice prompts with unverified company attributions
 - [Systems Coding Solutions](interviews/08-coding-solutions.md) — runnable Python implementations with verbal narration scripts
 - [Palantir and AI FDE Interview Breakdown — FDE Academy](https://youtu.be/CCt0csEqul0) — live coding, system design, and customer role-play rounds decoded
 
-### Datasets (verified)
+### Datasets and evidence status
 
 - [interviews/dataset/](interviews/dataset/README.md) — 17 audited interview questions, 10-pass verification, JSON schema
 - [job-market/dataset/](job-market/dataset/README.md) — 146 deduplicated 2026 enterprise postings with validator
@@ -189,7 +189,7 @@ The three source documents (83 pages total) are stored locally in `forward-deplo
 ### Practitioner communities
 
 - [fde.academy](https://fde.academy) — interview framing and by-level compensation analyses
-- [joinplank.com](https://joinplank.com) — market tracker: 982 postings across 462 companies in 2026
+- [joinplank.com](https://joinplank.com) — hiring platform; previously quoted 982/462 counts are not corroborated by the current homepage
 - [fdepulse.com](https://fdepulse.com) — practitioner career write-ups and role mechanics
 - [r/mlops](https://www.reddit.com/r/mlops) — most technical FDE-adjacent discussion: monitoring, evaluation, drift
 
@@ -197,7 +197,7 @@ The three source documents (83 pages total) are stored locally in `forward-deplo
 
 ## 10. Verified Practitioners to Follow
 
-These are directly cited in the Codebasics FDE Roadmap 2026 and the five verified YouTube masterclasses. Real people, real roles, verified URLs.
+These are directly cited in the Codebasics FDE Roadmap 2026 and previously cited YouTube resources. Names and links require source-specific review; this index does not authenticate testimony.
 
 - Kevin Bai — founding FDE at Anthropic, ex-Palantir and Rippling. Source of the FDE Flywheel
 - Dhaval Patel — co-founder Codebasics and AtliQ Technologies, [codebasics.io](https://codebasics.io)
