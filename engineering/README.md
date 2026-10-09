@@ -104,12 +104,12 @@ The engineering patterns documented across this pillar are implemented as fully 
 
 | Architectural Mechanism | Repository Reference Implementation | Unit Test & Evaluation Coverage |
 | :--- | :--- | :--- |
-| **Full Jitter Exponential Backoff** | [`interviews/code/resilient_client.py`](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/interviews/code/resilient_client.py) | [`interviews/code/test_resilient_client.py`](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/interviews/code/test_resilient_client.py) (4 tests passed) |
-| **Idempotent Webhook Receiver** | [`interviews/code/webhook_receiver.py`](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/interviews/code/webhook_receiver.py) | [`interviews/code/test_webhook_receiver.py`](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/interviews/code/test_webhook_receiver.py) (3 tests passed) |
-| **Token Bucket Rate Limiter** | [`interviews/code/rate_limiter.py`](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/interviews/code/rate_limiter.py) | [`interviews/code/test_rate_limiter.py`](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/interviews/code/test_rate_limiter.py) (4 tests passed) |
-| **Deterministic Semantic Chunker** | [`interviews/code/chunker.py`](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/interviews/code/chunker.py) | [`interviews/code/test_chunker.py`](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/interviews/code/test_chunker.py) (3 tests passed) |
-| **Enterprise Server (ETISE)** | [`portfolio/reference-project/src/api/server.py`](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/portfolio/reference-project/src/api/server.py) | [`portfolio/reference-project/tests/test_server.py`](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/portfolio/reference-project/tests/test_server.py) (7 tests passed) |
-| **Golden Evaluation Harness** | [`portfolio/reference-project/evals/run_evals.py`](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/portfolio/reference-project/evals/run_evals.py) | 25 Enterprise Golden Test Cases (100% citation grounding) |
+| **Full Jitter Exponential Backoff** | [`interviews/code/resilient_client.py`](../interviews/code/resilient_client.py) | [`interviews/code/test_resilient_client.py`](../interviews/code/test_resilient_client.py) (4 tests passed) |
+| **Idempotent Webhook Receiver** | [`interviews/code/webhook_receiver.py`](../interviews/code/webhook_receiver.py) | [`interviews/code/test_webhook_receiver.py`](../interviews/code/test_webhook_receiver.py) (3 tests passed) |
+| **Token Bucket Rate Limiter** | [`interviews/code/rate_limiter.py`](../interviews/code/rate_limiter.py) | [`interviews/code/test_rate_limiter.py`](../interviews/code/test_rate_limiter.py) (4 tests passed) |
+| **Deterministic Semantic Chunker** | [`interviews/code/chunker.py`](../interviews/code/chunker.py) | [`interviews/code/test_chunker.py`](../interviews/code/test_chunker.py) (3 tests passed) |
+| **Enterprise Server (ETISE)** | [`portfolio/reference-project/src/api/server.py`](../portfolio/reference-project/src/api/server.py) | [`portfolio/reference-project/tests/test_server.py`](../portfolio/reference-project/tests/test_server.py) (7 tests passed) |
+| **Golden Evaluation Harness** | [`portfolio/reference-project/evals/run_evals.py`](../portfolio/reference-project/evals/run_evals.py) | 25 Enterprise Golden Test Cases (100% citation grounding) |
 
 ---
 
