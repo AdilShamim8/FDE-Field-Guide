@@ -4,7 +4,7 @@ Defines strict boundary validation for tickets, extraction, citations, and revie
 """
 
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import List, Literal, Optional
 from pydantic import BaseModel, Field, field_validator
 
 
@@ -30,11 +30,19 @@ class RoutingDecision(str, Enum):
 
 
 class TicketIngestRequest(BaseModel):
-    ticket_id: str = Field(..., description="Unique ticket identifier")
-    account_id: str = Field(..., description="Customer enterprise account ID")
-    raw_text: str = Field(..., min_length=5, description="Full ticket body or email body")
-    source_channel: str = Field("email", description="Channel: email, webhook, or portal")
-    idempotency_key: Optional[str] = Field(None, description="Client idempotency key")
+    ticket_id: str = Field(..., min_length=1, max_length=128, description="Unique ticket identifier")
+    account_id: str = Field(..., min_length=1, max_length=128, description="Customer enterprise account ID")
+    raw_text: str = Field(..., min_length=5, max_length=20000, description="Full ticket body or email body")
+    source_channel: str = Field("email", max_length=32, description="Channel: email, webhook, or portal")
+    idempotency_key: Optional[str] = Field(None, min_length=1, max_length=128, description="Client idempotency key")
+
+
+    @field_validator("ticket_id", "account_id", "idempotency_key")
+    @classmethod
+    def reject_blank_identifiers(cls, value):
+        if value is not None and not value.strip():
+            raise ValueError("Identifier must not be blank")
+        return value
 
 
 class ExtractedTicketData(BaseModel):
@@ -64,7 +72,7 @@ class TriageResult(BaseModel):
     confidence: float
     routing_decision: RoutingDecision
     draft_response: str
-    citations: List[Citation] = []
+    citations: List[Citation] = Field(default_factory=list)
     repair_attempts: int = 0
     processing_time_ms: float = 0.0
 
@@ -80,7 +88,7 @@ class OperatorReviewItem(BaseModel):
 class OperatorResolveRequest(BaseModel):
     ticket_id: str
     operator_id: str
-    action: str = Field(..., description="APPROVE or OVERRIDE")
+    action: Literal["APPROVE", "OVERRIDE"] = Field(..., description="APPROVE or OVERRIDE")
     corrected_category: Optional[DefectCategory] = None
     corrected_severity: Optional[SeverityLevel] = None
     override_notes: Optional[str] = None
