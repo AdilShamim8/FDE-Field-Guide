@@ -174,10 +174,11 @@
     "raw_text": "Just checking general account settings and portal information.",
     "expected_category": "GENERAL_INQUIRY",
     "expected_severity": "P3",
-    "expected_routing": "AUTOMATED_DISPATCH",
+    "expected_routing": "HUMAN_REVIEW_REQUIRED",
     "expected_citation_doc": null,
     "evidence_status": "unverified_legacy_fixture",
-    "evaluation_split": "regression"
+    "evaluation_split": "regression",
+    "contract_update": "2026-10-09: general inquiry has no applicable sample policy; unrelated exact quotes cannot authorize strict-mode dispatch"
   },
   {
     "id": "TC-016",
@@ -234,10 +235,11 @@
     "raw_text": "What are your standard support team business hours for regional branches?",
     "expected_category": "GENERAL_INQUIRY",
     "expected_severity": "P3",
-    "expected_routing": "AUTOMATED_DISPATCH",
+    "expected_routing": "HUMAN_REVIEW_REQUIRED",
     "expected_citation_doc": null,
     "evidence_status": "unverified_legacy_fixture",
-    "evaluation_split": "regression"
+    "evaluation_split": "regression",
+    "contract_update": "2026-10-09: general inquiry has no applicable sample policy; unrelated exact quotes cannot authorize strict-mode dispatch"
   },
   {
     "id": "TC-021",
@@ -294,9 +296,10 @@
     "raw_text": "Inquiry regarding the roadmap for upcoming 2027 enterprise features.",
     "expected_category": "GENERAL_INQUIRY",
     "expected_severity": "P3",
-    "expected_routing": "AUTOMATED_DISPATCH",
+    "expected_routing": "HUMAN_REVIEW_REQUIRED",
     "expected_citation_doc": null,
     "evidence_status": "unverified_legacy_fixture",
-    "evaluation_split": "regression"
+    "evaluation_split": "regression",
+    "contract_update": "2026-10-09: general inquiry has no applicable sample policy; unrelated exact quotes cannot authorize strict-mode dispatch"
   }
 ]
