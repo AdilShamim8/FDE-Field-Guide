@@ -72,24 +72,13 @@ Practitioner masterclasses converge on five distinct archetype systems that prov
 
 ---
 
-### Archetype 2: Intake-to-Resolution Enterprise Workflow (Reference Project)
+### Archetype 2: intake and review workflow
 
-> [!NOTE]
-> **Complete Reference Project Available**: We have fully implemented Archetype 2 in [`portfolio/reference-project/`](reference-project/) featuring FastAPI, hybrid BM25 + dense search, golden evaluation harnesses, and an operations runbook.
+The [reference project](reference-project/README.md) demonstrates a local subset of this architecture, reviewed 2026-10-09: typed intake, heuristic classification, feature-hash/token-overlap retrieval over authored policies, category-applicable quote checks, bounded replay, and process-local review. It does not implement BM25, learned embeddings, automatic model repair, authenticated roles, durable storage, or customer-system dispatch.
 
-- **The Business Problem**: A high-volume B2B enterprise receives thousands of support exceptions, payment disputes, and SLA credit claims daily across disparate channels. Support engineers spend hours manually categorizing tickets, reviewing policy manuals, and drafting replies.
-- **Architectural Components**:
-  1. Defensive ingestion API: REST and webhook receiver with idempotency key caching, payload checksum verification, and defensive schema parsing.
-  2. Self-healing structured extraction: Extracts target fields (account ID, defect category, severity level, urgency score) with an automated repair loop that feeds validation errors back to the model.
-  3. Hybrid knowledge index: BM25 keyword matching combined with dense vector retrieval to ground answers against official SLA and customer service handbooks.
-  4. Human-in-the-loop exception queue: Tickets with confidence scores below 0.85 or P0 severity are routed to an operator review queue with one-click approval and override capture.
-- **Verifiable Public Datasets**:
-  - [Consumer Financial Protection Bureau (CFPB) Complaint Database](https://www.consumerfinance.gov/data-research/consumer-complaints/): Over 4 million real consumer financial disputes with company responses and resolution flags.
-  - [Hugging Face Bitext Customer Support Dataset](https://huggingface.co/datasets/bitext/customer-support-llm-dataset): 27,000 categorized enterprise customer service interactions.
-  - Sourcing documented in [`reference-project/evals/DATASET_PROVENANCE.md`](reference-project/evals/DATASET_PROVENANCE.md).
-- **Minimum Viable Bar**: 25-case golden evaluation suite reporting 100% citation grounding and automated exception queue routing.
+The real-data input is [five official CFPB metadata records received today](reference-project/evals/real_data/cfpb_metadata_2026-10-09.json), without narratives or ETISE labels. The 25 known cases remain regression fixtures with unverified origins. Bitext is publisher-described hybrid synthetic and is excluded from the real-world-only evidence set. Read [provenance](reference-project/evals/DATASET_PROVENANCE.md) before choosing evaluation data.
 
----
+For a production project, acquire customer-approved policies, a representative independently labeled holdout, identity mapping, downstream action contracts, review capacity, durable transactions, and workload measurements. Do not treat local fixture scores as the completed architecture or invent customer volumes and statutory dollar thresholds.
 
 ### Archetype 3: Document Intelligence and Multi-Stage Approval System
 - **The Business Problem**: A logistics or insurance firm receives multi-page vendor invoices, bills of lading, and customs declarations in PDF and image formats. Legacy OCR produces fragmented tables, misread digits, and corrupted alphanumeric codes.
