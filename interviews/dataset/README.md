@@ -6,7 +6,7 @@ Reviewed 2026-10-09. [fde_interview_questions.json](fde_interview_questions.json
 
 Each record is `curated_practice_company_attribution_unverified`. Preserve the historical `tested_at` and `verified_date` declarations for traceability; neither establishes that the named company asked that exact question. Suggested responses are synthesized preparation material, not verbatim testimony. The new `audited_on` date records this status review, not a new interview collection.
 
-The dataset cites Om Bharatiya, Nehal Vyas, Dr. Sundeep Teki, Dr. Sanjay Kumar PhD, YagyanshB, and Alexey Grigorev. These declared author names and links require source-specific review. An allowlisted author or domain is not provenance authentication.
+The dataset cites Om Bharatiya, Nehal Vyas, Dr. Sundeep Teki, Dr. Sanjay Kumar PhD, YagyanshB, Startup.jobs, and Alexey Grigorev. These declared author names and links require source-specific review. An allowlisted author or domain is not provenance authentication.
 
 ## Validation
 
