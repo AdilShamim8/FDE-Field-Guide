@@ -258,7 +258,7 @@ The most valuable skill in Forward Deployed Engineering is knowing when **not** 
 | :--- | :--- | :--- |
 | **1. Fixed Sequential Workflows** | The steps are known in advance ($A \rightarrow B \rightarrow C$). Renting an LLM to guess the control flow introduces non-deterministic failure modes and multiplies costs. | **Deterministic DAG Workflow** (Temporal, AWS Step Functions, Airflow, or plain Python pipeline). |
 | **2. Single-Shot Extraction Tasks** | The problem is parsing unstructured documents into structured tables. Running an agent loop adds multi-second latency and recursive failure modes. | **Single-Shot Extraction with Schema Validation** ([01: LLM Application Patterns](01-llm-application-patterns.md)). |
-| **3. Untrusted Egress Networks** | An agent that consumes untrusted external text and has access to arbitrary URL fetch tools is an immediate SSRF / data exfiltration hazard. | **Zero-Egress Isolated Containers** with pre-indexed offline search ([04: Cloud & Infrastructure](04-cloud-and-infrastructure.md)). |
+| **3. Untrusted Egress Networks** | An agent that consumes untrusted external text and has access to arbitrary URL fetch tools is an immediate SSRF / data exfiltration hazard. | **Zero-Egress Isolated Containers** with pre-indexed offline search ([04: Cloud & Infrastructure](../engineering/04-cloud-and-infrastructure.md)). |
 | **4. Zero Tolerance for Non-Determinism** | Financial ledger postings or life-safety medical dosing calculations cannot tolerate probabilistic runtime variations. | **Deterministic Rule Engines** with models serving only as advisory explainers. |
 | **5. Unbounded Stop Criteria** | The customer cannot define an objective, programmatic test for when the task is "done." The agent wanders the tool space indefinitely. | **Human-in-the-Loop Workflow** with bounded sub-task execution. |
 
@@ -296,7 +296,7 @@ stateDiagram-v2
     Cancelled --> [*]
 ```
 
-See the working reference implementation of this dual-key exception queue in [`portfolio/reference-project/src/engine/agent.py`](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/portfolio/reference-project/src/engine/agent.py), where high-severity compliance deviations automatically divert from autonomous dispatch to human operator review.
+See the working reference implementation of this dual-key exception queue in [`portfolio/reference-project/src/engine/agent.py`](../portfolio/reference-project/src/engine/agent.py), where high-severity compliance deviations automatically divert from autonomous dispatch to human operator review.
 
 ---
 
