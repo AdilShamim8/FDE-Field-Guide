@@ -7,9 +7,13 @@ FastAPI application exposing production endpoints for ETISE:
 """
 
 import time
+import hashlib
+import json
+from dataclasses import dataclass
+from functools import wraps
+from threading import RLock
 from typing import Any, Dict, List, Optional
 from fastapi import FastAPI, Header, HTTPException, Query, status
-from fastapi.responses import JSONResponse
 
 from ..config import settings
 from ..engine.agent import TriageAgent
@@ -20,17 +24,44 @@ from ..models.schemas import (
     TicketIngestRequest,
     TriageResult,
 )
-from ..pipeline.ingestion import HybridKnowledgeIndex
 
 app = FastAPI(
     title="Enterprise Ticket Intelligence and Grounded Synthesis Engine (ETISE)",
     version="1.0.0",
-    description="Production-grade forward deployed triage and compliance synthesis API",
+    description="Local deterministic triage reference; no authenticated tenant boundary",
 )
 
 # Application state
 agent = TriageAgent()
-idempotency_store: Dict[str, Dict[str, Any]] = {}
+@dataclass
+class CachedResult:
+    payload_hash: str
+    expires_at: float
+    result: Dict[str, Any]
+
+
+# Process-local serialization, not a distributed lock or durable transaction.
+state_lock = RLock()
+MAX_IDEMPOTENCY_ENTRIES = 4096
+idempotency_store: Dict[tuple, CachedResult] = {}
+
+
+def serialized_state(function):
+    @wraps(function)
+    def wrapped(*args, **kwargs):
+        with state_lock:
+            return function(*args, **kwargs)
+    return wrapped
+
+
+def parse_roles(header):
+    # Local role simulation only. A production gateway must supply verified identity.
+    roles = ["support_tier1"] if header is None else sorted({r.strip() for r in header.split(",") if r.strip()})
+    known = {"support_tier1", "support_tier2", "admin", "compliance"}
+    if any(role not in known for role in roles):
+        raise HTTPException(status_code=400, detail="Unknown simulated role")
+    return roles
+
 exception_queue: List[OperatorReviewItem] = []
 feedback_ledger: List[Dict[str, Any]] = []
 
@@ -46,6 +77,7 @@ metrics_data = {
 
 
 @app.get("/health", tags=["System"])
+@serialized_state
 def health_check() -> Dict[str, Any]:
     return {
         "status": "healthy",
@@ -58,6 +90,7 @@ def health_check() -> Dict[str, Any]:
 
 
 @app.get("/metrics", tags=["System"])
+@serialized_state
 def get_metrics() -> Dict[str, Any]:
     return {
         "metrics": metrics_data,
@@ -72,25 +105,35 @@ def get_metrics() -> Dict[str, Any]:
     status_code=status.HTTP_200_OK,
     tags=["Triage"],
 )
+@serialized_state
 def process_ticket(
     payload: TicketIngestRequest,
-    idempotency_key: Optional[str] = Header(None, alias="Idempotency-Key"),
+    idempotency_key: Optional[str] = Header(None, alias="Idempotency-Key", min_length=1, max_length=128),
     user_roles_header: Optional[str] = Header(None, alias="X-User-Roles"),
 ) -> TriageResult:
     """
     Ingests, classifies, and synthesizes a citation-grounded draft for incoming tickets.
-    Guarantees idempotency via Idempotency-Key header or payload parameter.
-    Enforces RBAC document filtering via X-User-Roles header.
+    Serializes local retries and expires cached results using a monotonic clock.
+    Simulates document filtering via caller-supplied X-User-Roles; not authentication.
     """
     key = idempotency_key or payload.idempotency_key
-
-    # Check for idempotent cached result
-    if key and key in idempotency_store:
+    if key is not None and not key.strip():
+        raise HTTPException(status_code=422, detail="Idempotency key must not be blank")
+    roles = parse_roles(user_roles_header)
+    cache_key = (payload.account_id, key, tuple(roles)) if key else None
+    serialized = json.dumps(payload.model_dump(exclude={"idempotency_key"}), sort_keys=True, separators=(",", ":"))
+    payload_hash = hashlib.sha256(serialized.encode("utf-8")).hexdigest()
+    now = time.monotonic()
+    for expired_key in [k for k, record in idempotency_store.items() if record.expires_at <= now]:
+        del idempotency_store[expired_key]
+    if cache_key in idempotency_store:
+        record = idempotency_store[cache_key]
+        if record.payload_hash != payload_hash:
+            raise HTTPException(status_code=409, detail="Idempotency key reused with conflicting payload")
         metrics_data["total_idempotent_replays"] += 1
-        cached_result = idempotency_store[key]
-        return TriageResult(**cached_result)
-
-    roles = [r.strip() for r in user_roles_header.split(",")] if user_roles_header else None
+        return TriageResult(**record.result)
+    if cache_key and len(idempotency_store) >= MAX_IDEMPOTENCY_ENTRIES:
+        raise HTTPException(status_code=503, detail="Local replay cache capacity reached")
 
     # Process ticket through agent
     result = agent.process_ticket(payload, user_roles=roles)
@@ -123,8 +166,12 @@ def process_ticket(
         exception_queue.append(review_item)
 
     # Store idempotent result
-    if key:
-        idempotency_store[key] = result.model_dump()
+    if cache_key:
+        idempotency_store[cache_key] = CachedResult(
+            payload_hash=payload_hash,
+            expires_at=time.monotonic() + settings.idempotency_ttl_seconds,
+            result=result.model_dump(),
+        )
 
     return result
 
@@ -134,6 +181,7 @@ def process_ticket(
     response_model=List[OperatorReviewItem],
     tags=["Operator Oversight"],
 )
+@serialized_state
 def get_exception_queue(
     status_filter: str = Query("PENDING", description="Status: PENDING, APPROVED, or OVERRIDDEN")
 ) -> List[OperatorReviewItem]:
@@ -144,6 +192,7 @@ def get_exception_queue(
 
 
 @app.post("/api/v1/queue/resolve", tags=["Operator Oversight"])
+@serialized_state
 def resolve_exception(resolve_req: OperatorResolveRequest) -> Dict[str, Any]:
     """
     Allows a human operator to approve or override an automated triage decision,
@@ -196,6 +245,7 @@ def resolve_exception(resolve_req: OperatorResolveRequest) -> Dict[str, Any]:
 
 
 @app.get("/api/v1/knowledge/search", tags=["Knowledge Base"])
+@serialized_state
 def search_knowledge(
     q: str = Query(..., min_length=2, description="Search query"),
     top_k: int = Query(2, ge=1, le=5),
@@ -204,7 +254,7 @@ def search_knowledge(
     """
     Performs permission-aware hybrid search over indexed enterprise compliance and SLA manuals.
     """
-    roles = [r.strip() for r in user_roles_header.split(",")] if user_roles_header else None
+    roles = parse_roles(user_roles_header)
     results = agent.index.search(q, top_k=top_k, user_roles=roles)
     return {
         "query": q,
