@@ -164,83 +164,31 @@ graph TD
 
 ---
 
-## 4. Production Empirical Case Study: Transforming "Just Build Something With Our Data"
+## 4. Worked exercise: resolve ambiguity in the actual market sources
 
-To examine high-agency execution under extreme ambiguity, consider this real-world engagement calibrated against
-empirical enterprise financial dispute operations ([`portfolio/reference-project/evals/DATASET_PROVENANCE.md`](../portfolio/reference-project/evals/DATASET_PROVENANCE.md)).
+Reviewed on 2026-10-09. The earlier claimed consumer-finance engagement, private record counts, staffing, and regulatory fines were not supported by repository artifacts. Use the current [source-pinned market snapshot](../job-market/dataset/market_snapshot_2026-10-09.json) to demonstrate the same prioritization skill with observed data.
 
-### The Situation & Initial Ambiguity
-Week 1 at a regional consumer finance institution. The executive sponsor (Executive VP of Operations) meets
-the FDE team and issues a vague mandate:
-> *"Our consumer complaint volume doubled this year. We have budget for AI. Just build something smart with our
-> dispute data and we'll know it when we see it. You have four weeks before our next board meeting."*
+### Situation and constraints
 
-Your team consists of you (the FDE) and one internal data engineer allocated at 25% time.
+The source FDE article describes 146 historical roles. Its newer cumulative CSV matches 212 IDs, while the monthly-file union matches 237. Location duplicates, title changes, and IDs missing from the cumulative file make a single unqualified headline misleading.
 
-### Discovered Ground-Truth Constraints
-- Historical dispute narratives sit in an on-premise DB2 warehouse. The internal data engineer has read-only
-  access to de-identified dispute records.
-- Any network connection leaving the customer's private subnet requires a formal architecture review that meets
-  monthly.
-- Frontline dispute operators are cynical; a prior vendor promised "automated resolution" eight months ago and
-  delivered an unmaintainable model that hallucinated refund amounts.
+### Move-by-move decision
 
-### What High-Agency Execution Looks Like: Week 1 Move-by-Move
+1. Classify the source revision, row counts, and title definition as knowable facts; inspect the immutable CSV objects.
+2. Make the reversible implementation decision to publish raw-row and unique-ID counts separately, without inventing missing source records.
+3. Keep unresolved source discrepancies explicit. Record the 25 scrape-only IDs and the 220-match alternative title rule as sensitivity analysis.
+4. Publish the dated transformation and validator before expanding to inferred skill, salary, or customer-facing labels.
+5. Ask for upstream reconciliation or approved labels only when those inputs are necessary to the next decision. Do not block independent counting work.
 
-```mermaid
-sequenceDiagram
-    FDE->>DE: Tier 1 Triage
-    DE-->>FDE: Raw tables identified
-    FDE->>Lead: Shadowing
-    Lead-->>FDE: Painful morning task identified
-    FDE->>FDE: Tier 2 Decision
-    FDE->>VP: One-page spec and demo booked
+### What this demonstrates
 
-    participant FDE as Forward Deployed Engineer
-    participant DE as Data Engineer
-    participant Lead as Dispute Operator
-    participant VP as Executive VP
-```
+A thin slice is a reproducible answer to a bounded question, with its remaining uncertainties intact. The checked-in refresh and validation tools establish this behavior. They do not claim a worldwide census or an October 9 market crawl.
 
-1. **Move 1: Execute Tier 1 Triage on Day 2**:
-   - Meet the data engineer: discover which tables are actively refreshed vs abandoned. Table `disputes_text_raw`
-     contains 45,000 historical records with real complaints.
-   - Shadow the senior dispute analyst: discover that the most expensive operational pain is **verifying whether
-     disputes exceed $1,000 and carry statutory 10-day Regulation E escalation deadlines**.
-2. **Move 2: Execute Tier 2 Decisions on Day 3**:
-   - Decide immediately: the pilot will operate on a sample of 250 de-identified historical complaints.
-   - Deploy the **Walking Skeleton** ([`portfolio/reference-project/src/api/server.py`](../portfolio/reference-project/src/api/server.py))
-     inside a containerized local sandbox within their network, avoiding the 4-week external security review.
-3. **Move 3: Baseline the Target Metric on Day 4**:
-   - Time the manual workflow: analysts currently spend **8.5 minutes per dispute** manually checking card
-     network rules and computing regulatory deadlines.
-   - Establish the target: the automated engine must classify the dispute, extract the dollar amount, and tag
-     statutory deadlines in under 2 seconds, cutting review time to under 1.5 minutes.
-4. **Move 4: Book the Week 3 Decision Gate on Day 5**:
-   - Send the weekly BLUF update to the Executive VP:
-     > *"We have bounded the scope to automated Regulation E statutory escalation routing. We are building on
-     > de-identified data in a local enclave. Demo is scheduled for Oct 24 at 14:00 to evaluate baseline accuracy
-     > and decide whether to proceed to staging deployment."*
+## 5. Executable references
 
-By Friday of Week 1, the vague executive request *"build something with our data"* was converted into a
-bounded technical architecture, an active open-questions log, and an empirical evaluation target.
-
----
-
-## 5. Direct Codebase Defense Implementations
-
-Navigating ambiguity requires resilient engineering defenses that isolate uncertainty behind clean interfaces:
-
-| Ambiguity Defense Discipline | Codebase Defense File | Production Role |
-| :--- | :--- | :--- |
-| **The Walking Skeleton Architecture** | [`portfolio/reference-project/src/api/server.py`](../portfolio/reference-project/src/api/server.py) | Full end-to-end FastAPI service with local mock fallbacks, enabling rapid local iteration |
-| **Self-Healing Schema Correction** | [`interviews/code/structured_extractor.py`](../interviews/code/structured_extractor.py) | Pydantic validation with reflection loops, absorbing unexpected customer schema anomalies |
-| **Parameter-Driven Text Chunking** | [`interviews/code/chunker.py`](../interviews/code/chunker.py) | Configurable sliding window chunker enabling rapid two-way door experimentation |
-| **Deterministic Decision Gating** | [`portfolio/reference-project/src/api/server.py`](../portfolio/reference-project/src/api/server.py) | Rule-based escalation gate preventing probabilistic hallucinations on statutory deadlines |
-| **Automated Golden Evals as Insurance**| [`portfolio/reference-project/evals/run_evals.py`](../portfolio/reference-project/evals/run_evals.py) | 25-case benchmark providing objective proof of accuracy to skeptical steering committees |
-| **One-Page Technical Specification** | [`customer/02-requirements-to-spec.md`](../customer/02-requirements-to-spec.md) | Standardized contract skeleton converting ambiguous customer conversations into testable code |
-
----
+- [Refresh pipeline](../job-market/dataset/refresh_market_snapshot.py) reads immutable source objects and reports discrepancies.
+- [Snapshot validator](../job-market/dataset/validate_market_snapshot.py) checks accounting and optional full reproduction.
+- [Expert practicum](../learning-paths/expert-fde-practicum.md) connects prioritization to customer acceptance gates.
 
 ## 6. Primary Practitioner Literature & Citations
 
