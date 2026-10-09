@@ -41,7 +41,7 @@ Turning loose discovery interviews and high-level aspirations into binding, test
 - **The Anatomy of Spec Failure**: Eliminating ambiguity, unstated architectural assumptions, unassigned scope, and shifting stakeholders.
 - **The One-Page Spec Skeleton**: Standardized structure covering problem quantification, measurable goals, explicit non-goals, and boundary scope.
 - **Executable Given/When/Then Acceptance Criteria**: Formulating criteria that survive QA and map directly to automated tests.
-- **Production Worked Example (ETISE-SPEC-2026-v2.1)**: Full real-world engineering specification for the Enterprise Ticket Intelligence & SLA Escalation Engine, backed by 26,872 Bitext customer interactions and CFPB dispute records.
+- **Reviewed specification exercise**: Current ETISE local contracts, five actual CFPB metadata records received 2026-10-09, and explicit open customer acceptance decisions. Bitext is publisher-described synthetic and is excluded from real-only evidence.
 - **The 24-Hour Review Ritual**: Silent reading protocols and closing open questions with named owners.
 
 ### 3. [Working in Customer Environments](03-working-in-customer-environments.md)
@@ -89,7 +89,7 @@ frameworks within this repository:
 | :--- | :--- | :--- |
 | **Executable Given/When/Then Acceptance Criteria** | [`portfolio/reference-project/tests/test_server.py`](../portfolio/reference-project/tests/test_server.py) | `pytest portfolio/reference-project/tests/` (Asserts automated dispatch, idempotency replays, RBAC) |
 | **Empirical Golden Evaluation Harness** | [`portfolio/reference-project/evals/run_evals.py`](../portfolio/reference-project/evals/run_evals.py) | `python portfolio/reference-project/evals/run_evals.py` (25 enterprise cases, 100% citation grounding) |
-| **Real-World Dispute Dataset Provenance** | [`portfolio/reference-project/evals/DATASET_PROVENANCE.md`](../portfolio/reference-project/evals/DATASET_PROVENANCE.md) | CFPB public complaint API & Hugging Face Bitext customer support dataset |
+| **Real-World Dispute Dataset Provenance** | [`portfolio/reference-project/evals/DATASET_PROVENANCE.md`](../portfolio/reference-project/evals/DATASET_PROVENANCE.md) | CFPB metadata lineage, unverified legacy fixtures, and the exclusion of hybrid synthetic Bitext data |
 | **Walking Skeleton Architecture** | [`portfolio/reference-project/src/api/server.py`](../portfolio/reference-project/src/api/server.py) | Fast API server with mock fallbacks for rapid local integration |
 | **Production Incident SRE Runbook** | [`troubleshooting/01-debugging-methodology.md`](../troubleshooting/01-debugging-methodology.md) | 7-phase incident lifecycle, Sev-0..Sev-3 SLA matrix, and blameless post-mortems |
 | **Regulated Enclave & Bastion Runbook** | [`troubleshooting/02-debugging-customer-systems.md`](../troubleshooting/02-debugging-customer-systems.md) | 6-tier visibility ladder and multi-cloud IAM CLI diagnostic commands |
