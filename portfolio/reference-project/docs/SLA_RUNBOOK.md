@@ -1,83 +1,63 @@
-# Operations Runbook and SLA Disaster Recovery
+# ETISE local operations and recovery runbook
 
-This runbook outlines operational procedures, telemetry alerts, troubleshooting workflows, and emergency disaster recovery protocols for the Enterprise Ticket Intelligence and Grounded Synthesis Engine (ETISE).
+This runbook covers the development service reviewed on 2026-10-09. There is no measured production SLA, paging integration, model provider, database, backup, or durable queue. The commands below describe available behavior; proposed production operations belong in a separately accepted runbook.
 
-## System SLOs and SLA thresholds
+## Start and verify
 
-- Availability: 99.9% uptime for the REST ingestion API (`GET /health`, `POST /api/v1/tickets/process`).
-- Latency: p95 latency under 1,200ms; p99 latency under 2,000ms.
-- Accuracy floor: 88% precision on ticket classification; 100% citation grounding (zero ungrounded claims in customer drafts).
-- Review queue lag: tickets routed to the exception queue must not wait more than 30 minutes for operator review during business hours.
+From `/workspace/FDE-Field-Guide/portfolio/reference-project` in the prepared cloud environment:
 
-## Telemetry and alerting rules
+```bash
+../../.venv/bin/python -m uvicorn src.api.server:app --host 127.0.0.1 --port 8000
+```
 
-All alerts page the primary on-call engineer via PagerDuty or enterprise incident management.
+Keep one worker and the execution session alive. Do not expose the unauthenticated reference to untrusted traffic.
 
-### Alert 1: High 5xx Error Rate (P0 Severity)
+In another terminal:
 
-- Trigger condition: HTTP 5xx responses exceed 1.0% of total requests over a rolling 5-minute window.
-- Probable cause: Upstream model API outage, Redis connection pool exhaustion, or database lock contention.
-- Triage steps:
-  1. Check endpoint health via `curl -f http://localhost:8000/health`.
-  2. Inspect container logs for connection timeouts or authentication errors.
-  3. If upstream provider is down, activate the automated fallback kill-switch (`SYSTEM_MODE=FALLBACK_BYPASS`).
+```bash
+curl --fail --silent --show-error http://127.0.0.1:8000/health
+curl --fail --silent --show-error 'http://127.0.0.1:8000/api/v1/knowledge/search?q=Section%203.1%20critical%20outage'
+curl --fail --silent --show-error http://127.0.0.1:8000/metrics
+```
 
-### Alert 2: Model Grounding Canary Failure (P1 Severity)
+Require `status: healthy`, an indexed corpus, and a relevant returned sample-policy result. These requests do not demonstrate production availability or legal source authenticity.
 
-- Trigger condition: Synthetic golden evaluation canary fails citation validation on 2 consecutive 5-minute runs.
-- Probable cause: Upstream model prompt drift, knowledge base index corruption, or context truncation.
-- Triage steps:
-  1. Inspect the canary trace to compare the generated quotation against the indexed source chunk.
-  2. If retrieval index is corrupted, trigger an index rebuild: `python -m src.pipeline.ingestion --rebuild`.
-  3. Force strict refusal mode (`STRICT_GROUNDING_REFUSAL=TRUE`) to prevent ungrounded outputs from reaching operators.
+For authored smoke inputs and assertions, run from the repository root:
 
-### Alert 3: Exception Queue Depth Spike (P2 Severity)
+```bash
+.venv/bin/python -m pytest portfolio/reference-project/tests/test_server.py -v
+.venv/bin/python portfolio/reference-project/evals/run_evals.py --report /tmp/etise-regression.json
+```
 
-- Trigger condition: Number of pending tickets in the human exception queue exceeds 150 items.
-- Probable cause: Sudden burst of ambiguous tickets, low model confidence scores, or supervisor staffing shortage.
-- Triage steps:
-  1. Inspect the distribution of low-confidence scores across incoming tickets.
-  2. Notify support team shift leads to allocate temporary secondary reviewers.
+The API tests process tickets, exercise local review and resolution, and reject conflicts and invalid inputs. Adversarial test requests are code-contract inputs, not real-world dataset records. The regression report is known-case evidence rather than customer accuracy.
 
-## Emergency rollback and kill-switch procedures
+## Diagnose available failure responses
 
-If the automated triage service causes workflow disruption, execute the appropriate containment protocol below:
+- Startup import error: confirm the working directory and `src.api.server:app` target. Use the project's environment and pinned dependency constraints.
+- HTTP 422: inspect the validation response for a blank ID, oversized field, invalid action, or malformed payload. Preserve the original source record separately; do not silently relabel missing data.
+- HTTP 400 on role simulation: check the declared role spelling. Only the listed reference roles are accepted; this does not authenticate the caller.
+- HTTP 409 on replay: a key was reused with different ticket content within the same declared account/role scope. Correct the upstream key contract instead of blindly retrying altered payloads.
+- HTTP 503 from replay-cache capacity: the local cache reached its bounded entry count. Inspect workload and expiry; do not increase limits without evaluating resource use. Queues and other state still lack production retention bounds.
+- Human review result: inspect confidence, evidence, and permissions. No retrieved evidence must not be bypassed by claiming a higher confidence score.
 
-### Level 1: Switch to shadow mode (soft bypass)
+## Stop, restart, and state-loss behavior
 
-The service continues ingesting tickets and logging predictions for observability, but stops publishing automated suggestions to the operator UI.
+Stop the foreground service you started with Ctrl-C, inspect its exit, then rerun the startup command. Check health and functional requests again. Do not stop another user's process to free a port.
 
-Command:
+A restart discards replay records, queued review items, feedback, and counters. There is no restore command. Do not use this service as the authoritative record for customer work. Increasing worker count creates independent state and breaks the single-process replay assumption.
 
-`curl -X POST http://localhost:8000/api/v1/admin/mode -H "Authorization: Bearer $ADMIN_TOKEN" -d '{"mode": "SHADOW"}'`
+There is no `/api/v1/admin/mode`, `SYSTEM_MODE=FALLBACK_BYPASS`, automatic PagerDuty integration, or `src.pipeline.ingestion --rebuild` command. The previous runbook instructions claiming them are withdrawn.
 
-Result: All tickets pass directly through to standard human queues without suggestions. Zero user impact.
+## Requirements before a real operational handover
 
-### Level 2: Complete service bypass (hard kill-switch)
-
-Traffic is routed completely around the ETISE service at the reverse proxy or API gateway level.
-
-Command:
-
-Update NGINX or AWS ALB target group to route traffic directly to the legacy Zendesk or ServiceNow webhook endpoint.
-
-## Incident postmortem checklist
-
-Following any P0 or P1 incident, the on-call FDE must complete the postmortem process within 48 hours:
-
-- [ ] Capture the immutable trace ID and full request payload for the failing transaction
-- [ ] Add the failure scenario to the regression test suite (`tests/`)
-- [ ] Add the query and expected output to the golden dataset (`evals/golden_dataset.json`)
-- [ ] Deliver a written one-page incident report to customer operations leadership
+A production owner must demonstrate authenticated tenant access, authorized reviews, durable audit and queue storage, resource/retention limits, telemetry privacy, workload-based service indicators, and a restore/replay drill. Define customer-approved objectives and rollback routing in the actual deployment environment. Do not substitute a checklist or local regression timing for these measurements.
 
 ## Related documents
 
-- [Project README](../README.md) - system overview and quickstart
-- [Architecture and threat model](ARCHITECTURE.md) - system components and boundaries
-- [Statement of work](SOW.md) - engagement SLAs and milestone commitments
-- [Debugging customer systems](../../troubleshooting/02-debugging-customer-systems.md) - field guide to troubleshooting in client estates
+- [Project README](../README.md) - setup and boundaries
+- [Architecture](ARCHITECTURE.md) - process-local state and threat model
+- [Expert practicum](../../../learning-paths/expert-fde-practicum.md) - operational acceptance gates
 
 ## Further reading
 
-- [Google SRE Book: Service Level Objectives](https://sre.google/sre-book/service-level-objectives/) - principles of error budgets and alert design
-- [The Datadog Guide to Monitoring LLM Systems](https://www.datadoghq.com/) - production observability for probabilistic systems
+- [Google SRE objectives](https://sre.google/sre-book/service-level-objectives/) - service measurement principles, checked 2026-10-09
