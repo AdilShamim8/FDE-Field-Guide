@@ -141,5 +141,5 @@ code within this repository:
 3. **OpenAI**: *Forward Deployed Engineer, Enterprise & Solutions Engineering Specifications* (2026). [openai.com/careers](https://openai.com/careers)
 4. **Anthropic**: *Forward Deployed Engineer - Claude Enterprise Deployments & Model Context Protocol* (2026). [job-boards.greenhouse.io/anthropic/jobs/5302966008](https://job-boards.greenhouse.io/anthropic/jobs/5302966008)
 5. **MIT NANDA Initiative / Fortune**: *The GenAI Divide: Why 95% of Enterprise AI Pilots Fail* (August 2025). [fortune.com/2025/08/18/mit-report-95-percent-generative-ai-pilots-at-companies-failing-cfo](https://fortune.com/2025/08/18/mit-report-95-percent-generative-ai-pilots-at-companies-failing-cfo)
-6. **Plank**: *The Forward Deployed Engineer Census & Role Taxonomy* (2025). Analysis of 982 forward-deployed job listings. [plank.com](https://plank.com)
-7. **Lightcast**: *Labor Market Analytics: Forward Deployed Software Engineer Compensation & Job Frequency* (2026). Sample median base salary: $188,000 across US metropolitan regions.
+6. [Plank](https://joinplank.com) - hiring platform. Previously quoted 982/462 counts and a separately titled census publication were not established by the current homepage.
+7. **Lightcast**: *Labor Market Analytics: Forward Deployed Software Engineer Compensation & Job Frequency* (2026). Fortune reports an advertised median exceeding $188,000 in September 2026; this is secondary reporting, not an exact median or independently checked salary microdata.
