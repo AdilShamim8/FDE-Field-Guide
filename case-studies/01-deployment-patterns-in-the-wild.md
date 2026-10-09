@@ -218,7 +218,7 @@ by components in this repository:
 | :--- | :--- | :--- | :--- |
 | **RBAC Policy Isolation** | Embedded Lab & Platform | [`portfolio/reference-project/src/api/server.py`](../portfolio/reference-project/src/api/server.py) | `pytest portfolio/reference-project/tests/test_server.py` (Asserts `X-User-Roles` filtering) |
 | **Offline Contract Mocking** | Defense & Air-Gapped | [`portfolio/reference-project/src/pipeline/ingestion.py`](../portfolio/reference-project/src/pipeline/ingestion.py) | Standalone dense vector cosine similarity without remote API calls |
-| **Deterministic Data Sanitization**| All Patterns (Regulated) | [`portfolio/reference-project/evals/DATASET_PROVENANCE.md`](../portfolio/reference-project/evals/DATASET_PROVENANCE.md) | Verified CFPB/Bitext regex tokenization and PII masking |
+| **Deterministic Data Sanitization**| All Patterns (Regulated) | [`portfolio/reference-project/evals/DATASET_PROVENANCE.md`](../portfolio/reference-project/evals/DATASET_PROVENANCE.md) | Provenance limitations and a partial regex-mask example; no anonymization guarantee |
 | **Transient Retry Backpressure** | SI & Startup Deployments| [`interviews/code/resilient_client.py`](../interviews/code/resilient_client.py) | Decorrelated jittered exponential backoff defending customer rate limits |
 | **Replay & Idempotency Defense** | All Enterprise Webhooks | [`interviews/code/webhook_receiver.py`](../interviews/code/webhook_receiver.py) | SHA-256 payload hashing preventing duplicate writes on network replay |
 
