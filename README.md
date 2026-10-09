@@ -59,7 +59,10 @@ python interviews/dataset/ten_pass_verification.py
 python job-market/dataset/validate_market_data.py
 python job-market/dataset/validate_market_snapshot.py
 python research/validate_evidence.py
+python tools/check_links.py
 ```
+
+The [GitHub workflow](.github/workflows/verify.yml) runs the dependency, test, regression, dataset, and local-link checks on pushes and pull requests, with pinned actions and read-only repository permissions. Its dataset checks are offline accounting checks; they do not refetch or authenticate every external source.
 
 The Python suite tests failure boundaries including payload conflicts, replay scopes, expiry, concurrent requests, exact quotation checks, empty evidence, retry delay, and chunk budgets. The regression report gates routing and required document retrieval as well as classification. It is a known-case regression check, with engine-only latency rather than production SLA measurement.
 
