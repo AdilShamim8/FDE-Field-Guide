@@ -22,6 +22,16 @@ Do not invent statistics, salary figures, company names, or quotes. Salary figur
 carry the source and the date because they change fast. Never fabricate URLs: if unsure of
 an exact page, link the domain root or drop the link and keep the descriptive text.
 
+## Dataset and implementation admission
+
+Record observation date separately from retrieval and review dates. A source checked today does not become data collected today. Keep historical aggregates and their denominators intact; publish new measurements as a separate version with a reproducible method.
+
+For real-world data, retain stable source IDs, immutable source revisions or response hashes, acquisition parameters, transformation history, permitted redistribution scope, and known coverage limits. Inspect the publisher's generation method and license; exclude synthetic data from a real-only evidence set. Public access alone does not establish unrestricted redistribution rights.
+
+Do not invent labels, complaint-ID mappings, customer approvals, ROI, quotations, or production incidents. Keep authored malformed inputs and practice scenarios outside observed-data cohorts. Unknown provenance must remain explicit. A passing schema check, author allowlist, or reachable URL does not authenticate the content.
+
+Separate implemented, tested behavior from proposed architecture. Link the actual executable and state its failure boundaries. Scores on known regression fixtures do not establish holdout quality; exact sample-policy quotes do not establish regulatory compliance. State skipped and failed checks alongside successful ones.
+
 ## Formatting
 
 DO NOT use:
