@@ -95,7 +95,7 @@ Customer InfoSec teams increasingly evaluate AI systems against the **OWASP Top 
 
 ### 2. LLM02: Sensitive Information Disclosure
 - **Vulnerability**: The model inadvertently reveals proprietary system prompts, internal infrastructure IPs, or cross-tenant data.
-- **Defense**: Implement role-based access control (RBAC) at the retrieval layer. Users can only retrieve document embeddings tagged with their authorized security groups. (See implementation in [`portfolio/reference-project/src/pipeline/ingestion.py`](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/portfolio/reference-project/src/pipeline/ingestion.py)).
+- **Defense**: Implement role-based access control (RBAC) at the retrieval layer. Users can only retrieve document embeddings tagged with their authorized security groups. (See implementation in [`portfolio/reference-project/src/pipeline/ingestion.py`](../portfolio/reference-project/src/pipeline/ingestion.py)).
 
 ### 3. LLM06: Excessive Agency & Autonomous Tool Execution
 - **Vulnerability**: An agent with write permissions autonomously executes destructive actions based on ambiguous model output.
