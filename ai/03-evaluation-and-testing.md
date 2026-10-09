@@ -127,7 +127,7 @@ $$\kappa = \frac{P_o - P_e}{1 - P_e}$$
 
 The following evaluation script represents the enterprise standard deployed within this repository. It executes the golden dataset, validates classification, checks 100% citation grounding, calculates latency distributions (p50, p90, p95, p99), and halts CI/CD builds upon SLA breaches.
 
-See the complete, verified implementation in [`portfolio/reference-project/evals/run_evals.py`](file:///c:/Users/Adil/Downloads/FDE-Field-Guide-main/portfolio/reference-project/evals/run_evals.py):
+See the complete, verified implementation in [`portfolio/reference-project/evals/run_evals.py`](../portfolio/reference-project/evals/run_evals.py):
 
 ```python
 """
