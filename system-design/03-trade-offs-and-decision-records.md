@@ -169,61 +169,29 @@ graph LR
 
 ---
 
-## 3. Production Worked Example: TDR-2026-009
+## 3. Reviewed decision example: evidence-free dispatch
 
-The following is the complete, production-grade Technical Decision Record governing the reference project
-in this repository:
+Reviewed on 2026-10-09 against [ETISE](../portfolio/reference-project/README.md). The former named financial engagement, fines, thousand-record experiments, failure percentages, and statutory dollar triggers had no supporting artifacts and are withdrawn as observations.
 
-```markdown
-# TDR-2026-009: Deterministic Decision Gating vs Pure LLM Generation for Regulatory SLA Escalation
+### Context and decision
 
-- **Status**: ACCEPTED (2026-09-14)
-- **Author**: Forward Deployed Engineering Lead
-- **Stakeholders**: VP of Consumer Operations, Head of Compliance, Principal Infrastructure Architect
-- **Target Repository**: `portfolio/reference-project/src/api/server.py`
+The reference classifier used to raise fallback confidence to at least the dispatch threshold. Its grounding gate also ignored the absence of evidence. These are observed code defects, not hypothetical customer incidents.
 
-## 1. Context & Operational Invariants
-The enterprise client processes 12,000+ monthly financial dispute records. Under federal regulatory compliance
-(12 CFR Part 1005 / Regulation E), consumer disputes alleging statutory billing errors or exceeding $1,000 carry
-mandatory 10-day resolution deadlines and severe financial penalties ($350,000 in Q3 fines).
-We evaluated whether statutory SLA escalation routing should be performed via an end-to-end autonomous LLM prompt
-or a deterministic Python rule-gating harness backed by vector-retrieved citations.
+Keep raw feature similarity below the threshold when warranted, and require a verified quotation in strict mode before automated dispatch. Preserve P0 escalation even when knowledge is unavailable. [Adversarial tests](../portfolio/reference-project/tests/test_regression_gates.py) exercise unknown input, empty evidence, forged citation flags, and incorrect routing.
 
-## 2. Decision
-We will execute **Deterministic Python Decision Gating** paired with structured LLM metadata extraction.
-1. The LLM extracts structured parameters (dispute amount, regulatory allegations, transaction date) validated via Pydantic v2.
-2. A deterministic Python engine evaluates statutory thresholds (`amount >= 1000.0` or statutory keywords).
-3. If statutory thresholds are met, the engine hard-diverts the ticket into an urgent escalation queue with
-   pre-compiled regulatory citations.
+### Consequences and alternatives
 
-## 3. Explicit Negative Consequences
-- **Sacrificed Flexibility**: Natural language nuances that do not match defined regulatory thresholds will not
-  trigger automatic escalation; they will rely on operator exception review.
-- **Maintenance Burden**: If statutory thresholds change (e.g. Consumer Financial Protection Bureau modifies
-  Regulation E dollar limits), the Python code must be updated and deployed via CI/CD rather than by updating
-  a system prompt.
-- **Dual-Layer Logic**: Requires maintaining both Pydantic schema extraction logic and deterministic rule logic.
+More requests may require human review, increasing operator workload. A locally verified quote still does not establish relevance, legal authority, or authenticated permission. Turning off strict mode changes the reference's policy boundary and requires explicit review before any real deployment.
 
-## 4. Alternatives Considered & Rejected
-- **Alternative A: End-to-End LLM Prompting with Few-Shot Examples**:
-  - *Rejected*: In rigorous testing across 1,000 historical disputes, temperature=0 models exhibited a 1.4%
-    non-deterministic failure rate on complex multi-paragraph complaints. In a regulated environment processing
-    12,000 monthly tickets, 1.4% failure represents ~168 potential statutory breaches annually.
-- **Alternative B: Pure Keyword Matching (Regex-Only)**:
-  - *Rejected*: Yielded a 34% false-positive rate on conversational customer complaints, overwhelming human review queues.
+A calibrated model is an alternative only after an independently labeled customer holdout exists. The current hand-written scores are not probabilities. A durable, authenticated service is separate required work.
 
-## 5. Post-Handover Named Owner
-- **Primary Owner**: Regulatory Compliance Engineering Squad (Lead: Marcus Vance, VP Consumer Ops).
-- **On-Call Pager**: Operations Tier-2 SRE rotation.
+### Legal boundary
 
-## 6. Revisit Trigger & Falsification Conditions
-This decision will be formally reopened if:
-1. Automated evaluation tests demonstrate that a structured fine-tuned model achieves 100.0% deterministic
-   compliance adherence across 10,000 consecutive test cases.
-2. The customer's legal counsel amends Regulation E escalation policy, triggering an update by Q1 2027.
-```
+Do not represent a customer-defined dollar threshold as a statute. [Regulation E §1005.11](https://www.consumerfinance.gov/rules-policy/regulations/1005/11/), reviewed today, distinguishes investigation, provisional credit, and conditional extensions. It does not create the former blanket $1,000 threshold and ten-day final-resolution rule.
 
----
+### Revisit trigger and ownership
+
+Revisit when approved customer policies, representative labels, review capacity measurements, and a named production owner exist. Record the new baseline and untouched evaluation set. A known fixture score cannot make this a legally accepted financial routing system.
 
 ## 4. The 4 Currencies of Executive Translation
 
