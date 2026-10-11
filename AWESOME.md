@@ -1,237 +1,204 @@
-# Awesome FDE Resources
+# Awesome FDE resources
+
+A resource directory for learning Forward Deployed Engineering, building a small system, and progressing toward customer delivery. Choose a starting point below, then use the topic links to close a specific gap. Keep a working project alongside your reading.
 
-A curated resource index for Forward Deployed Engineering. Entries include published guidance, historical measurements, and authored practice material. A listed link is not proof that every adjacent claim has been verified.
+Navigation and repository descriptions reviewed 2026-10-11. External resources retain their own publication and verification dates; this update does not recertify every linked source. See the [dated beginner review](research/beginner_review_2026-10-11.md) and [repository audit](AUDIT.md) for the evidence behind the current material.
 
-Index reviewed: 2026-10-09. See the [audit](AUDIT.md), [dated source checks](research/source_checks_2026-10-09.json), and [expert practicum](learning-paths/expert-fde-practicum.md) for verification scope and delivery gates.
+## Contents
 
----
+- [Choose a starting point](#choose-a-starting-point)
+- [Beginner foundations](#beginner-foundations)
+- [Build and evaluate software](#build-and-evaluate-software)
+- [Customer work and operations](#customer-work-and-operations)
+- [Expert practice and portfolio](#expert-practice-and-portfolio)
+- [Real data and engineering cases](#real-data-and-engineering-cases)
+- [Interview practice](#interview-practice)
+- [Books and external learning](#books-and-external-learning)
+- [Evidence and maintenance](#evidence-and-maintenance)
 
-## How to use this file
+## Choose a starting point
 
-Read this file once top to bottom. Then return to the section that matches your biggest gap. One section per week, applied to something real, is worth more than collecting the entire list at once.
+| Your goal | Start here | Work to keep |
+|---|---|---|
+| Learn to program through a small project | [First run](learning-paths/foundations/00-setup-and-first-run.md), then [foundations](learning-paths/foundations/README.md) | Your script, query, failure test, and data note |
+| Understand the FDE role | [Role overview](role/01-what-is-an-fde.md) and [role boundaries](role/03-fde-vs-other-roles.md) | A description of the responsibilities you want to practice |
+| Transition from an adjacent role | [Learning-path selector](learning-paths/README.md) | A project targeting your current delivery gap |
+| Develop the local reference | [ETISE README](portfolio/reference-project/README.md) | Reproduced behavior and a tested change |
+| Demonstrate experienced delivery | [Expert practicum](learning-paths/expert-fde-practicum.md) | Independent evaluation, authority checks, recovery, and handover evidence |
+| Prepare for an interview | [Interview guide](interviews/README.md) | A timed implementation and an explained failure |
+| Research market or dataset claims | [Market methodology](job-market/dataset/README.md) | Source dates, denominators, and reproducible counts |
 
-The ordering within each section is priority order: start at the top, go as deep as your gap demands.
+The [beginner route](learning-paths/beginner-to-fde.md) describes progression beyond the first project. The [90-day plan](learning-paths/90-day-fde-roadmap.md) and [24-week plan](learning-paths/24-week-enterprise-fde-roadmap.md) assume programming foundations. Their schedules are recommendations; optional AI, cloud, and ERP extensions require their own implementation and verification.
 
----
+## Beginner foundations
 
-## 1. Role Understanding — What an FDE Actually Is
+Follow these six lessons in order. Lessons 0–2 use Python's standard library; later lessons use the tested local reference dependencies. No paid model calls or cloud services are required.
 
-Start here if you are still unclear on what the role is and whether it is right for you.
+| Lesson | Practice | Completion evidence |
+|---|---|---|
+| [0. Setup and first run](learning-paths/foundations/00-setup-and-first-run.md) | Terminal, paths, Git, and a Python environment | Run the data summary and identify its input |
+| [1. Python and real data](learning-paths/foundations/01-python-and-real-data.md) | JSON, lists, dictionaries, loops, and functions | Count records with your own function |
+| [2. SQL and replay](learning-paths/foundations/02-sql-and-replay.md) | Keys, parameters, transactions, and repeat imports | Explain zero new rows on replay and rollback on conflict |
+| [3. HTTP and validation](learning-paths/foundations/03-http-and-validation.md) | Request bodies, schemas, and status codes | Reproduce 200, 409, and 422 responses |
+| [4. Retrieval and AI](learning-paths/foundations/04-retrieval-and-ai.md) | Evidence selection and generation choices | Explain role filtering and when a model would help |
+| [5. Evaluation and handover](learning-paths/foundations/05-evaluation-and-handover.md) | Assertions, deliberate defects, and operating instructions | Test your own code and retain a peer walkthrough |
 
-### Videos (watch in this order)
+Use the [glossary](learning-paths/foundations/glossary.md) for unfamiliar terms and the [customer brief worksheet](learning-paths/foundations/customer-brief-template.md) to record assumptions and acceptance criteria. Keep original learner work in the ignored `learning-artifacts/` directory. A passing reference test does not verify your independent implementation.
 
-- [Forward Deployed Engineering 101 — Kevin Bai (Anthropic)](https://www.youtube.com/watch?v=KwhgfwOSToQ) — the single best 30-minute primer. Kevin is a founding FDE at Anthropic, ex-Palantir and ex-Rippling. Covers the FDE Flywheel, the Auditing-Evals-Deployment loop, and why model intelligence is commoditized while deployment is the moat
-- [This Is How Forward Deployed Engineering Is Actually Done — AI LABS](https://www.youtube.com/watch?v=AD-EmZ3v6-g) — the operational 5-step method: AS-IS auditing, strategic automation triage (AI vs code vs human), failure-oriented building, ground-truth evals, and ROI quantification
-- [Forward Deployed Engineer: The Hottest AI Job of 2026 — Aishwarya Srinivasan](https://www.youtube.com/watch?v=w-Z4QYK1QL4) — market positioning and the dual skill stack
-- [What is Forward Deployed Engineer (FDE) Role? — Piyush Garg](https://www.youtube.com/watch?v=7JlEs6zyB_U) — boundary between FDE, Solutions Architect, and Core SWE
-- [FDE: The $1M/Year AI Job Explained — FDE Academy](https://youtu.be/zXysLUTLjw4) — Palantir origins, audit-to-deployment blueprint, client discovery
+## Build and evaluate software
 
-### This guide
+### Runnable material
 
-- [What is an FDE?](role/01-what-is-an-fde.md) — definition, history, and 2026 market context
-- [Responsibilities](role/02-responsibilities.md) — what FDEs do day-to-day, including the 12 Core Principles from the Codebasics FDE Roadmap 2026
-- [FDE vs Other Roles](role/03-fde-vs-other-roles.md) — how FDE differs from SWE, Solutions Engineer, AI Engineer, and Consultant
-- [The FDE Loop](role/05-the-fde-loop.md) — the Kevin Bai FDE Flywheel and the canonical 6-phase operational loop
+- [Complaint importer](learning-paths/foundations/code/complaint_pipeline.py) - validate the retained real metadata, summarize it, and import it into local SQLite with unchanged-ID replay and transaction rollback.
+- [Importer tests](learning-paths/foundations/code/test_complaint_pipeline.py) - invalid input, changed facts, rollback, SQL parameters, and CLI behavior. Mutated inputs are authored tests.
+- [Coding exercises](interviews/code/) - parsing, retries, rate limiting, bounded chunking, structured extraction, and webhook contracts. Inspect each implementation's supported boundary.
+- [ETISE reference](portfolio/reference-project/README.md) - local FastAPI intake with deterministic rules, feature hashing, applicable-policy checks, and process-local state. Role headers simulate permissions; the service has no LLM calls, BM25, authenticated tenant identity, or durable dispatch.
+- [Regression runner](portfolio/reference-project/evals/run_evals.py) - 25 known routing and citation contracts with unverified fixture origins. Passing results do not establish unseen customer accuracy or production latency.
+- [Verification workflow](.github/workflows/verify.yml) - dependency checks, runtime tests, regression contracts, dataset accounting, and portable local links.
+
+### Engineering and AI concepts
 
-### Market data
+- [Core technical skills](skills/01-core-technical-skills.md) - programming, APIs, data, and deployment topics.
+- [APIs and integrations](engineering/02-apis-and-integrations.md) - authentication, retries, replay, and system-of-record interfaces.
+- [Data pipelines](engineering/03-data-pipelines.md) - ingestion, data quality, and schema changes.
+- [Cloud and infrastructure](engineering/04-cloud-and-infrastructure.md) - deployment constraints and infrastructure choices.
+- [Security and compliance](engineering/05-security-and-compliance.md) - threat modeling, access boundaries, and review requirements.
+- [LLM application patterns](ai/01-llm-application-patterns.md) - extraction, retrieval, generation, and deterministic alternatives.
+- [Agents and tools](ai/02-agents-and-tools.md) - tool-use and orchestration design options; diagrams do not establish implementation.
+- [Evaluation and testing](ai/03-evaluation-and-testing.md) - labels, regression, holdouts, and acceptance criteria.
+- [Monitoring and reliability](ai/04-monitoring-and-reliability.md) - operational signals, model usage, and failure diagnosis.
 
-- [Market Overview](job-market/01-market-overview.md) — current source-pinned 212-ID sample, monthly deduplication, and historical secondary salary reporting
-- [Compensation](job-market/02-compensation.md) — sourced base, bonus, and equity bands across Early Startups, Growth Tech, and Tier-1 AI Labs
+### Architecture decisions
 
----
+- [Customer-system architecture](system-design/01-architecture-for-customer-systems.md) - design around network, storage, and compute constraints.
+- [Reference architectures](system-design/02-reference-architectures.md) - proposed application blueprints to adapt and test.
+- [Trade-offs and decision records](system-design/03-trade-offs-and-decision-records.md) - record context, alternatives, and consequences.
+- [Implemented reference architecture](portfolio/reference-project/docs/ARCHITECTURE.md) - the actual local data flow and missing production controls.
 
-## 2. Learning Roadmaps — How to Get There
+## Customer work and operations
 
-Choose the roadmap that fits your timeline and background.
+Start with the workflow and its owner before choosing an AI tool. For each proposed change, record the current process, the acceptance check, the failure path, and who handles exceptions.
 
-### Primary roadmaps
+- [Engagement lifecycle](customer/01-engagement-lifecycle.md) - discovery through delivery and handover.
+- [Discovery and requirements](skills/02-discovery-and-requirements.md) - ask about the work, constraints, and measurable outcomes.
+- [Requirements to specification](customer/02-requirements-to-spec.md) - turn a request into testable behavior.
+- [Working in customer environments](customer/03-working-in-customer-environments.md) - access, network, and operating constraints.
+- [Managing expectations](customer/04-managing-expectations.md) - scope, uncertainty, and delivery communication.
+- [Stakeholder management](skills/04-stakeholder-management.md) - decisions and escalation ownership.
+- [Ambiguity and prioritization](skills/05-ambiguity-and-prioritization.md) - choose the next useful, reviewable increment.
+- [Deployment guide](deployment/README.md) - release planning, readiness, and ownership.
+- [Troubleshooting guide](troubleshooting/README.md) - diagnosis and incident practice.
+- [Local reference runbook](portfolio/reference-project/docs/SLA_RUNBOOK.md) - commands supported by ETISE and state lost on restart.
 
-- [24-Week Enterprise FDE Roadmap](learning-paths/24-week-enterprise-fde-roadmap.md) — the complete curriculum sourced from Codebasics FDE Roadmap 2026. Phase 1 (Weeks 1–16): Python and FastAPI, RAG, Agentic AI and MCP, ERP integration, DevOps, LLMOps, System Design. Phase 2 (Weeks 17–24): Problem Discovery, BRD, TDD, Stakeholder Management, UAT, Change Management. Use this if you are starting from scratch or want the full enterprise context
-- [90-Day FDE Transition Roadmap](learning-paths/90-day-fde-roadmap.md) — accelerated 12-week curriculum synthesizing FDE Academy masterclasses. Use this if you already have production engineering experience
-- [Forward Deployed Engineer (FDE) Roadmap — codebasics](https://www.youtube.com/watch?v=uE4HTkDtp48) — the video walkthrough of the 24-week curriculum by Dhaval Patel and Hemanand Vadivel
+## Expert practice and portfolio
 
-### Background-specific paths
+Use the [expert practicum](learning-paths/expert-fde-practicum.md) when you can already build and operate software. It asks for source lineage, independent evaluation, authenticated authority, durable recovery, measured economics, and operator acceptance. Tool count and elapsed study time do not demonstrate those capabilities.
 
-- [From Software Engineer](learning-paths/from-software-engineer.md)
-- [From AI / ML Engineer](learning-paths/from-ai-ml-engineer.md)
-- [From Data Engineer](learning-paths/from-data-engineer.md)
-- [From Solutions Engineer](learning-paths/from-solutions-engineer.md)
-- [From Consultant](learning-paths/from-consultant.md)
-- [Beginner to FDE](learning-paths/beginner-to-fde.md)
+- [What to build](portfolio/01-what-to-build.md) - select a useful problem with a testable boundary.
+- [Project ideas](portfolio/02-project-ideas.md) - proposed projects that need permitted data and demonstrated results.
+- [Project presentation](portfolio/03-presenting-projects.md) - show the decision, implementation, failure, and recovery.
+- [Project selection](portfolio/04-project-selection-masterclass.md) - compare candidate workflows and review data suitability.
 
----
+Before claiming delivery readiness, retain evidence that another person can reproduce the system, the tests exercise your code, evaluation labels fit the decision, access controls match the threat model, and recovery instructions work. Label role-plays and peer walkthroughs as practice; record real operator acceptance only when it happened.
 
-## 3. Technical Skills — What to Build
+## Real data and engineering cases
 
-### Core documentation
+### Dataset directory
 
-- [Core Technical Skills](skills/01-core-technical-skills.md) — the baseline stack: Python 3.12+, FastAPI, Docker, SQL, LLM APIs
+| Resource | What it contains | Interpretation limit |
+|---|---|---|
+| [CFPB metadata sample](portfolio/reference-project/evals/real_data/cfpb_metadata_2026-10-09.json) | Five actual categorical records received and captured on 2026-10-09 | Selected sample, one product category, no narratives or triage labels |
+| [Pinned market snapshot](job-market/dataset/market_snapshot_2026-10-09.json) | Source references, hashes, and 212 cumulative title-matched IDs across 125 employer names | Observation dates run through 2026-09-23; not today's open vacancies or a worldwide census |
+| [Market dataset runbook](job-market/dataset/README.md) | Definitions, row/ID accounting, historical aggregates, and reproduction steps | The earlier 146-role summary is aggregate material, not 146 retained raw postings |
+| [Evaluation provenance](portfolio/reference-project/evals/DATASET_PROVENANCE.md) | Admission rules and evidence status of inputs and fixtures | The 25 legacy cases have unverified origins and are not an independent customer holdout |
 
-### AI and LLM engineering
+The exact official CFPB query for 2026-10-11 returned zero hits at capture time. The [October 11 ledger](research/source_checks_2026-10-11.json) records that response and selected documentation checks, including failed retrievals. Keep the older sample's dates intact; do not manufacture records or labels to make it look current.
 
-- [LLM Application Patterns](ai/01-llm-application-patterns.md) — Structured Extraction, Constrained Decoding, Classification, Hybrid RAG, Summarization, Dialogue State, and Strategic Automation Triage
-- [Agents and Tools](ai/02-agents-and-tools.md) — ReAct state machines, MCP, supervised multi-agent pipelines, persistent memory layers
-- [Evaluation and Testing](ai/03-evaluation-and-testing.md) — golden evaluation harnesses, LLM-as-judge, Cohen's Kappa
-- [Monitoring and Reliability](ai/04-monitoring-and-reliability.md) — OpenTelemetry GenAI, token cost telemetry, drift detection
-- [Building Agentic RAG in Production — FDE Academy](https://youtu.be/Ycl5aiYRcmU) — end-to-end technical: data ingestion to cloud deployment
-- [Enterprise AI Deployment and Real Pipelines — FDE Academy](https://youtu.be/FSZhPDzESPU) — bridging prototype code to production infrastructure
+### Cases to investigate
 
-### Engineering patterns
+- [Source-backed engineering cases](case-studies/02-llm-deployment-cases.md) - market reconciliation, provenance correction, and evaluation findings.
+- [Observed failure investigations](case-studies/03-failure-stories.md) - reproducible code failures and the limits of their fixes.
+- [Deployment patterns](case-studies/01-deployment-patterns-in-the-wild.md) - organizational patterns and proposed defenses.
+- [Regulated-industry playbook](case-studies/04-regulated-industries-playbook.md) - domain review questions requiring applicable legal and security guidance.
+- [Manufacturing evidence review](case-studies/05-enterprise-manufacturing-vaayu-pumps.md) - the uncorroborated Vaayu account and artifacts needed to establish a real outcome. The claimed 83-page document pack is not authenticated in this repository.
 
-- [APIs and Integrations](engineering/02-apis-and-integrations.md) — idempotency, exponential backoff, rate limiting, SAP S/4HANA OData and BAPI integration
-- [Data Pipelines](engineering/03-data-pipelines.md) — messy enterprise data ingestion, schema drift, CDC pipelines, SAP integration patterns
-- [Cloud and Infrastructure](engineering/04-cloud-and-infrastructure.md) — in-VPC zero-egress deployment, AWS PrivateLink, Terraform
-- [Security and Compliance](engineering/05-security-and-compliance.md) — OWASP LLM Top 10, RBAC, PII vaults, InfoSec review navigation
+For market interpretation, use the [market overview](job-market/01-market-overview.md) and [compensation chapter](job-market/02-compensation.md) with their stated source windows. Salary reporting and a historical title filter do not establish a universal hiring rule.
 
-### System design
+## Interview practice
 
-- [Architecture for Customer Systems](system-design/01-architecture-for-customer-systems.md) — designing under customer network, storage, and compute constraints
-- [Reference Architectures](system-design/02-reference-architectures.md) — RAG Knowledge Assistant, Real-Time Intake, Edge-to-Cloud, Batch ETL blueprints
-- [Trade-offs and Decision Records](system-design/03-trade-offs-and-decision-records.md) — authoring ADRs that withstand customer audit
-- [Systems Design and Technical Skills for FDEs — FDE Academy](https://youtu.be/9CmIPfIYPws) — customer-flavored distributed architecture and Python fluency
+These resources are preparation material. Authored prompts, sample responses, and scoring rubrics are not authenticated company transcripts or hiring policies.
 
-### Runnable code (all tests passing)
+- [Interview process](interviews/01-interview-process.md) - reported formats and preparation guidance; confirm the actual process with the employer.
+- [Coding and technical rounds](interviews/02-coding-and-technical.md) - implementation and debugging practice.
+- [System design rounds](interviews/03-system-design.md) - explain capacity, constraints, and failure behavior.
+- [Customer scenarios](interviews/04-customer-scenarios.md) - role-play discovery, pushback, and incident communication.
+- [Behavioral rounds](interviews/05-behavioral.md) - explain real ownership decisions without inventing outcomes.
+- [Take-home assignments](interviews/06-take-homes.md) - timed practice and an authored review rubric.
+- [Question bank](interviews/07-question-bank.md) - curated prompts with unverified company attributions.
+- [Coding solutions](interviews/08-coding-solutions.md) - worked implementations to compare after your own attempt.
+- [Practice dataset](interviews/dataset/README.md) - 17 authored records; its ten-pass validator checks structure and declarations, not company usage or predictive validity.
 
-- [interviews/code/](interviews/code/) — 7 runnable Python implementations: `parser.py`, `resilient_client.py`, `rate_limiter.py`, `chunker.py`, `structured_extractor.py`, `vibe_coding_runner.py`, `webhook_receiver.py`
-- [portfolio/reference-project/](portfolio/reference-project/README.md) — full production ETISE FastAPI app with hybrid search, RBAC, Docker, and 25-case golden eval suite
+## Books and external learning
 
----
+### Read by the gap in your project
 
-## 4. Books (read by gap, not cover to cover)
+These are reading recommendations, not prerequisites to complete before building. The [reading list](resources/02-reading.md) provides broader context; preserve the evidence status of historical reports and attributed accounts there.
 
-These are from the [reading list](resources/02-reading.md). The gap column tells you which to reach for first.
+| Book | Author(s) | Use it for |
+|---|---|---|
+| Designing Data-Intensive Applications | Martin Kleppmann | Data modeling, replication, and failure trade-offs |
+| Designing Machine Learning Systems | Chip Huyen | Data, evaluation, and model-system operation |
+| Site Reliability Engineering | Betsy Beyer, Chris Jones, Jennifer Petoff, Niall Richard Murphy, editors | SLOs, error budgets, and incident response |
+| Accelerate | Nicole Forsgren, Jez Humble, Gene Kim | Delivery measurement and improvement |
+| Continuous Delivery | Jez Humble, David Farley | Release and deployment practices |
+| The Trusted Advisor | David Maister, Charles Green, Robert Galford | Trust and advisory relationships |
+| Never Split the Difference | Chris Voss, Tahl Raz | Negotiation and difficult conversations |
+| Team of Teams | Stanley McChrystal and coauthors | Coordination across organizational boundaries |
+| The Mythical Man-Month | Frederick Brooks | Planning and software-project coordination |
 
-| Book | Author(s) | Your Gap |
-| :--- | :--- | :--- |
-| Designing Data-Intensive Applications | Martin Kleppmann | Data systems vocabulary; maps to any customer estate |
-| Designing Machine Learning Systems | Chip Huyen | Evaluation-driven platform thinking; still the best for GenAI |
-| Site Reliability Engineering | Google (free at [sre.google](https://sre.google)) | SLOs, error budgets, on-call design; the model you leave behind |
-| Accelerate | Forsgren, Humble, Kim | CI/CD evidence ammunition for customer conversations |
-| Continuous Delivery | Humble, Farley | Making deployments boring in the good sense |
-| The Trusted Advisor | Maister, Green, Galford | Trust formation; why admitting what broke earns the account |
-| Never Split the Difference | Chris Voss | Scoping conversations, timeline pushback, saying no gracefully |
-| Team of Teams | Stanley McChrystal | Why the embedded-engineer model works when committees stall |
-| The Mythical Man-Month | Fred Brooks | Read before you promise a date; still correct after 50 years |
+### Optional videos
 
----
+These previously listed resources are retained for exploration. Their contents, speaker affiliations, and outcome claims were not reverified in this index update. Compare technical advice with primary documentation and your own measured workload.
 
-## 5. Customer and Delivery Skills
+- [Forward Deployed Engineering 101](https://www.youtube.com/watch?v=KwhgfwOSToQ) - previously attributed to Kevin Bai.
+- [This Is How Forward Deployed Engineering Is Actually Done](https://www.youtube.com/watch?v=AD-EmZ3v6-g) - previously listed as an AI LABS discussion.
+- [What is the FDE role?](https://www.youtube.com/watch?v=7JlEs6zyB_U) - previously attributed to Piyush Garg.
+- [Codebasics FDE roadmap](https://www.youtube.com/watch?v=uE4HTkDtp48) - external roadmap discussion, separate from this guide's recommended schedule.
+- [FDE Academy channel](https://www.youtube.com/@fdeacademy) - additional project and interview discussions.
 
-### This guide
+### Ongoing reading and communities
 
-- [The Engagement Lifecycle](customer/01-engagement-lifecycle.md) — 5 phases from pre-kickoff to SRE handover, with ADKAR change management
-- [Requirements to Spec](customer/02-requirements-to-spec.md) — BRD to TDD to SDD specification chain, Spec Clarity Test, UAT matrix
-- [Working in Customer Environments](customer/03-working-in-customer-environments.md) — locked-down laptops, air-gapped VPCs, slow ticketing systems
-- [Managing Expectations](customer/04-managing-expectations.md) — scope creep, delivering bad news, boundary conditions
-- [Discovery and Requirements](skills/02-discovery-and-requirements.md) — conducting technical discovery, extracting pain, writing SOWs
-- [Stakeholder Management](skills/04-stakeholder-management.md) — navigating customer politics and de-escalating conflicts
-- [Ambiguity and Prioritization](skills/05-ambiguity-and-prioritization.md) — triaging competing requests under time and security constraints
+Choose a source for a specific question; publication recency alone does not establish correctness.
 
----
+- [Chip Huyen's blog](https://huyenchip.com) - AI engineering essays.
+- [The Pragmatic Engineer](https://newsletter.pragmaticengineer.com) - engineering-industry reporting.
+- [MLOps discussions](https://www.reddit.com/r/mlops) - community questions and experience reports.
+- [Plank](https://joinplank.com) - hiring platform; review individual listings and their dates rather than copying uncorroborated headline counts.
+- [SAP Business Accelerator Hub](https://api.sap.com) - official API catalog; verify current sandbox access, credentials, limits, and terms before an exercise.
 
-## 6. Real Enterprise Case Study
+## Evidence and maintenance
 
-The single best learning resource in this entire repository for understanding what FDE work looks like end to end.
+Read primary documentation for the specific software version you use. Distinguish a resource recommendation, an authored exercise, a measured result, and a proposed architecture. A working link or matching hash alone cannot authenticate a quotation, customer outcome, or dataset license.
 
-- [Vaayu Pumps Field Service AI — Case Study](case-studies/05-enterprise-manufacturing-vaayu-pumps.md) — synthesized from 83 pages of real enterprise BRD v1.1, TDD v1.0, and SDD v1.0 (Codebasics FDE Roadmap 2026, September 2026). Covers: 4-agent supervised pipeline architecture, SAP S/4HANA OData and BAPI integration, P1–P4 severity decision matrix, skill-based technician routing algorithm, persistent memory layer, bottom-up model routing, DPDP Act data residency, and measured SLA impact
+- [October 9 source checks](research/source_checks_2026-10-09.json) - earlier dated retrievals and claim-specific limits.
+- [October 11 source checks](research/source_checks_2026-10-11.json) - pinned beginner documentation, inspiration, the current CFPB query, and explicit retrieval failures.
+- [Evidence validator](research/validate_evidence.py) - offline checks that discover all saved dated ledgers and metadata snapshots; it does not refetch live sources.
+- [Contribution rules](STYLING.md) - dates, source admission, implementation boundaries, and writing conventions.
 
-The three source documents (83 pages total) are stored locally in `forward-deployed-engineer-fde-roadmap/` (not pushed to GitHub):
-
-- `01_BRD_VaayuPumps_FieldServiceAI_v1.1.pdf` — 25 pages, business requirements
-- `02_TDD_VaayuPumps_FieldServiceAI_v1.0.pdf` — 25 pages, technical design
-- `03_SDD_VaayuPumps_FieldServiceAI_v1.0.pdf` — 33 pages, solution design
-
----
-
-## 7. Interview Preparation
-
-### Process and strategy
-
-- [The Interview Process](interviews/01-interview-process.md) — 7-stage pipeline at Palantir, OpenAI, Anthropic, Scale AI
-- [Coding and Technical Rounds](interviews/02-coding-and-technical.md) — what rounds actually test: systems, concurrency, dirty data
-- [System Design Rounds](interviews/03-system-design.md) — customer-flavored system design with capacity, network, and failover
-- [Customer Scenario Rounds](interviews/04-customer-scenarios.md) — verbatim role-play transcripts, adversarial pushback, 3-tier rubrics
-- [Behavioral Rounds](interviews/05-behavioral.md) — ownership stories, stakeholder negotiation, failure under pressure
-- [Take-Home Assignments](interviews/06-take-homes.md) — 72-hour enterprise challenge, 100-point rubric, ADR templates
-- [Question Bank](interviews/07-question-bank.md) — curated practice prompts with unverified company attributions
-- [Systems Coding Solutions](interviews/08-coding-solutions.md) — runnable Python implementations with verbal narration scripts
-- [Palantir and AI FDE Interview Breakdown — FDE Academy](https://youtu.be/CCt0csEqul0) — live coding, system design, and customer role-play rounds decoded
-
-### Datasets and evidence status
-
-- [interviews/dataset/](interviews/dataset/README.md) — 17 audited interview questions, 10-pass verification, JSON schema
-- [job-market/dataset/](job-market/dataset/README.md) — 146 deduplicated 2026 enterprise postings with validator
-
----
-
-## 8. Portfolio
-
-- [What to Build](portfolio/01-what-to-build.md) — 6 principles separating toy tutorials from enterprise artifacts
-- [Project Ideas](portfolio/02-project-ideas.md) — 12 customer-grade project specs: fintech, healthcare, infrastructure
-- [Presenting Projects](portfolio/03-presenting-projects.md) — architectural READMEs, Loom demos, executive case studies
-- [Project Selection Masterclass](portfolio/04-project-selection-masterclass.md) — 5 enterprise archetypes, verified datasets, anti-patterns
-- [Reference Project: ETISE](portfolio/reference-project/README.md) — the complete production reference app
-- [AI for Forward-Deployed Engineers Masterclass — FDE Academy](https://youtu.be/Fruw822BMBc) — five enterprise portfolio archetypes, why basic AI projects fail
-
----
-
-## 9. Ongoing Sources (check quarterly)
-
-- [Chip Huyen's blog](https://huyenchip.com) — long-form pieces on GenAI platforms and evaluation practice
-- [The Pragmatic Engineer](https://newsletter.pragmaticengineer.com) — best-sourced engineering-industry newsletter; where hiring-market shifts appear with named sources
-- [FDE Academy YouTube](https://www.youtube.com/@fdeacademy) — masterclasses, project breakdowns, practitioner video discussions
-- [provider documentation](https://docs.anthropic.com) and [platform.openai.com/docs](https://platform.openai.com/docs) — changelogs and model cards move monthly; read these before any architecture conversation
-- [LangChain State of Agent Engineering](https://langchain.com) — 2026 survey of how agents are actually deployed in production
-- [The New Stack — May 2026 FDE analysis](https://thenewstack.io/forward-deployed-engineers-ai) — why labs hire FDE teams
-- [Fortune — September 2026 Lightcast analysis](https://fortune.com/2026/09/03/forward-deployed-engineers-fast-growing-six-figure-silicon-valley-job-integrate-ai-with-customers-tech-careers-palantir) — market sizing and salary data
-- [SAP Business Accelerator Hub](https://api.sap.com) — free public sandbox for OData API practice; no SAP installation required
-
-### Practitioner communities
-
-- [fde.academy](https://fde.academy) — interview framing and by-level compensation analyses
-- [joinplank.com](https://joinplank.com) — hiring platform; previously quoted 982/462 counts are not corroborated by the current homepage
-- [fdepulse.com](https://fdepulse.com) — practitioner career write-ups and role mechanics
-- [r/mlops](https://www.reddit.com/r/mlops) — most technical FDE-adjacent discussion: monitoring, evaluation, drift
-
----
-
-## 10. Verified Practitioners to Follow
-
-These are directly cited in the Codebasics FDE Roadmap 2026 and previously cited YouTube resources. Names and links require source-specific review; this index does not authenticate testimony.
-
-- Kevin Bai — founding FDE at Anthropic, ex-Palantir and Rippling. Source of the FDE Flywheel
-- Dhaval Patel — co-founder Codebasics and AtliQ Technologies, [codebasics.io](https://codebasics.io)
-- Hemanand Vadivel — co-creator Codebasics FDE Roadmap 2026
-- Pankaj Jaiswal — FDE in SAP-heavy manufacturing. Source of the Bonus SAP section, [linkedin.com/in/pankaj29](https://www.linkedin.com/in/pankaj29/)
-- Rushi Gandhi — FDE practitioner, [linkedin.com/in/rushi0508](https://www.linkedin.com/in/rushi0508/)
-- Pranav Modh — FDE practitioner, [linkedin.com/in/modhpranav](https://www.linkedin.com/in/modhpranav/)
-- Daksh Trehan — FDE practitioner, [linkedin.com/in/dakshtrehan](https://www.linkedin.com/in/dakshtrehan/)
-- Colin Jarvis — OpenAI (listed in Codebasics roadmap as follow)
-- Andrej Karpathy — listed in Codebasics roadmap as follow for AI foundations
-
----
-
-## 11. Job-Readiness Self-Audit
-
-Before applying to any Tier-1 FDE posting (Anthropic, OpenAI, Palantir, Databricks, Scale AI), verify you can honestly say yes to all five:
-
-1. Production microservice — you have deployed an async FastAPI service with Pydantic v2 validation, distributed rate limiting, and idempotent request handling. It is on GitHub with a Dockerfile and passing tests.
-
-2. Quantitative evaluation harness — you have a CLI runner that executes 25 or more golden test cases and reports precision, recall, latency, and citation grounding. It exits 0 on pass and 1 on fail.
-
-3. Customer architectural governance — you have written a complete Architecture Decision Record (ADR) justifying trade-offs (in-VPC Bedrock vs local vLLM) and a cutover rollback runbook.
-
-4. Messy real-world data parsing — you have written defensive parsers that process corrupted real-world enterprise exports (CFPB or SEC EDGAR format) without unhandled exceptions or data loss.
-
-5. Rehearsed ownership stories — you have drafted and verbally rehearsed 6 core ownership stories (outages, stakeholder conflict, impossible deadlines) in STAR format. You can deliver any of them in 90 seconds without notes.
-
-If you can say yes to all five, apply. If not, the [24-Week Enterprise FDE Roadmap](learning-paths/24-week-enterprise-fde-roadmap.md) maps directly to each gap.
-
----
+When proposing a resource, include its purpose, intended prerequisite, exact source location, and known limits. Pin source revisions where possible and retain publication, collection, retrieval, and review dates separately. Update a description when its supporting source or implementation changes.
 
 ## Related documents
 
-- [Reading List](resources/02-reading.md) — books, papers, and sources with detailed context
-- [Tools](resources/01-tools.md) — the development, deployment, and observability toolbox
-- [Communities and People](resources/03-communities-and-people.md) — where practitioners talk and verified people to follow
-- [Learning Paths](learning-paths/README.md) — background-specific transition blueprints
+- [Guide overview](README.md) - repository navigation and verification commands.
+- [Learning paths](learning-paths/README.md) - choose the next route by demonstrated skills.
+- [Resource toolbox](resources/01-tools.md) - tools to investigate for a specific delivery need.
+- [Communities and people](resources/03-communities-and-people.md) - additional directories; attributed accounts need source-specific review.
+- [Repository audit](AUDIT.md) - confirmed findings and remaining production work.
+
+## Further reading
+
+- [Pinned AI Engineering From Scratch](https://github.com/rohitg00/ai-engineering-from-scratch/tree/1c8e62b526e78b8773559594aab3a3487d9998ac) - inspiration for shared foundations and staged practice, inspected 2026-10-11; the new FDE lessons are original.
+- [Pinned Python tutorial](https://github.com/python/cpython/tree/2abcf904b8dac8c999d2b3aac76681abb333798a/Doc/tutorial) - primary language documentation for the tested interpreter version.
+- [Pinned pytest getting started](https://github.com/pytest-dev/pytest/blob/cf470ec0bf7eb89cd97dd56df4859eae5db46447/doc/en/getting-started.rst) - assertions and executable failure checks.
+- [Google SRE book](https://sre.google/sre-book/table-of-contents/) - operational reliability literature.
+- [OWASP LLM security project](https://owasp.org/www-project-top-10-for-large-language-model-applications/) - security guidance to review against a stated threat model and release.
