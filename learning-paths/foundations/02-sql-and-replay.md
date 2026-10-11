@@ -19,7 +19,7 @@ From the repository root, choose a new database filename if the example already 
 .venv/bin/python learning-paths/foundations/code/complaint_pipeline.py --db learning-artifacts/complaints.sqlite
 ```
 
-Expected on a fresh database: the first result has `inserted: 5`, `replayed: 0`, and `total_stored: 5`. The second has `inserted: 0`, `replayed: 5`, and `total_stored: 5`. If you reuse an existing database, state that instead of claiming a fresh import.
+Expected on a fresh database: the JSON report's `database` object has `inserted: 5`, `replayed: 0`, and `total_stored: 5`. On the second run, that object has `inserted: 0`, `replayed: 5`, and `total_stored: 5`. If you reuse an existing database, state that instead of claiming a fresh import.
 
 Inspect the rows with Python's built-in SQLite library; no database server is required:
 
