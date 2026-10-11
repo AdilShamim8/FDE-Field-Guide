@@ -2,6 +2,12 @@
 
 This audit is for contributors taking the guide from useful learning material to defensible engineering work. The initial findings refer to repository commit `ff473e3`; remediation and source checks were completed on 2026-10-09. Recommendations are engineering judgments, not claims about a real customer deployment.
 
+## October 11 beginner follow-up
+
+The [2026-10-11 beginner review](research/beginner_review_2026-10-11.md) documents the new foundations sequence, corrected learning-path claims, pinned inspiration, selected source checks, and executed exercises. The suite now has 89 passing tests, including local ingestion failures and discovery of every saved dated ledger. All 25 known regression contracts continue to pass.
+
+The October 11 official CFPB query returned zero hits at capture time. The five-record teaching input retains its October 9 receipt and retrieval dates. No worldwide dataset, independent customer benchmark, or blanket source recertification is claimed. Initial inventory and remediation details below retain their October 9 scope.
+
 ## Scope and verification limits
 
 The repository inventory contains 128 tracked project files across all fourteen guide sections, runnable interview exercises, ETISE, and three data collections. Structural checks cover the whole inventory: links, portability, dataset schema, claim patterns, and correspondence between documented controls and code. Functional investigation covers the runnable Python workflows. This does not certify every external citation or claim in every paragraph.
