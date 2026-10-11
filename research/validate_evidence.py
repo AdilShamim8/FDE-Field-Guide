@@ -60,13 +60,28 @@ def validate_source_ledger(ledger):
     return passed, failed
 
 
+def validate_saved_evidence(root):
+    """Include every dated artifact so new reviews cannot silently skip CI."""
+    ledgers = sorted((root / "research").glob("source_checks_*.json"))
+    samples = sorted((root / "portfolio/reference-project/evals/real_data").glob("cfpb_metadata_*.json"))
+    require(bool(ledgers), "No source ledgers discovered")
+    require(bool(samples), "No CFPB metadata samples discovered")
+    reports = []
+    for path in ledgers:
+        passed, failed = validate_source_ledger(json.loads(path.read_text(encoding="utf-8")))
+        reports.append({"file": path.name, "kind": "source_ledger", "successful": passed, "failed": failed})
+    for path in samples:
+        count = validate_cfpb(json.loads(path.read_text(encoding="utf-8")))
+        reports.append({"file": path.name, "kind": "cfpb_metadata", "records": count})
+    return reports
+
+
 def main():
-    ledger = json.loads((ROOT / "research/source_checks_2026-10-09.json").read_text())
-    sample = json.loads((ROOT / "portfolio/reference-project/evals/real_data/cfpb_metadata_2026-10-09.json").read_text())
-    passed, failed = validate_source_ledger(ledger)
-    count = validate_cfpb(sample)
-    print(f"Source ledger: {passed} successful retrievals, {failed} explicitly failed retrievals.")
-    print(f"CFPB: {count} unique source-date complaint metadata records; restricted field projection checked.")
+    for report in validate_saved_evidence(ROOT):
+        if report["kind"] == "source_ledger":
+            print(f"{report['file']}: {report['successful']} successful retrievals, {report['failed']} explicitly failed retrievals.")
+        else:
+            print(f"{report['file']}: {report['records']} unique source-date metadata records; restricted field projection checked.")
     print("Offline structure checks passed; live sources and licenses are not refetched by this command.")
 
 
