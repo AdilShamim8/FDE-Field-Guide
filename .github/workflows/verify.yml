@@ -29,7 +29,7 @@ jobs:
           python -m pip install -r portfolio/reference-project/requirements.txt -c portfolio/reference-project/requirements.lock
           python -m pip check
       - name: Exercise runtime failure boundaries
-        run: python -m pytest interviews/code/ portfolio/reference-project/tests/ job-market/dataset/tests/ -q
+        run: python -m pytest interviews/code/ portfolio/reference-project/tests/ job-market/dataset/tests/ learning-paths/foundations/code/ research/tests/ -q
       - name: Check known regression contracts
         run: python portfolio/reference-project/evals/run_evals.py --report "$RUNNER_TEMP/etise-regression.json"
       - name: Validate fixture declarations and dataset accounting
