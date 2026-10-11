@@ -32,6 +32,8 @@ Use this page when a new term interrupts your lesson. Reviewed 2026-10-11. Defin
 | Holdout | Cases kept untouched while developing the system | A representative customer holdout remains missing |
 | Handover/runbook | Instructions and ownership for operating the system | Start it, reproduce a failure, recover, and name the next owner |
 
+For customer requirements, AI evaluation, access control, service objectives, and handover terminology, use the broader [FDE glossary](../../GLOSSARY.md). The [FDE roadmap](../../ROADMAP.md) shows where those concepts enter the learning sequence.
+
 ## Related documents
 
 - [Beginner path](../beginner-to-fde.md) - learning order
