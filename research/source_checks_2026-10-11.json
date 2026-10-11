@@ -1,0 +1,337 @@
+{
+  "schema_version": 1,
+  "checked_on": "2026-10-11",
+  "scope": "Beginner curriculum, executable foundations, and selected primary documentation; not a worldwide survey. Dates in old datasets remain unchanged.",
+  "inspiration_commit": "1c8e62b526e78b8773559594aab3a3487d9998ac",
+  "tested_runtime": {
+    "python": "3.12.14",
+    "fastapi": "0.143.0",
+    "pytest": "9.1.1",
+    "pydantic": "2.14.0"
+  },
+  "checks": [
+    {
+      "id": "python_venv",
+      "url": "https://docs.python.org/3.12/library/venv.html",
+      "checked_on": "2026-10-11",
+      "status": null,
+      "error": "URLError: <urlopen error Tunnel connection failed: 403 Forbidden>",
+      "verification_scope": "Selected source text and response metadata inspected; not exhaustive claim authentication or a fresh collection of all historical data",
+      "observations": [
+        "This request failed; it does not establish current source content. Successful pinned-primary-source alternatives are recorded separately where available."
+      ]
+    },
+    {
+      "id": "python_json",
+      "url": "https://docs.python.org/3.12/library/json.html",
+      "checked_on": "2026-10-11",
+      "status": null,
+      "error": "URLError: <urlopen error Tunnel connection failed: 403 Forbidden>",
+      "verification_scope": "Selected source text and response metadata inspected; not exhaustive claim authentication or a fresh collection of all historical data",
+      "observations": [
+        "This request failed; it does not establish current source content. Successful pinned-primary-source alternatives are recorded separately where available."
+      ]
+    },
+    {
+      "id": "python_sqlite",
+      "url": "https://docs.python.org/3.12/library/sqlite3.html",
+      "checked_on": "2026-10-11",
+      "status": null,
+      "error": "URLError: <urlopen error Tunnel connection failed: 403 Forbidden>",
+      "verification_scope": "Selected source text and response metadata inspected; not exhaustive claim authentication or a fresh collection of all historical data",
+      "observations": [
+        "This request failed; it does not establish current source content. Successful pinned-primary-source alternatives are recorded separately where available."
+      ]
+    },
+    {
+      "id": "git_basics",
+      "url": "https://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-the-Repository",
+      "checked_on": "2026-10-11",
+      "status": null,
+      "error": "URLError: <urlopen error Tunnel connection failed: 403 Forbidden>",
+      "verification_scope": "Selected source text and response metadata inspected; not exhaustive claim authentication or a fresh collection of all historical data",
+      "observations": [
+        "This request failed; it does not establish current source content. Successful pinned-primary-source alternatives are recorded separately where available."
+      ]
+    },
+    {
+      "id": "pytest_getting_started",
+      "url": "https://docs.pytest.org/en/stable/getting-started.html",
+      "checked_on": "2026-10-11",
+      "status": null,
+      "error": "URLError: <urlopen error Tunnel connection failed: 403 Forbidden>",
+      "verification_scope": "Selected source text and response metadata inspected; not exhaustive claim authentication or a fresh collection of all historical data",
+      "observations": [
+        "This request failed; it does not establish current source content. Successful pinned-primary-source alternatives are recorded separately where available."
+      ]
+    },
+    {
+      "id": "fastapi_first_steps",
+      "url": "https://fastapi.tiangolo.com/tutorial/first-steps/",
+      "checked_on": "2026-10-11",
+      "status": null,
+      "error": "URLError: <urlopen error Tunnel connection failed: 403 Forbidden>",
+      "verification_scope": "Selected source text and response metadata inspected; not exhaustive claim authentication or a fresh collection of all historical data",
+      "observations": [
+        "This request failed; it does not establish current source content. Successful pinned-primary-source alternatives are recorded separately where available."
+      ]
+    },
+    {
+      "id": "fastapi_request_body",
+      "url": "https://fastapi.tiangolo.com/tutorial/body/",
+      "checked_on": "2026-10-11",
+      "status": null,
+      "error": "URLError: <urlopen error Tunnel connection failed: 403 Forbidden>",
+      "verification_scope": "Selected source text and response metadata inspected; not exhaustive claim authentication or a fresh collection of all historical data",
+      "observations": [
+        "This request failed; it does not establish current source content. Successful pinned-primary-source alternatives are recorded separately where available."
+      ]
+    },
+    {
+      "id": "openai_structured_outputs",
+      "url": "https://platform.openai.com/docs/guides/structured-outputs",
+      "checked_on": "2026-10-11",
+      "status": null,
+      "error": "URLError: <urlopen error Tunnel connection failed: 403 Forbidden>",
+      "verification_scope": "Selected source text and response metadata inspected; not exhaustive claim authentication or a fresh collection of all historical data",
+      "observations": [
+        "This request failed; it does not establish current source content. Successful pinned-primary-source alternatives are recorded separately where available."
+      ]
+    },
+    {
+      "id": "cfpb_catalog",
+      "url": "https://www.consumerfinance.gov/data-research/consumer-complaints/",
+      "checked_on": "2026-10-11",
+      "status": 200,
+      "final_url": "https://www.consumerfinance.gov/data-research/consumer-complaints/",
+      "bytes": 155128,
+      "sha256": "a05e97d0ab20726f225d395bfa52c36e0acb8cc7018abf6a8be7daaf1805c312",
+      "response_date": "Sun, 11 Oct 2026 04:16:45 GMT",
+      "verification_scope": "Selected source text and response metadata inspected; not exhaustive claim authentication or a fresh collection of all historical data",
+      "observations": [
+        "Official catalog and interpretation notices accessed; complaint records are not independently adjudicated company findings."
+      ]
+    },
+    {
+      "id": "cfpb_oct11",
+      "url": "https://www.consumerfinance.gov/data-research/consumer-complaints/search/api/v1/?date_received_min=2026-10-11&date_received_max=2026-10-11&size=5&sort=created_date_desc",
+      "checked_on": "2026-10-11",
+      "status": 200,
+      "final_url": "https://www.consumerfinance.gov/data-research/consumer-complaints/search/api/v1/?date_received_min=2026-10-11&date_received_max=2026-10-11&size=5&sort=created_date_desc",
+      "bytes": 1483,
+      "sha256": "377c57fad3e422b6f3341fdd098b566914669642b1b8b69e606d94e23afe8e4d",
+      "response_date": "Sun, 11 Oct 2026 04:16:47 GMT",
+      "verification_scope": "Selected source text and response metadata inspected; not exhaustive claim authentication or a fresh collection of all historical data",
+      "observations": [
+        "The exact 2026-10-11 date-received query returned zero hits with an exact total, no timeout, and all five shards successful. This is the response at capture time, not a claim that the whole day will contain no records.",
+        "No records were invented or substituted into the same-day cohort; the retained October 9 sample remains historical."
+      ]
+    },
+    {
+      "id": "cpython_venv",
+      "url": "https://raw.githubusercontent.com/python/cpython/v3.12.14/Doc/library/venv.rst",
+      "checked_on": "2026-10-11",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/python/cpython/v3.12.14/Doc/library/venv.rst",
+      "bytes": 30839,
+      "sha256": "4b7bd1a665aca29bb883d944bbadf5ffcccfe37cca958184f1d8903a1062bca1",
+      "response_date": "Sun, 11 Oct 2026 04:17:40 GMT",
+      "verification_scope": "Selected source text and response metadata inspected; not exhaustive claim authentication or a fresh collection of all historical data",
+      "observations": [
+        "Versioned Python 3.12 documentation describes isolated virtual environments. This is not a claim that Python 3.12 is the latest release."
+      ]
+    },
+    {
+      "id": "cpython_json",
+      "url": "https://raw.githubusercontent.com/python/cpython/v3.12.14/Doc/library/json.rst",
+      "checked_on": "2026-10-11",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/python/cpython/v3.12.14/Doc/library/json.rst",
+      "bytes": 29859,
+      "sha256": "939f692d13cad1c22417edb8704664991f73dfa064f1eec5f59532de99fa93ef",
+      "response_date": "Sun, 11 Oct 2026 04:17:40 GMT",
+      "verification_scope": "Selected source text and response metadata inspected; not exhaustive claim authentication or a fresh collection of all historical data",
+      "observations": [
+        "Versioned documentation describes JSON decoding into Python structures; parsed data still needs a domain contract."
+      ]
+    },
+    {
+      "id": "cpython_sqlite",
+      "url": "https://raw.githubusercontent.com/python/cpython/v3.12.14/Doc/library/sqlite3.rst",
+      "checked_on": "2026-10-11",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/python/cpython/v3.12.14/Doc/library/sqlite3.rst",
+      "bytes": 92590,
+      "sha256": "ae534aa61fb6ab8d7bff2e7d33ac3f79e3b06e18acf4ec8081250ef7ff542d76",
+      "response_date": "Sun, 11 Oct 2026 04:17:40 GMT",
+      "verification_scope": "Selected source text and response metadata inspected; not exhaustive claim authentication or a fresh collection of all historical data",
+      "observations": [
+        "Versioned documentation covers parameter placeholders and transaction context managers. The local import exercises both and retains an explicit four-field projection."
+      ]
+    },
+    {
+      "id": "python_control_flow",
+      "url": "https://raw.githubusercontent.com/python/cpython/2abcf904b8dac8c999d2b3aac76681abb333798a/Doc/tutorial/controlflow.rst",
+      "checked_on": "2026-10-11",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/python/cpython/2abcf904b8dac8c999d2b3aac76681abb333798a/Doc/tutorial/controlflow.rst",
+      "bytes": 40828,
+      "sha256": "1e589edc233e3654a8a64073e1cce668304453c1d64e163955df8e08dec73f66",
+      "response_date": "Sun, 11 Oct 2026 04:19:55 GMT",
+      "verification_scope": "Selected source text and response metadata inspected; not exhaustive claim authentication or a fresh collection of all historical data",
+      "observations": [
+        "Pinned Python tutorial covers conditionals, iteration, and functions for beginner practice."
+      ]
+    },
+    {
+      "id": "python_data_structures",
+      "url": "https://raw.githubusercontent.com/python/cpython/2abcf904b8dac8c999d2b3aac76681abb333798a/Doc/tutorial/datastructures.rst",
+      "checked_on": "2026-10-11",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/python/cpython/2abcf904b8dac8c999d2b3aac76681abb333798a/Doc/tutorial/datastructures.rst",
+      "bytes": 24809,
+      "sha256": "c83633cfaa116c223eb4eacaf454f444591257f5340bae4f741726335029cf48",
+      "response_date": "Sun, 11 Oct 2026 04:19:55 GMT",
+      "verification_scope": "Selected source text and response metadata inspected; not exhaustive claim authentication or a fresh collection of all historical data",
+      "observations": [
+        "Pinned Python tutorial covers lists, dictionaries, and common iteration patterns."
+      ]
+    },
+    {
+      "id": "fastapi_pinned_first_steps",
+      "url": "https://raw.githubusercontent.com/fastapi/fastapi/f5c6e9b4f9cadc1bf0f9a1fd672e621206b63007/docs/en/docs/tutorial/first-steps.md",
+      "checked_on": "2026-10-11",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/fastapi/fastapi/f5c6e9b4f9cadc1bf0f9a1fd672e621206b63007/docs/en/docs/tutorial/first-steps.md",
+      "bytes": 14155,
+      "sha256": "ecc419c9e4ccf1e996db0b196301aab93a8f43d52ddc59a180d4e88f8290c858",
+      "response_date": "Sun, 11 Oct 2026 04:19:55 GMT",
+      "verification_scope": "Selected source text and response metadata inspected; not exhaustive claim authentication or a fresh collection of all historical data",
+      "observations": [
+        "Pinned documentation covers route decorators, HTTP operations, and an application served by an ASGI server."
+      ]
+    },
+    {
+      "id": "fastapi_pinned_request_body",
+      "url": "https://raw.githubusercontent.com/fastapi/fastapi/f5c6e9b4f9cadc1bf0f9a1fd672e621206b63007/docs/en/docs/tutorial/body.md",
+      "checked_on": "2026-10-11",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/fastapi/fastapi/f5c6e9b4f9cadc1bf0f9a1fd672e621206b63007/docs/en/docs/tutorial/body.md",
+      "bytes": 6611,
+      "sha256": "1a3e0f7b9220dcee9a7379c999d57b49e126ed07725dbbc5566ee1278d4ec670",
+      "response_date": "Sun, 11 Oct 2026 04:19:54 GMT",
+      "verification_scope": "Selected source text and response metadata inspected; not exhaustive claim authentication or a fresh collection of all historical data",
+      "observations": [
+        "Pinned documentation explains typed Pydantic request bodies. The local reference exercises validation rejection, not authenticated access."
+      ]
+    },
+    {
+      "id": "pytest_pinned_getting_started",
+      "url": "https://raw.githubusercontent.com/pytest-dev/pytest/cf470ec0bf7eb89cd97dd56df4859eae5db46447/doc/en/getting-started.rst",
+      "checked_on": "2026-10-11",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/pytest-dev/pytest/cf470ec0bf7eb89cd97dd56df4859eae5db46447/doc/en/getting-started.rst",
+      "bytes": 9542,
+      "sha256": "69760b3e09fbe6fef3f2e64c7e79289e409dd815e710a7f803e826da3720c9f0",
+      "response_date": "Sun, 11 Oct 2026 04:19:55 GMT",
+      "verification_scope": "Selected source text and response metadata inspected; not exhaustive claim authentication or a fresh collection of all historical data",
+      "observations": [
+        "Pinned pytest 9.1.1 tutorial explains assertion-based tests and test discovery. Installed pytest 9.1.1 is a tested version, not a universal latest-version recommendation."
+      ]
+    },
+    {
+      "id": "progit_pinned_recording_changes",
+      "url": "https://raw.githubusercontent.com/progit/progit2/a013e3230a1207cfa5ae94d28ba7d2021063c337/book/02-git-basics/sections/02-recording-changes.asc",
+      "checked_on": "2026-10-11",
+      "status": 404,
+      "error": "HTTPError: HTTP Error 404: Not Found",
+      "verification_scope": "Selected source text and response metadata inspected; not exhaustive claim authentication or a fresh collection of all historical data",
+      "observations": [
+        "This request failed; it does not establish current source content. Successful pinned-primary-source alternatives are recorded separately where available."
+      ]
+    },
+    {
+      "id": "inspiration_readme",
+      "url": "https://raw.githubusercontent.com/rohitg00/ai-engineering-from-scratch/1c8e62b526e78b8773559594aab3a3487d9998ac/README.md",
+      "checked_on": "2026-10-11",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/rohitg00/ai-engineering-from-scratch/1c8e62b526e78b8773559594aab3a3487d9998ac/README.md",
+      "bytes": 111519,
+      "sha256": "deff2b1a0d7a552c0a79b19db1176b46b8e3c8c147c39bd5b3ed4266bd00a91c",
+      "response_date": "Sun, 11 Oct 2026 04:23:54 GMT",
+      "verification_scope": "Selected source text and response metadata inspected; not exhaustive claim authentication or a fresh collection of all historical data",
+      "observations": [
+        "The pinned curriculum organizes routes, staged projects, prerequisite links, and retained artifacts. Its published counts are not adopted as this repository's coverage."
+      ]
+    },
+    {
+      "id": "inspiration_software_route",
+      "url": "https://raw.githubusercontent.com/rohitg00/ai-engineering-from-scratch/1c8e62b526e78b8773559594aab3a3487d9998ac/learning-paths/software-engineering-fundamentals.json",
+      "checked_on": "2026-10-11",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/rohitg00/ai-engineering-from-scratch/1c8e62b526e78b8773559594aab3a3487d9998ac/learning-paths/software-engineering-fundamentals.json",
+      "bytes": 1803,
+      "sha256": "1ab778a6fd600424eb60d9b26217ce0bb8c84d78dc28949f79b56a2aae635467",
+      "response_date": "Sun, 11 Oct 2026 04:23:53 GMT",
+      "verification_scope": "Selected source text and response metadata inspected; not exhaustive claim authentication or a fresh collection of all historical data",
+      "observations": [
+        "The source route treats setup, Git, interfaces, verification, security, and operations as foundations."
+      ]
+    },
+    {
+      "id": "inspiration_fde_route",
+      "url": "https://raw.githubusercontent.com/rohitg00/ai-engineering-from-scratch/1c8e62b526e78b8773559594aab3a3487d9998ac/learning-paths/forward-deployed-ai-engineer.json",
+      "checked_on": "2026-10-11",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/rohitg00/ai-engineering-from-scratch/1c8e62b526e78b8773559594aab3a3487d9998ac/learning-paths/forward-deployed-ai-engineer.json",
+      "bytes": 7247,
+      "sha256": "e74d935f37dccd5945eb71ba61c4558a20dfdfc931d78b464f51c3923e8714da",
+      "response_date": "Sun, 11 Oct 2026 04:23:53 GMT",
+      "verification_scope": "Selected source text and response metadata inspected; not exhaustive claim authentication or a fresh collection of all historical data",
+      "observations": [
+        "Customer deployment is a specialist overlay after shared foundations; the source distinguishes portfolio evidence from production experience and hiring guarantees."
+      ]
+    },
+    {
+      "id": "inspiration_career_practice",
+      "url": "https://raw.githubusercontent.com/rohitg00/ai-engineering-from-scratch/1c8e62b526e78b8773559594aab3a3487d9998ac/learning-paths/CAREER-PRACTICE.md",
+      "checked_on": "2026-10-11",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/rohitg00/ai-engineering-from-scratch/1c8e62b526e78b8773559594aab3a3487d9998ac/learning-paths/CAREER-PRACTICE.md",
+      "bytes": 11361,
+      "sha256": "63718ae7db9aa23497ea49fb2b1d8b8f42ec8b9b755dc55f19bf10a2434b43d6",
+      "response_date": "Sun, 11 Oct 2026 04:23:53 GMT",
+      "verification_scope": "Selected source text and response metadata inspected; not exhaustive claim authentication or a fresh collection of all historical data",
+      "observations": [
+        "The source connects a single project with workflow evidence, independent verification, cost/outcome decisions, and feedback. This repository adapts the teaching structure with original prose and existing FDE artifacts."
+      ]
+    },
+    {
+      "id": "inspiration_license",
+      "url": "https://raw.githubusercontent.com/rohitg00/ai-engineering-from-scratch/1c8e62b526e78b8773559594aab3a3487d9998ac/LICENSE",
+      "checked_on": "2026-10-11",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/rohitg00/ai-engineering-from-scratch/1c8e62b526e78b8773559594aab3a3487d9998ac/LICENSE",
+      "bytes": 1070,
+      "sha256": "d116e214adbcab1c96e680695bcda5c629f00d72425f83e18770ce5e156c17d4",
+      "response_date": "Sun, 11 Oct 2026 04:23:53 GMT",
+      "verification_scope": "Selected source text and response metadata inspected; not exhaustive claim authentication or a fresh collection of all historical data",
+      "observations": [
+        "The pinned source contains an MIT license attributed to Rohit Ghumare. No source prose or implementation has been copied into the new lessons."
+      ]
+    },
+    {
+      "id": "progit_recording_changes_resolved",
+      "url": "https://raw.githubusercontent.com/progit/progit2/a013e3230a1207cfa5ae94d28ba7d2021063c337/book/02-git-basics/sections/recording-changes.asc",
+      "checked_on": "2026-10-11",
+      "status": 200,
+      "bytes": 25583,
+      "sha256": "0a3ee3c170776e1701bdb7481f3e582a7a414f692075b1349e3192237d834078",
+      "response_date": "Sun, 11 Oct 2026 04:23:30 GMT",
+      "verification_scope": "Selected source text and response metadata inspected; not exhaustive claim authentication or a fresh collection of all historical data",
+      "observations": [
+        "Inspected the chapter on tracked/untracked/staged files, diff review, and recording commits after resolving the actual path from the source tree."
+      ]
+    }
+  ]
+}
