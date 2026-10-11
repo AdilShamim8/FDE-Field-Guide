@@ -1,8 +1,8 @@
 # The 90-Day FDE Transition Roadmap
 
-This roadmap provides an intensive, week-by-week transition curriculum for engineers targeting forward deployed engineering roles at AI labs, enterprise platforms, and growth startups. It synthesizes core training frameworks from FDE Academy (2026), practitioner field reports, and enterprise hiring rubrics.
+This is a recommended twelve-week project plan for engineers who already write basic code. It is not an authenticated employer curriculum or a guarantee of readiness in ninety days. Implementation descriptions were checked against this repository on 2026-10-11. Start with the [foundations lessons](foundations/README.md) if you cannot yet read JSON, query a table, or debug an HTTP request.
 
-The roadmap assumes you already write basic code in at least one language. It is engineered to bridge the three gaps that eliminate traditional software engineers from FDE loops: defensive data handling outside idealized environments, deterministic evaluation of probabilistic systems, and customer-facing discovery and de-escalation under pressure.
+The plan develops defensive data handling, evaluation, and customer-facing discovery. The local reference demonstrates a subset of these skills. Tasks involving learned embeddings, model calls, durable databases, authentication, deployment, or customer acceptance are extensions you must implement and verify.
 
 ## Structure of the 90 days
 
@@ -23,7 +23,7 @@ Goal: Master production Python, defensive parsing, idempotency, rate limiting, a
   - Strong typing with `mypy` and runtime schema enforcement using `pydantic` V2.
   - Multi-encoding byte stream handling: detecting UTF-8 Byte Order Marks (BOM), cascading fallback to CP1252 and Latin-1 without raising unhandled decode exceptions.
   - Defect accounting: parsing malformed CSV and JSON exports, recording every dropped or repaired record with line numbers and defect categories in an audit report.
-- Deliverable: write a standalone command-line parser that processes a corrupted 10,000-row enterprise export and emits clean records plus a Defect Accounting Report. See reference code in `interviews/code/parser.py`.
+- Deliverable: write a standalone command-line parser that processes a permitted export with documented defects (or clearly labeled authored corruptions) and emits clean records plus a Defect Accounting Report. See reference code in `interviews/code/parser.py`.
 
 ### Week 2: Resilient API Integration and Idempotency
 
@@ -54,27 +54,27 @@ Goal: Master production Python, defensive parsing, idempotency, rate limiting, a
 
 ## Month 2: Production AI Systems and Deterministic Governance (Weeks 5 to 8)
 
-Goal: Build a flagship, permission-aware AI system with self-healing structured extraction, hybrid retrieval, and automated golden evaluations.
+Goal: build an evidence-aware application, then add model extraction or hybrid retrieval only when the workflow and evaluation justify them. Keep source-derived inputs separate from authored regression cases.
 
-### Week 5: Document Chunking and Dense Semantic Embeddings
+### Week 5: Document Chunking and Representation Choices
 
 - Core focus: ingesting enterprise unstructured text without destroying semantic boundaries.
 - Key skills:
-  - Token-aware document chunking: splitting text on sentence and paragraph punctuation boundaries with configurable sliding overlap and metadata inheritance.
+  - Boundary-aware document chunking with overlap and metadata inheritance. The supplied chunker budgets regex word/punctuation units, not a model tokenizer; add and test a provider tokenizer when enforcing model context limits.
   - Dense vector embeddings: projecting text into normalized vector spaces, calculating cosine similarity, and understanding semantic subspace clusters.
   - Multi-modal and layout-aware considerations: extracting structured tables and key-value sections from complex business documents.
-- Deliverable: build a document ingestion pipeline that chunks multi-page enterprise policy manuals and indexes them into normalized vector representations. See `interviews/code/chunker.py`.
+- Deliverable: build a document ingestion pipeline that chunks multi-page enterprise policy manuals and indexes them into normalized vector representations. See `interviews/code/chunker.py` for bounded regex-unit splitting. Learned embeddings and layout extraction are additional implementations, not capabilities of that exercise.
 
 ### Week 6: Permission-Aware Hybrid Search and RBAC Filtering
 
 - Core focus: enforcing enterprise access control perimeters at query time.
 - Key skills:
   - Document-level Access Control Lists (ACLs): binding allowed user roles (`support_tier1`, `compliance`, `admin`) directly to stored chunk metadata.
-  - Pre-retrieval security filtering: filtering vector searches so users never receive search results or citations for unauthorized documents.
+  - Pre-retrieval role filtering plus authenticated identity: derive effective roles from a verified principal, then test document permissions and tenant scope. Caller-supplied headers alone do not establish authorization.
   - Hybrid retrieval: combining BM25 sparse lexical matching with dense vector cosine similarity to handle both exact enterprise acronyms and conceptual queries.
-- Deliverable: implement a search index that takes user role headers and proves zero data leakage when querying identical prompts across different permission tiers. See `portfolio/reference-project/src/pipeline/ingestion.py`.
+- Deliverable: test allowed and denied document retrieval with a stated threat model. The reference at `portfolio/reference-project/src/pipeline/ingestion.py` uses feature hashing and token overlap; it has no BM25 or learned embedding model. Its role headers simulate permissions. Authenticated identity, tenant isolation, BM25/RRF, and a representative retrieval evaluation are separate extensions; passing role-header tests does not prove zero leakage.
 
-### Week 7: Self-Healing Structured Extraction and Gating
+### Week 7: Structured Extraction and Evidence Gating
 
 - Core focus: converting messy customer text into reliable, validated actions.
 - Key skills:
@@ -82,16 +82,16 @@ Goal: Build a flagship, permission-aware AI system with self-healing structured 
   - Feedback repair loops: intercepting schema validation errors and feeding the exact error text back to the model in an automated retry turn.
   - Deterministic citation grounding: verifying that cited document quotes appear verbatim in retrieved source text before returning answers.
   - Human-in-the-loop exception queues: routing low-confidence or high-severity tickets to operator review queues.
-- Deliverable: build an end-to-end triage agent that validates structured JSON outputs, executes automated repair loops, and routes exceptions. See `portfolio/reference-project/src/engine/agent.py`.
+- Deliverable: inspect `portfolio/reference-project/src/engine/agent.py` and demonstrate missing-evidence review, applicable-document checks, exact quotation checks, and severity routing. It is deterministic and has no model repair loop. If you add a structured model extractor, validate its output, bound retries, record failures, and test it separately on permitted inputs.
 
-### Week 8: The Golden Evaluation Harness
+### Week 8: Regression Contracts and Independent Evaluation
 
 - Core focus: measuring system quality with reproducible, falsifiable metrics.
 - Key skills:
-  - Curating a 25-case golden dataset: balancing clean requests, noisy inputs, rate-limit edge cases, out-of-domain prompts, and permission test cases.
-  - Constructing an automated evaluation harness: executing the golden suite offline and computing accuracy, precision, recall, and citation validity percentages.
-  - Latency and cost accounting: measuring p50, p90, p95, and p99 latency distributions and token costs.
-- Deliverable: create `run_evals.py` that runs against your project, prints an executive scorecard, and asserts pass/fail against strict SLA thresholds. See `portfolio/reference-project/evals/run_evals.py`.
+  - Separate authored contract tests from an independently labeled evaluation set. Document record lineage, annotation rules, disagreement, selection, and an untouched holdout; select sample size for the decision and uncertainty rather than copying a fixed count.
+  - Run reproducible checks for classification, routing, applicable evidence, and abstention. Interpret precision/recall only against suitable independently established labels. An exact quote can still be irrelevant.
+  - Measure end-to-end API latency under specified load and failure conditions. Record token usage and cost only for actual provider calls; local deterministic timings do not establish a production SLA.
+- Deliverable: run `portfolio/reference-project/evals/run_evals.py` and retain its report. The existing 25 cases are known regression fixtures with unverified origins, not a real customer holdout. The report gates known routing/document contracts and reports engine-only timings. Add separately justified customer acceptance thresholds and measured API latency for your own system.
 
 ## Month 3: System Design, Customer Scenarios, and Interview Execution (Weeks 9 to 12)
 
@@ -115,13 +115,13 @@ Goal: Master enterprise architectural design, customer de-escalation dialogue, t
   - De-escalating production emergencies: managing customer panic when an LLM outputs an incorrect answer, using structured containment, root-cause traces, and regression prevention.
 - Deliverable: practice verbatim role-play dialogues for the five core customer scenarios with a study partner. See `interviews/04-customer-scenarios.md`.
 
-### Week 11: 72-Hour Take-Home Execution and Rubric Mastery
+### Week 11: A Timed Take-Home Practice
 
-- Core focus: executing take-home assignments to full production standard within tight deadlines.
+- Core focus: delivering a reviewable small implementation within a stated time budget, with missing production work documented.
 - Key skills:
   - Time allocation discipline: spending 20% on discovery and ADRs, 45% on core pipeline and boundary defense, 20% on evaluation harnesses, and 15% on README and runbooks.
   - Authoring operational handovers: writing runbooks that instruct external customer operators how to deploy, monitor, and troubleshoot the system.
-  - Scoring against enterprise rubrics: self-evaluating your submission against the 100-point enterprise rubric.
+  - Scoring against enterprise rubrics: self-evaluating against the guide's authored practice rubric, which is not an authenticated company scoring system.
 - Deliverable: execute a timed 72-hour take-home challenge from spec to handover documentation. See `interviews/06-take-homes.md`.
 
 ### Week 12: Portfolio Packaging, Demo Video, and Mock Loops
@@ -135,7 +135,7 @@ Goal: Master enterprise architectural design, customer de-escalation dialogue, t
 
 ## Daily execution ritual
 
-To complete this roadmap alongside existing work commitments, follow this daily structure:
+One possible study schedule is below. Adjust it to your available time and repeat work until you can demonstrate the exit criteria; the schedule is a recommendation, not measured completion time:
 
 - Morning (60 minutes): core technical implementation (writing Python code, unit tests, or Docker configs).
 - Midday (30 minutes): conceptual reading (reading industry papers, AWS architecture blogs, or system design blueprints).
@@ -147,11 +147,11 @@ To complete this roadmap alongside existing work commitments, follow this daily 
 - [From Software Engineer](from-software-engineer.md) - the transition path for traditional developers
 - [FDE project selection masterclass](../portfolio/04-project-selection-masterclass.md) - the five enterprise archetypes
 - [Coding round solutions and playbooks](../interviews/08-coding-solutions.md) - production code implementations
-- [FDE interview question bank](../interviews/07-question-bank.md) - scoring rubrics and senior response playbooks
+- [FDE interview question bank](../interviews/07-question-bank.md) - authored practice rubrics and response exercises
 
 ## Further reading
 
 - [FDE Academy YouTube Channel](https://www.youtube.com/@fdeacademy) - masterclasses and video tutorials
-- [FDE Roadmap and Core Tech Stack](https://youtu.be/kBM5UXRbo3U) - video breakdown of the 90-day transition curriculum
+- [FDE Roadmap and Core Tech Stack](https://youtu.be/kBM5UXRbo3U) - background material; this page's schedule is a local recommendation
 - [Why FDE is the Most In-Demand AI Role](https://youtu.be/CCt0csEqul0) - career mechanics and interview loop expectations
 - [From Software Engineer to FDE](https://youtu.be/vLlIBT0HSSc) - transition guidance for traditional engineers
