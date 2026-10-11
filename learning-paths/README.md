@@ -22,6 +22,10 @@ Continue with [beginner to FDE](beginner-to-fde.md) for the longer progression t
 
 The background chapters retain historical source windows and recommendations. Salary reports, old skill percentages, and old title samples are not newly measured employer requirements. Read the [market methodology](../job-market/dataset/README.md) before using those figures.
 
+## Glossary and roadmap
+
+Use the [FDE glossary](../GLOSSARY.md) for customer, integration, AI, evaluation, trust, and operating vocabulary. The [FDE roadmap](../ROADMAP.md) connects six stages to retained work and exit checks, with entry routes for beginners and experienced engineers.
+
 ## Plan the next project
 
 - [90-day roadmap](90-day-fde-roadmap.md): a compact planning sequence for people who already write basic code. Implementations beyond the local reference are assignments.
