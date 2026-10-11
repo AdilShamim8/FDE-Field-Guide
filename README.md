@@ -13,6 +13,12 @@ Evidence and implementation review: 2026-10-09; beginner curriculum and selected
 - Checking market claims: read the [market methodology](job-market/dataset/README.md) before using counts or salary reports.
 - Developing the reference: follow the [ETISE README](portfolio/reference-project/README.md), including its missing production controls.
 
+## Glossary, roadmap, and website
+
+- [FDE glossary](GLOSSARY.md) - 51 terms with plain definitions and examples covering customer delivery, integrations, AI, evaluation, trust, and operations.
+- [FDE roadmap](ROADMAP.md) - six stages with retained work and exit checks, connecting the beginner lessons, 90-day plan, 24-week plan, and expert practicum.
+- [Website](index.html) - open the self-contained learning portal in a browser; lesson and chapter links lead to the repository.
+
 ## Data you can trace
 
 The [market snapshot retrieved on 2026-10-09](job-market/dataset/market_snapshot_2026-10-09.json) records immutable upstream revisions, input SHA-256 hashes, source-record references, and nine observation dates through 2026-09-23. Its cumulative title filter matches 212 job IDs across 125 employer names. September has 127 matching listing rows and 91 unique matching IDs. The monthly-file union differs from the cumulative source; the discrepancy is preserved rather than hidden.
