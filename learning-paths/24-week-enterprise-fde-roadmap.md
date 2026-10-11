@@ -1,10 +1,10 @@
 # 24-Week Enterprise Forward Deployed AI Engineer Roadmap
 
-This roadmap provides the complete week-by-week enterprise transition curriculum for aspiring Forward Deployed AI Engineers. It is sourced directly from the Codebasics FDE Roadmap 2026 (Dhaval Patel and Hemanand Vadivel, AtliQ Technologies), built from practitioner interviews with Pankaj Jaiswal, Rushi Gandhi, Pranav Modh, and Daksh Trehan, and validated against 146 deduplicated 2026 FDE job postings.
+This is a recommended twenty-four-week project plan for engineers building customer-facing AI and integration skills. The earlier page attributed its schedule to Codebasics material, but the claimed PDF, practitioner interviews, and validation against 146 raw postings are not authenticated by this repository. Treat the schedule as local learning advice. Scope and implementation claims were reviewed on 2026-10-11; external platform access and individual technical details still require their current official documentation.
 
-FDE = AI engineer + a slice of AI PM. Phase 1 builds core AI engineering skills. Phase 2 builds product management and soft skills required to succeed on the client floor.
+FDE work combines software delivery with customer discovery, integration, evaluation, and handover. The two phases organize study; use a [customer brief](foundations/customer-brief-template.md) and acceptance criteria from the first week rather than waiting until Phase 2.
 
-Prerequisites: minimum one year of programming experience in any language, SQL fundamentals (SELECT, JOIN, GROUP BY), Git and GitHub (clone, commit, push, branching), how HTTP requests and JSON APIs work, and the debugging habit of reading error messages and searching documentation.
+Prerequisites: demonstrate functions and tests, SQL queries including JOIN and GROUP BY, Git diffs and commits, HTTP/JSON requests, and debugging from an error message. Start with the [foundations lessons](foundations/README.md) if those tasks are unfamiliar. Elapsed programming time is not a readiness test. Model APIs, cloud deployment, and ERP access are optional extensions with separate credentials, costs, and data permissions.
 
 ## Phase 1: Technical Skills (Weeks 1 to 16)
 
@@ -12,7 +12,7 @@ Build and ship enterprise AI: Python, RAG, agents, ERP data, DevOps, LLMOps, and
 
 ### Weeks 1 and 2: Python for Enterprise AI
 
-Python is named in 133 of 146 scraped FDE postings (91.0%) (observed evidence, Codebasics job analysis, September 2026). Start with the basics and go deep into how Python is used for enterprise AI.
+Use Python to connect a validated input, an API, and a failure test. Historical skill percentages elsewhere in the guide are not a fresh measurement of this curriculum or a prerequisite for every FDE role.
 
 Topics:
 
@@ -31,7 +31,7 @@ Assignments:
 
 ### Week 3: Vibe Coding
 
-An FDE who codes with AI is 3x faster. An FDE who blindly trusts AI code fails in production. MakeMyTrip CTO Sambit Sarangi stated that what they check in interviews is how well candidates review AI-generated code (Codebasics FDE Roadmap 2026, September 2026).
+AI coding assistance is optional. This repository has no experiment establishing a productivity multiplier or an authenticated employer quote for this claim. You remain responsible for understanding each diff and testing its behavior.
 
 Topics:
 
@@ -48,7 +48,7 @@ Assignments:
 
 ### Weeks 4 and 5: LLM Fundamentals and RAG
 
-30 to 40% of projects at AtliQ Technologies require some type of RAG (Retrieval Augmented Generation), consistent with industry-wide patterns (Codebasics FDE Roadmap 2026).
+Choose retrieval when a task needs current, permissioned source material. Compare it with deterministic lookup and direct model use on the same workload. This guide does not establish an industry-wide percentage of projects that need RAG.
 
 Topics:
 
@@ -64,12 +64,12 @@ Topics:
 
 Assignments:
 
-- [ ] Build a RAG system over 10 real PDFs (equipment manuals, HR policies, or vendor contracts): ingest, chunk, embed, and answer questions with citations to the source page
+- [ ] Build a RAG system over permitted real documents (for example, public equipment manuals with reviewed reuse terms); preserve their URLs, dates, hashes, and page references: ingest, chunk, embed, and answer questions with citations to the source page
 - [ ] Write a Kaggle notebook or GitHub repository for your RAG project and share on LinkedIn
 
 ### Weeks 6, 7, and 8: Agentic AI, Multi-Agent Systems, MCP
 
-The world is focused on Agentic AI. As an FDE, you will build agentic automations while working at client sites.
+Tool-using automation is one possible design. Start with a bounded single workflow; add agents or MCP only when their coordination or integration benefit can be tested.
 
 Topics:
 
@@ -85,15 +85,15 @@ Topics:
 Assignments:
 
 - [ ] Build a work-order triage agent on top of your Week 1 tracker: reads an incoming complaint, uses your RAG system to check the equipment manual, decides priority, and creates the work order via your API through tool calls
-- [ ] Add a human-in-the-loop interrupt: if the agent confidence is below 85% or priority is P1, route to a "needs review" state instead of auto-creating
+- [ ] Add a human-in-the-loop interrupt: route to review when evidence is missing, authority is insufficient, or an action requires approval. Calibrate any confidence threshold against independently labeled data and customer error costs; a model-generated 85% score is not a universal safety gate
 - [ ] Record a 5-minute demo video explaining the agent decision flow as if presenting to a client IT team, and post it on LinkedIn
 - [ ] Build a 3-agent LangGraph system: Agent 1 extracts key fields from RFQ or vendor documents, Agent 2 validates completeness against approved vendor list, Agent 3 drafts a procurement recommendation and posts to a mock approval API
 
-Development philosophy: you are not building a demo. You are building production code that will run inside a client environment with their messy legacy data, their IT security policies, and their end-users who are not technical. Build defensively. Document everything.
+Development goal: build defensively and document the tested boundary. A local exercise becomes a production system only after authenticated access, durable recovery, suitable evaluation, operational budgets, and accountable acceptance are demonstrated.
 
 ### Week 9: ERP and Enterprise Data Integration
 
-You will almost always build AI on top of an ERP — SAP, NetSuite, Dynamics, Tally, or a custom one. Learn ERP literacy and how to pull data out. Go deeper only if your client lives inside SAP (see the Bonus section at the end of this document).
+Some engagements integrate with ERP systems; others use support tools, data platforms, or custom services. Identify the actual system of record and available interfaces before choosing a vendor. Go deeper into SAP only when the deployment requires it.
 
 Topics:
 
@@ -124,7 +124,7 @@ Topics:
 - CI/CD with GitHub Actions: lint to test to build to push to deploy pipeline for AI applications
 - API Gateway patterns: rate limiting, authentication (OAuth2 and JWT), CORS, request routing
 - Infrastructure as Code: Terraform basics for provisioning cloud resources
-- Secrets management: AWS Secrets Manager, Azure Key Vault — never in environment variables
+- Secrets management: AWS Secrets Manager, Azure Key Vault — use managed identities or a supported secrets service where available; scoped runtime injection is acceptable, while secrets in source, logs, images, or committed .env files are not
 - A/B testing and canary releases for AI model versions
 - On-premise Kubernetes: kubeadm, Rancher, air-gapped Docker registries, private LLM hosting (Ollama, vLLM)
 
@@ -164,8 +164,8 @@ Topics:
 - As an FDE, you need to understand the client current system design and suggest enhancements for the integration layer you are building such that it does not impact their current usage
 - Why AI system design is different: an LLM is non-deterministic, expensive per call, slow, and confidently wrong. Almost every unusual box in an AI architecture exists to defend against one of those four properties
 - The model layer: API models vs self-hosted, and model routing. Small model for extraction and classification, frontier model only where synthesis is genuinely required. This is the single largest cost lever you control
-- The retrieval layer: ingestion path vs query path, hybrid search (vector plus keyword), reranking, chunking strategy, metadata filtering. When RAG answers are bad, it is retrieval 8 times out of 10
-- Orchestration: tool calling, the think-act-observe loop, and reliability maths — 95% per step across 10 steps lands near 60% end to end
+- The retrieval layer: ingestion path vs query path, hybrid search (vector plus keyword), reranking, chunking strategy, metadata filtering. Measure retrieval, evidence applicability, and generation failures separately; this repository does not establish a universal failure ratio
+- Orchestration: tool calling, the think-act-observe loop, and reliability maths — under an explicit independent-step assumption, 0.95^10 is about 0.60; real failures can be correlated and must be measured
 - Latency and cost design: time-to-first-token vs total time, streaming, the caching ladder (exact-response cache, then semantic cache, then stable prompt prefix). Cost is a designed property, not an invoice you discover at month end
 - The trust layer: input and output guardrails, evals as the unit tests of an AI system, and end-to-end tracing
 - Degradation and fallback design: primary model to secondary to graceful manual path, with every tier announced to the user rather than failing silently
@@ -234,7 +234,7 @@ Topics:
 - Managing scope: what goes out-of-scope and why
 - BRD versioning and change log management
 - Common mistakes: ambiguous requirements, missing exclusions, untestable criteria
-- The BRD review rubric used in the Vaayu Pumps project: completeness, specificity, testability, traceability to business outcomes (source: BRD v1.1, September 2026)
+- Suggested BRD review criteria: completeness, specificity, testability, and traceability to the stated outcome. The claimed Vaayu document pack is not authenticated here
 
 Assignments:
 
@@ -253,7 +253,7 @@ Topics:
 - Business rule specs: for example, SLA escalation — first warning at 80% of the SLA window, auto-escalation at 100%
 - Error scenarios and exception handling requirements
 - Integration specs: source systems, APIs, auth, refresh frequency
-- The Spec Clarity Test: feed your TDD to an AI coding agent; if it cannot build correctly from your spec, the spec is not clear enough (source: TDD v1.0, September 2026)
+- Review specification clarity with a peer implementation and explicit acceptance tests. A coding model failure alone cannot distinguish an ambiguous spec from a model error
 
 Assignments:
 
@@ -300,7 +300,7 @@ Assignments:
 
 ## Bonus: Deep SAP Integration and Field Service Domain
 
-Not required for most FDE roles, but if you target SAP-heavy consultancies or manufacturing and field service clients, this depth is a differentiator. This section is based on inputs from Pankaj Jaiswal, an FDE working in this exact environment (Codebasics FDE Roadmap 2026, September 2026).
+Not required for most FDE roles, but if you target SAP-heavy consultancies or manufacturing and field service clients, this depth is a differentiator. These are optional domain-study topics. Verify transaction codes, API availability, permissions, and version compatibility against your actual SAP environment; this repository does not authenticate the earlier attributed practitioner interview.
 
 ### SAP Integration Patterns
 
@@ -325,7 +325,7 @@ Assignment:
 
 ## AI Tools to Accelerate Your Delivery Workflow
 
-An FDE who uses AI tools intelligently produces better deliverables in half the time. These are tools actively used on real enterprise projects (Codebasics FDE Roadmap 2026, September 2026):
+The following are optional workflow tools, not measured productivity guarantees or verified customer deployment evidence. Check current product capabilities and data-use terms before adopting one:
 
 | Tool | Best Used For | Pro Tip |
 | :--- | :--- | :--- |
@@ -335,29 +335,31 @@ An FDE who uses AI tools intelligently produces better deliverables in half the 
 | Multi-Model Approach | When a model gets a diagram or data flow consistently wrong | Switch models: if Claude keeps making the same structural mistake, try ChatGPT. If ChatGPT hallucinates, try Gemini |
 | Screen recording tool | Walkthrough and demo videos for client training, UAT handholding, and stakeholder presentations | A 3-minute recording replaces 10 pages of written user guide for non-technical users |
 
-## Real-World Case Studies
+## Available evidence and optional extensions
 
-Three reference case studies demonstrate the full 24-week curriculum in practice:
+The repository does not contain verified customer artifacts for the three previously described AI/SAP projects or an authenticated 83-page Vaayu document pack. Do not present those stacks or planned outputs as completed case studies.
 
-Case Study 01: AI Field Service Management Command Centre — multi-agent system for automated work order triage, skill-based technician dispatch, real-time SLA breach prediction, and spare parts availability check. Tech stack: LangGraph Supervisor, GPT-4o, SAP PM OData, Azure SQL, Datasphere, IoT event stream. Documents produced: BRD, FRD, SDD with agent diagrams, SAP BAPI Integration Catalogue, UAT scripts. See [Vaayu Pumps case study](../case-studies/05-enterprise-manufacturing-vaayu-pumps.md) for the full 83-page document set.
+Use the actual available material:
 
-Case Study 02: Predictive Maintenance AI Agent — agentic system that ingests IoT sensor data, detects anomaly patterns, auto-creates SAP PM work orders before equipment failure, and routes to the right technician. Tech stack: LangGraph, Gemini 2.5 Flash, SAP PM BAPI, IoT Hub, FastAPI, LangSmith. Documents produced: SDD with IoT integration spec, BAPI catalogue, anomaly detection rule library, KPI dashboard design.
+- [Foundations project](foundations/README.md): retained real CFPB metadata, local Python/SQLite imports, replay, and transaction failure tests. There are five selected October 9 records and no customer routing labels.
+- [ETISE reference](../portfolio/reference-project/README.md): runnable local intake, authored policies, evidence gating, and 25 known regression contracts with unverified origins. No model calls, authenticated tenant identity, or durable dispatch.
+- [Market snapshot](../job-market/dataset/README.md): pinned upstream artifacts, distinct row/ID accounting, and dated observations through September 23. Not a live vacancy census.
 
-Case Study 03: Contract Lifecycle Management AI Agent — AI agent that extracts key clauses from service contracts, flags SLA breaches and renewal deadlines, and answers natural language questions about contract terms. Tech stack: Claude Sonnet, CrewAI, pgvector, Python FastAPI, MS Graph API, RAGAS evaluation. Documents produced: prompt library, clause extraction templates, evaluation report, handover runbook.
+Predictive maintenance, work-order dispatch, and contract extraction remain possible project ideas. Each needs permitted domain data, a baseline, suitable labels, access controls, and a tested failure/recovery path. A public complaint metadata sample cannot substitute for sensor history or equipment-specific acceptance evidence.
 
 ## Related documents
 
 - [90-Day FDE Transition Roadmap](90-day-fde-roadmap.md) - the accelerated 12-week curriculum for engineers transitioning from adjacent roles
 - [Learning Paths Overview](README.md) - background-specific transition blueprints and the readiness self-audit protocol
-- [Vaayu Pumps Case Study](../case-studies/05-enterprise-manufacturing-vaayu-pumps.md) - the complete enterprise project referenced in Case Study 01 above
+- [Vaayu Pumps evidence review](../case-studies/05-enterprise-manufacturing-vaayu-pumps.md) - source limits and what would be needed to validate the manufacturing design
 - [Requirements to Spec](../customer/02-requirements-to-spec.md) - the BRD, TDD, and SDD chain with Spec Clarity Test
 - [Agents and Tools](../ai/02-agents-and-tools.md) - supervised multi-agent pipeline architecture and persistent memory layers
 - [ERP and SAP Integration](../engineering/02-apis-and-integrations.md) - deep SAP S/4HANA OData, BAPI, and CPI integration patterns
 
 ## Further reading
 
-- [Codebasics](https://codebasics.io) - primary source for this 24-week curriculum (FDE_Roadmap_2026.pdf, September 2026)
-- [SAP Business Accelerator Hub](https://api.sap.com) - free sandbox for OData API practice, no SAP license required
+- [Codebasics](https://codebasics.io) - earlier attributed learning source; the claimed PDF is not authenticated by this guide
+- [SAP Business Accelerator Hub](https://api.sap.com) - official API catalog; verify current sandbox access, credentials, limits, and terms
 - [LangChain Academy](https://academy.langchain.com) - free courses on LangChain and LangGraph for agentic systems
 - [Prosci ADKAR Model](https://www.prosci.com/methodology/adkar) - the change management framework for enterprise AI adoption
 - [OWASP Top 10 for LLMs](https://owasp.org/www-project-top-10-for-large-language-model-applications/) - security requirements for LLM applications
